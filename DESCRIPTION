@@ -1,0 +1,9 @@
+Package: starmie
+Type: Package
+Title: for lazy population geneticisits.
+Version: 0.1.0
+Author: Gerry Tonkin-Hill, Stuart Lee
+Maintainer: Stuart Lee<lee.s@wehi.edu.au>
+Description: What is K? Baby don't hurt me. Don't hurt me. No more.
+License: GPLv3
+LazyData: TRUE
