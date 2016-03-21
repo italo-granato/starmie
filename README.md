@@ -6,3 +6,7 @@ frustration?
 If you answered yes to any of the above then starmie is for you!
 
 COMING SOON
+
+## external datasets
+Simulated microsat data was taken from 
+http://pritchardlab.stanford.edu/software/example-data/locprior.str
