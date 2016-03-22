@@ -1,3 +1,6 @@
+# loadStructure.R
+# Functions for parsing output from STRUCTURE
+
 #' Read Structure Output
 #' @param  path directory containing output of STRUCTURE runs
 #' @param  n_runs number of runs for each K value
