@@ -10,3 +10,5 @@ COMING SOON
 ## external datasets
 Simulated microsat data was taken from 
 http://pritchardlab.stanford.edu/software/example-data/locprior.str
+Simulated SNP data was taken from ADMIXTURE test datasets
+https://www.genetics.ucla.edu/software/admixture/download.html
