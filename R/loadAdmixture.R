@@ -8,6 +8,7 @@
 #' @param  logfile include logfiles for each admixture run (required for diagnositc plots)
 #' @importFrom tidyr gather
 #' @importFrom dplyr bind_rows
+#' @importFrom data.table fread
 #' @export
 loadAdmixture <- function(starmie_obj, path, k_values, logfile = FALSE) {
   # i/o checks
@@ -28,9 +29,9 @@ loadAdmixture <- function(starmie_obj, path, k_values, logfile = FALSE) {
   # at the moment just read in q_files
   q_files <- list.files(path, ".Q$", full.names = TRUE)
   read_qfiles <- function(qfile) {
-    q_df <- read.table(qfile)
+    q_df <- fread(qfile, data.table=FALSE, header=FALSE)
     q_df$sample.id <- 1:nrow(q_df)
-    q_df$K <- as.integer(gsub("(^.+\\.+)(\\d+)(\\..+$)", "\\2", qfile))
+    q_df$K <- rep(ncol(q_df), nrow(df))
     tidyr::gather(q_df, cluster, probability, -sample.id, -K)
   }
 
