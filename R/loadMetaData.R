@@ -10,7 +10,7 @@ UseMethod("loadSampleData")
 #'
 #' @param sample_file filename containing sample information
 #' @param pop_identifer logical does file contain geographic location?
-#' @details Assume that we have PLINK format FAM file with optional location identifier
+#' @details Assume that we have PLINK format FAM file with optional location identifier in the final column
 #' @export
 loadSampleData <- function(starmie_obj, sample_file, pop_identifier = FALSE) {
   # i/o checks
@@ -23,7 +23,8 @@ loadSampleData <- function(starmie_obj, sample_file, pop_identifier = FALSE) {
                  "maternal.id", "sex", "phenotype")
   sample_data <- read.table(sample_file,
                             header = FALSE,
-                            na.strings = c("NA", "-9"))
+                            na.strings = c("NA", "-9"),
+                            stringsAsFactors = FALSE)
   if (pop_identifier) {
     # check valid FAM file + population_id
     if (ncol(sample_data) != 7) stop("Sample file requires 7 columns to be valid")
