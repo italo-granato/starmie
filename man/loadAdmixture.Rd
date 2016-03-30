@@ -22,7 +22,8 @@ my_starmie <- starmie()
 sample_file <- system.file("extdata/hapmap3_files", "hapmap3.fam", package="starmie")
 my_starmie <- loadSampleData(my_starmie, sample_file)
 # read in Q-files
-qfiles <- list.files(system.file("extdata/hapmap3_files", package="starmie"), pattern = ".Q$", full.names = TRUE)
+hapmap_files <- system.file("extdata/hapmap3_files", package="starmie")
+qfiles <- list.files(hapmap_files, pattern = ".Q$", full.names = TRUE)
 my_starmie <- loadAdmixture(my_starmie, qfiles)
 
 }
