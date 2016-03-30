@@ -10,6 +10,15 @@
 #' @importFrom dplyr bind_rows
 #' @importFrom data.table fread
 #' @export
+#' @examples
+#' my_starmie <- starmie()
+#' # add in sample metadata
+#' sample_file <- system.file("extdata/hapmap3_files", "hapmap3.fam", package="starmie")
+#' my_starmie <- loadSampleData(my_starmie, sample_file)
+#' # read in Q-files
+#' qfiles <- list.files(system.file("extdata/hapmap3_files", package="starmie"), pattern = ".Q$", full.names = TRUE)
+#' my_starmie <- loadAdmixture(my_starmie, qfiles)
+#'
 loadAdmixture <- function(starmie_obj, file_list, logfile_list = NULL) {
   # i/o checks
   if (!inherits(starmie_obj, "starmie")) stop("Not a valid starmie object.")
@@ -28,20 +37,20 @@ loadAdmixture <- function(starmie_obj, file_list, logfile_list = NULL) {
   # do the work
   # at the moment just read in q_files, number of Q-files corresponds to K
   read_qfiles <- function(qfile) {
-    q_df <- data.table::fread(qfile, data.table=FALSE, header=FALSE)
+    q_df <- fread(qfile, data.table=FALSE, header=FALSE)
     stopifnot(nrow(q_df) == nrow(starmie_obj$sample_data))
     q_df$K <- rep(ncol(q_df), nrow(q_df))
     q_df$sample.id <- starmie_obj$sample_data$sample.id
-    tidyr::gather(q_df, cluster, probability, -sample.id, -K)
+    gather(q_df, cluster, probability, -sample.id, -K)
   }
 
-  allQ <- dplyr::bind_rows(lapply(file_list, read_qfiles))
+  allQ <- bind_rows(lapply(file_list, read_qfiles))
   # change cluster character name into integer
   allQ$cluster <- as.integer(gsub("V", "", allQ$cluster))
 
   # read in logfiles
   if (!is.null(logfile_list)) {
-    log_info <- dplyr::bind_rows(lapply(logfile_list, read_logfiles))
+    log_info <- bind_rows(lapply(logfile_list, read_logfiles))
   } else {
     log_info <- NULL
   }
@@ -51,7 +60,6 @@ loadAdmixture <- function(starmie_obj, file_list, logfile_list = NULL) {
   starmie_obj
 
 }
-
 
 read_logfiles <- function(logfile) {
   # grab final logliklihood and CV error

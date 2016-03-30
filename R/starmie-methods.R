@@ -13,3 +13,6 @@ print.starmie <- function(starmie_obj) {
 }
 
 # ggplot method not sure if have to use ggproto here, look into this
+autoplot.starmie <- function() {
+
+}

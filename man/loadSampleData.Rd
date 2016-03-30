@@ -16,6 +16,6 @@ Read in sample information from space delimted PLINK fam file
 or plain text file.
 }
 \details{
-Assume that we have PLINK format FAM file with optional location identifier
+Assume that we have PLINK format FAM file with optional location identifier in the final column
 }
 

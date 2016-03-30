@@ -7,9 +7,9 @@ UseMethod("loadSampleData")
 #'
 #' @description Read in sample information from space delimted PLINK fam file
 #' or plain text file.
-#'
+#' @param starmie_obj an object of class \code{\link{starmie}}
 #' @param sample_file filename containing sample information
-#' @param pop_identifer logical does file contain geographic location?
+#' @param pop_identifoer logical does file contain geographic location?
 #' @details Assume that we have PLINK format FAM file with optional location identifier in the final column
 #' @export
 loadSampleData <- function(starmie_obj, sample_file, pop_identifier = FALSE) {

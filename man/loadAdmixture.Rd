@@ -4,16 +4,26 @@
 \alias{loadAdmixture}
 \title{Read Admixture Output}
 \usage{
-loadAdmixture(path, k_values, logfile = FALSE)
+loadAdmixture(starmie_obj, file_list, logfile_list = NULL)
 }
 \arguments{
-\item{path}{directory containing admixture run information}
+\item{starmie_obj}{an object of class \code{\link{starmie}} with sample_data filled}
 
-\item{k_values}{integer vector of K values tried}
+\item{file_list}{a vector of .Q file names for admixture}
 
-\item{logfile}{include logfiles for each admixture run (required for diagnositc plots)}
+\item{logfile_list}{a vector of logfile names for each admixture run (required for diagnositc plots)}
 }
 \description{
 Read Admixture Output
+}
+\examples{
+my_starmie <- starmie()
+# add in sample metadata
+sample_file <- system.file("extdata/hapmap3_files", "hapmap3.fam", package="starmie")
+my_starmie <- loadSampleData(my_starmie, sample_file)
+# read in Q-files
+qfiles <- list.files(system.file("extdata/hapmap3_files", package="starmie"), pattern = ".Q$", full.names = TRUE)
+my_starmie <- loadAdmixture(my_starmie, qfiles)
+
 }
 

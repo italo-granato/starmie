@@ -4,14 +4,14 @@
 \alias{readStructure}
 \title{Read Structure Output}
 \usage{
-readStructure(path, n_runs, logfile = FALSE)
+readStructure(starmie_obj, filename, logfile = NULL)
 }
 \arguments{
-\item{path}{directory containing output of STRUCTURE runs}
-
-\item{n_runs}{number of runs for each K value}
-
 \item{logfile}{include STRUCTURE logs for each run (required if wanting to do MCMC plots)}
+
+\item{starmie}{object}
+
+\item{location}{of the STRUCTURE output file}
 }
 \description{
 Read Structure Output
