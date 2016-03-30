@@ -3,41 +3,63 @@
 
 
 #' Read Admixture Output
-#' @param  path directory containing admixture run information
-#' @param  k_values integer vector of K values tried
-#' @param  logfile include logfiles for each admixture run (required for diagnositc plots)
+#' @param  starmie_obj an object of class \code{\link{starmie}} with sample_data filled
+#' @param  file_list a vector of .Q file names for admixture
+#' @param  logfile_list a vector of logfile names for each admixture run (required for diagnositc plots)
 #' @importFrom tidyr gather
 #' @importFrom dplyr bind_rows
 #' @importFrom data.table fread
 #' @export
-loadAdmixture <- function(starmie_obj, path, k_values, logfile = FALSE) {
+loadAdmixture <- function(starmie_obj, file_list, logfile_list = NULL) {
   # i/o checks
   if (!inherits(starmie_obj, "starmie")) stop("Not a valid starmie object.")
-  if (!is.character(path) ) stop("Path must be character variable.")
-  if ( !dir.exists(path) ) stop("Path does not exist.")
-  if ( !is.logical(logfile) ) stop("logfile must be TRUE/FALSE")
-  if(any(!is.finite(k_values) | !is.integer(k_values) | is.na(k_values))) {
-    stop("k_values must all be finite integers")
+  if (!all(is.character(file_list))) stop("file_list must be a character vector.")
+  if (!is.null(logfile_list)) {
+    if (!all(is.character(logfile_list))) stop("logfile_list must be a character vector.")
   }
   # check whether sample id is available, and sample meta data is inputted
   # otherwise throw an errror.
   if (is.null(starmie_obj$sample_data)) {
     stop("Sample metadata is required.")
+    if(is.null(starmie_obj$sample_data$sample.id)) {
+      stop("Sample identifier required")
+    }
   }
-
   # do the work
-  # at the moment just read in q_files
-  q_files <- list.files(path, ".Q$", full.names = TRUE)
+  # at the moment just read in q_files, number of Q-files corresponds to K
   read_qfiles <- function(qfile) {
-    q_df <- fread(qfile, data.table=FALSE, header=FALSE)
-    q_df$sample.id <- 1:nrow(q_df)
-    q_df$K <- rep(ncol(q_df), nrow(df))
+    q_df <- data.table::fread(qfile, data.table=FALSE, header=FALSE)
+    stopifnot(nrow(q_df) == nrow(starmie_obj$sample_data))
+    q_df$K <- rep(ncol(q_df), nrow(q_df))
+    q_df$sample.id <- starmie_obj$sample_data$sample.id
     tidyr::gather(q_df, cluster, probability, -sample.id, -K)
   }
 
-  allQ <- dplyr::bind_rows(lapply(q_files, read_qfiles))
+  allQ <- dplyr::bind_rows(lapply(file_list, read_qfiles))
+  # change cluster character name into integer
+  allQ$cluster <- as.integer(gsub("V", "", allQ$cluster))
 
-  starmie_obj$admixture_run <- allQ
+  # read in logfiles
+  if (!is.null(logfile_list)) {
+    log_info <- dplyr::bind_rows(lapply(logfile_list, read_logfiles))
+  } else {
+    log_info <- NULL
+  }
+
+  # output list containing q_info, and log_info
+  starmie_obj$admixture_run <- list(q_info = allQ, log_info = log_info)
   starmie_obj
 
+}
+
+
+read_logfiles <- function(logfile) {
+  # grab final logliklihood and CV error
+  logfin <- readLines(logfile)
+  loglik <- as.numeric(gsub("Loglikelihood: ", "",
+                            logfin[grepl("^Loglikelihood:", logfin)]))
+  cverror <- logfin[grepl("^CV error", logfin)]
+  K <- as.integer(gsub(".*\\(K=(.*)\\).*", "\\1", cverror))
+  cverror <- as.numeric(gsub(".*: ", "\\1", cverror))
+  data.frame(K = K, logL = loglik, CVerror = cverror, stringsAsFactors = FALSE)
 }
