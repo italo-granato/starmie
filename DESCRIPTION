@@ -7,6 +7,13 @@ Maintainer: Stuart Lee<lee.s@wehi.edu.au>
 Description: What is K? Baby don't hurt me. Don't hurt me. No more.
 License: GPLv3
 LazyData: TRUE
+Imports:
+  data.table,
+  dplyr,
+  readr,
+  stringr,
+  tidyr,
+  purrr
 Suggests:
     testthat
 URL: https://github.com/sa-lee/starmie
