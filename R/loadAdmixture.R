@@ -16,15 +16,16 @@
 #' sample_file <- system.file("extdata/hapmap3_files", "hapmap3.fam", package="starmie")
 #' my_starmie <- loadSampleData(my_starmie, sample_file)
 #' # read in Q-files
-#' qfiles <- list.files(system.file("extdata/hapmap3_files", package="starmie"), pattern = ".Q$", full.names = TRUE)
+#' hapmap_files <- system.file("extdata/hapmap3_files", package="starmie")
+#' qfiles <- list.files(hapmap_files, pattern = ".Q$", full.names = TRUE)
 #' my_starmie <- loadAdmixture(my_starmie, qfiles)
 #'
 loadAdmixture <- function(starmie_obj, file_list, logfile_list = NULL) {
   # i/o checks
   if (!inherits(starmie_obj, "starmie")) stop("Not a valid starmie object.")
-  if (!all(is.character(file_list))) stop("file_list must be a character vector.")
+  if (!all(is.character(file_list) & !is.na(file_list))) stop("file_list must be a character vector.")
   if (!is.null(logfile_list)) {
-    if (!all(is.character(logfile_list))) stop("logfile_list must be a character vector.")
+    if (!all(is.character(logfile_list) & !is.na(logfile_list))) stop("logfile_list must be a character vector.")
   }
   # check whether sample id is available, and sample meta data is inputted
   # otherwise throw an errror.
