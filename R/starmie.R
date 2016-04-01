@@ -21,3 +21,39 @@ starmie <- function() {
                 structure_run = NULL,  admixture_run = NULL, clumpp = NULL),
                 class = "starmie")
 }
+
+#' Accessor methods for starmie objects
+#' @description Return elements from a \code{\link{starmie_obj}}
+#' @export
+get_ploidy <- function(starmie_obj) {
+  starmie_obj$ploidy
+}
+
+#' @describeIn get_ploidy Return number of samples
+get_nsamples <- function(starmie_obj) {
+  starmie_obj$n_samples
+}
+
+#' @describeIn get_ploidy Return number of markers
+get_nmarkers <- function(starmie_obj) {
+  starmie_obj$n_markers
+}
+#' @describeIn get_ploidy Return sample data frame
+get_samples <- function(starmie_obj) {
+  starmie_obj$sample_data
+}
+
+#' @describeIn get_ploidy Return marker data frame
+get_markers <- function(starmie_obj) {
+  starmie_obj$marker_data
+}
+
+#' @describeIn get_ploidy Return structure run list
+get_structure <- function(starmie_obj) {
+  starmie_obj$structure_run
+}
+
+#' @describeIn get_ploidy Return admixture run list
+get_admixture <- function(starmie_obj) {
+  starmie_obj$admixture_run
+}

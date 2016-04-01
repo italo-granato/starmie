@@ -16,19 +16,40 @@ print.starmie <- function(starmie_obj) {
 #' @param starmie_obj an object of class \code{\link{starmie}}
 #' @param method a character corresponding to either 'admixture' or 'structure'
 #' @param type a character corresponding to type of plot to make (default 'all')
-#' @importFrom ggplot2 autoplot
+#' @import ggplot2
 autoplot.starmie <- function(starmie_obj, method, type = "all", ...) {
+  # i/o checks
+  if (!method %in% c("admixture", "structure") && length(method) != 1) {
+    stop("Invalid method command choose either structure or admixture")
+  }
 
+  # theme for starmie object
   starmie_theme <- theme_bw() + theme(panel.grid=element_blank(),
-                         panel.border=element_blank(),
-                         panel.grid.minor=element_blank(),
-                         panel.grid.major=element_blank(),
-                         axis.text.x=element_blank(),
-                         axis.ticks.x=element_blank(),
-                         legend.position="none")
+                                      panel.border=element_blank(),
+                                      panel.grid.minor=element_blank(),
+                                      panel.grid.major=element_blank(),
+                                      axis.text.x=element_blank(),
+                                      axis.ticks.x=element_blank(),
+                                      legend.position="none")
 
   # probably best to do case, switch here
   if (method == "admixture") {
+    q_df <- get_admixture(starmie_obj)$q_info
+    if (nrow(q_df) == 0) {
+      stop("No ADMIXTURE clustering information in starmie object")
+    }
+
+    admixture_plot <- ggplot(q_df, aes(x = sample.id,
+                                       y = probability,
+                                       fill = factor(cluster))) +
+      facet_grid(K ~ .) +
+      geom_bar(stat = "identity") +
+      scale_y_continuous(expand = c(0,0)) +
+      xlab("Sample") +
+      ylab("Proportion of cluster") +
+      starmie_theme
+
+    admixture_plot
 
   }
 
