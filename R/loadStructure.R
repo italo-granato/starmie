@@ -112,8 +112,37 @@ readStructure <- function(starmie_obj, filename, logfile = NULL) {
     }
 
     #do more work
-  }
+    l_f <- readr::read_lines(logfile)
+    #remove blank lines
+    l_f <- l_f[l_f!=""]
 
+    #Get burn and non-burn in iterations as seperate data frames.
+    ##NOTE: This relies heavily on the current format.
+    intervals <- unlist(lapply(which(grepl("^ Rep#:   Lambda   Alpha.*",l_f)), function(x){ x[1]:(x[1]+11) }))
+    burn_lines <- l_f[intervals]
+    burn_lines <- burn_lines[grepl("[0-9]|R.*", burn_lines)]
+    burn_lines <- str_trim(burn_lines)
+    mid <- which(grepl(".*Ln Like  Est Ln P.*",burn_lines))[1]
+    nonburn_lines <- burn_lines[mid:length(burn_lines)]
+    burn_lines <- burn_lines[1:mid-1]
+
+    burn_header <- unlist(str_split(burn_lines[1], "\\s{2,}"))
+    burn_lines <- burn_lines[!grepl("Rep#:   Lambda   Alpha.*", burn_lines)]
+    burn_lines <- str_split_fixed(burn_lines, "\\s+", n=pops*2+4)
+    burn_lines[,1] <- gsub(":","",burn_lines[,1])
+    burn_df <- data.matrix(data.frame(burn_lines, stringsAsFactors = FALSE))
+    colnames(burn_df) <- burn_header
+
+    nonburn_header <- unlist(str_split(nonburn_lines[1], "\\s{2,}"))
+    nonburn_lines <- nonburn_lines[!grepl("Rep#:.*", nonburn_lines)]
+    nonburn_lines <- str_split_fixed(nonburn_lines, "\\s+", n=pops*2+5)
+    nonburn_lines[,1] <- gsub(":","",nonburn_lines[,1])
+    nonburn_df <- data.matrix(data.frame(nonburn_lines, stringsAsFactors = FALSE))
+    colnames(nonburn_df) <- nonburn_header
+
+    starmie_obj$structure_run["burn_df"] = burn_df
+    starmie_obj$structure_run["nonburn_df"] = nonburn_df
+  }
 
   starmie_obj
 }
