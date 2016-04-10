@@ -3,22 +3,52 @@
 
 #' Read Structure Output
 #' @param starmie object
-#' @param  location of the STRUCTURE output file
-#' @param logfile include STRUCTURE logs for each run (required if wanting to do MCMC plots)
+#' @param  vector of locations for the STRUCTURE output files
+#' @param vector of logfile locations (required if wanting to do MCMC plots)
 #' @importFrom readr read_lines
 #' @import stringr
 #' @importFrom purrr map
 #' @export
+#' @examples
+#' my_starmie <- starmie()
+#' # add in sample metadata
+#' sample_file <- system.file("extdata/hapmap3_files", "hapmap3.fam", package="starmie")
+#' my_starmie <- loadSampleData(my_starmie, sample_file)
+#' # read in Strucutre files
+#' structure_files <- system.file("extdata/microsat_testfiles", package="starmie")
+#' structure_output_files <- list.files(structure_files, pattern = ".*out_f", full.names = TRUE)
+#' structure_log_files <- list.files(structure_files, pattern = ".*log", full.names = TRUE)
+#' my_starmie <- loadStructure(my_starmie, structure_output_files, structure_log_files)
 #'
-loadStructure <- function(starmie_obj, filename, logfile = NULL) {
+
+loadStructure <- function(starmie_obj, file_list, logfile_list=NULL){
   # i/o checks
   if (!inherits(starmie_obj, "starmie")) stop("Not a valid starmie object.")
-  if(!is.character(filename)) {
-    stop("File must be character variable.")
+  if (!all(is.character(file_list) & !is.na(file_list))) stop("file_list must be a character vector.")
+  if (!is.null(logfile_list)) {
+    if (!all(is.character(logfile_list) & !is.na(logfile_list))) stop("logfile_list must be a character vector.")
+    if(length(file_list)!=length(logfile_list)) stop("Unequal number of structure output and logfiles.")
   }
-  if(!file.exists(filename)) {
-    stop("File does not exist.")
+  # check whether sample id is available, and sample meta data is inputted
+  # otherwise throw an errror.
+  if (is.null(starmie_obj$sample_data)) {
+    stop("Sample metadata is required.")
+    if(is.null(starmie_obj$sample_data$sample.id)) {
+      stop("Sample identifier required")
+    }
   }
+
+  structure_run <- list()
+  for(i in seq_along(file_list)){
+    structure_run[[i]] <- readStructure(file_list[i], logfile_list[i])
+  }
+
+  starmie_obj$structure_run <- structure_run
+
+  return(starmie_obj)
+}
+
+readStructure <- function(filename, logfile = NULL) {
 
   # do the work
   s_f <- readr::read_lines(filename)
@@ -31,7 +61,7 @@ loadStructure <- function(starmie_obj, filename, logfile = NULL) {
   run_lines <- str_trim(run_lines)
   run_lines <- str_split_fixed(run_lines, " ", n=2)
   run_params <- data.frame(Parameter=run_lines[,2], Value=as.numeric(run_lines[,1]))
-  pops <- run_params[run_params$Parameter=="populations assumed",][2]
+  pops <- as.numeric(run_params[run_params$Parameter=="populations assumed",][2])
 
   #Get membership proportion
   mem_lines <- s_f[(which(grepl("^Proportion of membership.*",s_f))+3):(which(grepl("^Allele-freq", s_f))-2)]
@@ -95,23 +125,16 @@ loadStructure <- function(starmie_obj, filename, logfile = NULL) {
     )
   })
 
-  starmie_obj$structure_run <- list(pops=pops
-                                    , run_params=run_params
-                                    , mem_df=mem_df
-                                    , alle_freqs=alle_freqs
-                                    , avg_dist_df=avg_dist_df
-                                    , fit_stats_df=fit_stats_df
-                                    , fst_df=fst_df
-                                    , ancest_df=ancest_df
-                                    , clust_allele_list=clust_allele_list)
+  structure_run <- list(pops=pops
+                        , run_params=run_params
+                        , mem_df=mem_df
+                        , alle_freqs=alle_freqs
+                        , avg_dist_df=avg_dist_df
+                        , fit_stats_df=fit_stats_df
+                        , fst_df=fst_df
+                        , ancest_df=ancest_df
+                        , clust_allele_list=clust_allele_list)
   if(!is.null(logfile)){
-    # i/o checks
-    if(!is.character(logfile)) {
-      stop("File must be character variable.")
-    }
-    if(!file.exists(logfile)) {
-      stop("File does not exist.")
-    }
 
     #do more work
     l_f <- readr::read_lines(logfile)
@@ -129,24 +152,28 @@ loadStructure <- function(starmie_obj, filename, logfile = NULL) {
     burn_lines <- burn_lines[1:mid-1]
 
     burn_header <- unlist(str_split(burn_lines[1], "\\s{2,}"))
+
+    log_pops <- sum(str_count(burn_header, "F[0-9]"))
+    if(log_pops!=pops) stop("Population mismatch between output and logfile.")
+
     burn_lines <- burn_lines[!grepl("Rep#:   Lambda   Alpha.*", burn_lines)]
-    burn_lines <- str_split_fixed(burn_lines, "\\s+", n=pops*2+4)
+    burn_lines <- str_split_fixed(burn_lines, "\\s+", n=length(burn_header))
     burn_lines[,1] <- gsub(":","",burn_lines[,1])
     suppressWarnings(burn_df <- data.matrix(data.frame(burn_lines, stringsAsFactors = FALSE)))
     colnames(burn_df) <- burn_header
 
     nonburn_header <- unlist(str_split(nonburn_lines[1], "\\s{2,}"))
     nonburn_lines <- nonburn_lines[!grepl("Rep#:.*", nonburn_lines)]
-    nonburn_lines <- str_split_fixed(nonburn_lines, "\\s+", n=pops*2+5)
+    nonburn_lines <- str_split_fixed(nonburn_lines, "\\s+", n=length(nonburn_header))
     nonburn_lines[,1] <- gsub(":","",nonburn_lines[,1])
     nonburn_df <- data.matrix(data.frame(nonburn_lines, stringsAsFactors = FALSE))
     colnames(nonburn_df) <- nonburn_header
 
-    starmie_obj$structure_run$burn_df = burn_df
-    starmie_obj$structure_run$nonburn_df = nonburn_df
+    structure_run$burn_df = burn_df
+    structure_run$nonburn_df = nonburn_df
   }
 
-  starmie_obj
+  structure_run
 }
 
 
