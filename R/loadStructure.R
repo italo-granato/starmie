@@ -14,41 +14,22 @@
 #' # add in sample metadata
 #' sample_file <- system.file("extdata/hapmap3_files", "hapmap3.fam", package="starmie")
 #' my_starmie <- loadSampleData(my_starmie, sample_file)
-#' # read in Strucutre files
+#' # read in Structure files
 #' structure_files <- system.file("extdata/microsat_testfiles", package="starmie")
 #' structure_output_files <- list.files(structure_files, pattern = ".*out_f", full.names = TRUE)
 #' structure_log_files <- list.files(structure_files, pattern = ".*log", full.names = TRUE)
 #' my_starmie <- loadStructure(my_starmie, structure_output_files, structure_log_files)
 #'
 
-loadStructure <- function(starmie_obj, file_list, logfile_list=NULL){
+loadStructure <- function(filename, logfile=NULL){
   # i/o checks
-  if (!inherits(starmie_obj, "starmie")) stop("Not a valid starmie object.")
-  if (!all(is.character(file_list) & !is.na(file_list))) stop("file_list must be a character vector.")
+  if (!all(is.character(output_file) & !is.na(output_file))) stop("file_list must be a string.")
   if (!is.null(logfile_list)) {
-    if (!all(is.character(logfile_list) & !is.na(logfile_list))) stop("logfile_list must be a character vector.")
-    if(length(file_list)!=length(logfile_list)) stop("Unequal number of structure output and logfiles.")
-  }
-  # check whether sample id is available, and sample meta data is inputted
-  # otherwise throw an errror.
-  if (is.null(starmie_obj$sample_data)) {
-    stop("Sample metadata is required.")
-    if(is.null(starmie_obj$sample_data$sample.id)) {
-      stop("Sample identifier required")
-    }
+    if (!all(is.character(logfile_list) & !is.na(logfile_list))) stop("logfile_list must be a character.")
   }
 
-  structure_run <- list()
-  for(i in seq_along(file_list)){
-    structure_run[[i]] <- readStructure(file_list[i], logfile_list[i])
-  }
-
-  starmie_obj$structure_run <- structure_run
-
-  return(starmie_obj)
-}
-
-readStructure <- function(filename, logfile = NULL) {
+  #create new structure object
+  structure_obj <- structure()
 
   # do the work
   s_f <- readr::read_lines(filename)
@@ -125,15 +106,16 @@ readStructure <- function(filename, logfile = NULL) {
     )
   })
 
-  structure_run <- list(pops=pops
-                        , run_params=run_params
-                        , mem_df=mem_df
-                        , alle_freqs=alle_freqs
-                        , avg_dist_df=avg_dist_df
-                        , fit_stats_df=fit_stats_df
-                        , fst_df=fst_df
-                        , ancest_df=ancest_df
-                        , clust_allele_list=clust_allele_list)
+  structure_obj$K = pops
+  structure_obj$run_params = run_params
+  structure_obj$mem_df = mem_df
+  structure_obj$alle_freqs=alle_freqs
+  structure_obj$avg_dist=avg_dist
+  structure_obj$fit_stats_df = fit_stats_df
+  structure_obj$fst_df = fst_df
+  structure_obj$ancest_df=ancest_df
+  structure_obj$clust_allele_list=clust_allele_list
+
   if(!is.null(logfile)){
 
     #do more work
@@ -169,11 +151,11 @@ readStructure <- function(filename, logfile = NULL) {
     nonburn_df <- data.matrix(data.frame(nonburn_lines, stringsAsFactors = FALSE))
     colnames(nonburn_df) <- nonburn_header
 
-    structure_run$burn_df = burn_df
-    structure_run$nonburn_df = nonburn_df
+    structure_obj$burn_df = burn_df
+    structure_obj$nonburn_df = nonburn_df
   }
 
-  structure_run
+  structure_obj
 }
 
 
