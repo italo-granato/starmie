@@ -20,7 +20,6 @@
 #' structure_log_files <- list.files(structure_files, pattern = ".*log", full.names = TRUE)
 #' my_starmie <- loadStructure(my_starmie, structure_output_files, structure_log_files)
 #'
-
 loadStructure <- function(filename, logfile=NULL){
   # i/o checks
   if (!all(is.character(output_file) & !is.na(output_file))) stop("file_list must be a string.")
@@ -29,7 +28,7 @@ loadStructure <- function(filename, logfile=NULL){
   }
 
   #create new structure object
-  structure_obj <- structure()
+  structure_obj <- struct()
 
   # do the work
   s_f <- readr::read_lines(filename)
