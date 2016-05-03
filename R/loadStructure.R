@@ -10,21 +10,17 @@
 #' @importFrom purrr map
 #' @export
 #' @examples
-#' my_starmie <- starmie()
-#' # add in sample metadata
-#' sample_file <- system.file("extdata/hapmap3_files", "hapmap3.fam", package="starmie")
-#' my_starmie <- loadSampleData(my_starmie, sample_file)
 #' # read in Structure files
 #' structure_files <- system.file("extdata/microsat_testfiles", package="starmie")
 #' structure_output_files <- list.files(structure_files, pattern = ".*out_f", full.names = TRUE)
 #' structure_log_files <- list.files(structure_files, pattern = ".*log", full.names = TRUE)
-#' my_starmie <- loadStructure(my_starmie, structure_output_files, structure_log_files)
+#' my_struct <- loadStructure(structure_output_file[[1]], structure_log_files[[1]])
 #'
 loadStructure <- function(filename, logfile=NULL){
   # i/o checks
-  if (!all(is.character(output_file) & !is.na(output_file))) stop("file_list must be a string.")
-  if (!is.null(logfile_list)) {
-    if (!all(is.character(logfile_list) & !is.na(logfile_list))) stop("logfile_list must be a character.")
+  if (!is.na(filename) & !is.character(filename)) stop("filename must be a string.")
+  if (!is.null(logfile)) {
+    if (!is.character(logfile) & !is.na(logfile)) stop("logfile must be a string.")
   }
 
   #create new structure object
@@ -109,7 +105,7 @@ loadStructure <- function(filename, logfile=NULL){
   structure_obj$run_params = run_params
   structure_obj$mem_df = mem_df
   structure_obj$alle_freqs=alle_freqs
-  structure_obj$avg_dist=avg_dist
+  structure_obj$avg_dist=avg_dist_df
   structure_obj$fit_stats_df = fit_stats_df
   structure_obj$fst_df = fst_df
   structure_obj$ancest_df=ancest_df
