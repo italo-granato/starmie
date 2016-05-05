@@ -4,7 +4,7 @@
 \alias{fortify.starmie}
 \title{Return a tidy data frame from a starmie object for custom plotting}
 \usage{
-\method{fortify}{starmie}(starmie_obj, method)
+fortify.starmie(starmie_obj, method)
 }
 \description{
 Return a tidy data frame from a starmie object for custom plotting
