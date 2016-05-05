@@ -23,12 +23,19 @@ struct <- function() {
                  fst_df=NULL, fit_stats_df = NULL,  ancest_df = NULL,
                  clust_allele_list = NULL,
                  burn_df=NULL, nonburn_df=NULL),
-            class = "structure")
+            class = "struct")
 }
 
 #' Accessor methods for structure object
-#' @description Return K from a \code{\link{structure_obj}}
+#' @description Return K from a \code{\link{struct_obj}}
 #' @export
-get_K <- function(structure_obj) {
+getK <- function(structure_obj) {
   structure_obj$K
+}
+
+#' Accessor methods for structure object
+#' @description Return the log posterior probability from a \code{\link{struct_obj}}
+#' @export
+getPosterior <- function(structure_obj){
+  structure_obj$fit_stats_df[structure_obj$fit_stats_df$Statistic=="Estimated Ln Prob of Data",][2]
 }
