@@ -29,8 +29,10 @@ bestK <- function(structure_runs, method="evano", plot=TRUE){
 
 
   #If K are not sequential or do not have equal number of runs just perform the structure approach and produce a simpler plot
-  if (!is.sequential(names(split_posterior_probs)) |
-      !all(length(split_posterior_probs[[1]])==unlist(lapply(split_posterior_probs, length))) |
+  Ks <- table(posterior_probs$K)
+
+  if (!is.sequential(names(Ks)) |
+      !all(Ks[[1]]==Ks) |
       method=="structure"){
 
     if (method!="structure") warning("WARNING! K values are not sequential or there are an uneven number of runs per K. Reverting to structure method.")
@@ -51,7 +53,7 @@ bestK <- function(structure_runs, method="evano", plot=TRUE){
     gg <- gg + scale_x_continuous(breaks = min(posterior_probs_summary$K):max(posterior_probs_summary$K))
     gg <- gg + ylab("Mean log posterior probability")
 
-    if (plot) {gg}
+    if (plot) {suppressWarnings(print(gg))}
 
     return(posterior_probs_summary$K[which.max(posterior_probs_summary$meanK)])
   }
@@ -104,7 +106,7 @@ bestK <- function(structure_runs, method="evano", plot=TRUE){
   gg <- gg + theme_bw()
   gg <- gg + scale_x_continuous(breaks = min(posterior_probs_summary$K):max(posterior_probs_summary$K))
 
-  if (plot) {gg}
+  if (plot) {suppressWarnings(print(gg))}
 
   best <- posterior_probs_summary[posterior_probs_summary$variable=="delta K",]
   best <- best$K[which.max(best$value)]
