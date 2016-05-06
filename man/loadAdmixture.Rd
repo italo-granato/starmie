@@ -22,9 +22,9 @@ Read Admixture Output
 \examples{
 qfin <- system.file("extdata/hapmap3_files", "hapmap3.2.Q", package = "starmie")
 pfin <- system.file("extdata/hapmap3_files", "hapmap3.2.P", package = "starmie")
-loadAdmixtue(qfin, pfin)
+loadAdmixture(qfin, pfin)
 # add log file
 logfin <- system.file("extdata/hapmap3_files", "log2.out", package = "starmie")
-loadAdmixtue(qfin, pfin, logfin)
+loadAdmixture(qfin, pfin, logfin)
 }
 
