@@ -4,27 +4,27 @@
 \alias{loadAdmixture}
 \title{Read Admixture Output}
 \usage{
-loadAdmixture(starmie_obj, file_list, logfile_list = NULL)
+loadAdmixture(qfile, pfile, logfile = NULL)
 }
 \arguments{
-\item{starmie_obj}{an object of class \code{\link{starmie}} with sample_data filled}
+\item{qfile}{a valid Q file from ADMIXTURE}
 
-\item{file_list}{a vector of .Q file names for admixture}
+\item{pfile}{a corresponding P file from ADMXIXTURE}
 
-\item{logfile_list}{a vector of logfile names for each admixture run (required for diagnositc plots)}
+\item{logfile}{logfile from corresponding AMIXTURE run ()}
+}
+\value{
+an \link{admix} object containing the output of of an admixture run
 }
 \description{
 Read Admixture Output
 }
 \examples{
-my_starmie <- starmie()
-# add in sample metadata
-sample_file <- system.file("extdata/hapmap3_files", "hapmap3.fam", package="starmie")
-my_starmie <- loadSampleData(my_starmie, sample_file)
-# read in Q-files
-hapmap_files <- system.file("extdata/hapmap3_files", package="starmie")
-qfiles <- list.files(hapmap_files, pattern = ".Q$", full.names = TRUE)
-my_starmie <- loadAdmixture(my_starmie, qfiles)
-
+qfin <- system.file("extdata/hapmap3_files", "hapmap3.2.Q", package = "starmie")
+pfin <- system.file("extdata/hapmap3_files", "hapmap3.2.P", package = "starmie")
+loadAdmixtue(qfin, pfin)
+# add log file
+logfin <- system.file("extdata/hapmap3_files", "log2.out", package = "starmie")
+loadAdmixtue(qfin, pfin, logfin)
 }
 

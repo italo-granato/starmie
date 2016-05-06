@@ -4,7 +4,7 @@
 \alias{autoplot.starmie}
 \title{ggplot method for starmie object}
 \usage{
-autoplot.starmie(starmie_obj, method, type = "all", ...)
+\method{autoplot}{starmie}(starmie_obj, method, type = "all", ...)
 }
 \arguments{
 \item{starmie_obj}{an object of class \code{\link{starmie}}}
