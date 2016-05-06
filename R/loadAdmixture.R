@@ -29,10 +29,10 @@ admix <- function() {
 #' @examples
 #' qfin <- system.file("extdata/hapmap3_files", "hapmap3.2.Q", package = "starmie")
 #' pfin <- system.file("extdata/hapmap3_files", "hapmap3.2.P", package = "starmie")
-#' loadAdmixtue(qfin, pfin)
+#' loadAdmixture(qfin, pfin)
 #' # add log file
 #' logfin <- system.file("extdata/hapmap3_files", "log2.out", package = "starmie")
-#' loadAdmixtue(qfin, pfin, logfin)
+#' loadAdmixture(qfin, pfin, logfin)
 loadAdmixture <- function(qfile, pfile, logfile = NULL) {
   # i/o checks
   if ( !(is.character(qfile) & length(qfile) == 1) ) stop("qfile must be a character vector of length 1.")
@@ -47,6 +47,7 @@ loadAdmixture <- function(qfile, pfile, logfile = NULL) {
   q_df <- fread(qfile, data.table = FALSE, header = FALSE)
   K <- ncol(q_df)
   nsamples <- nrow(q_df)
+  colnames(q_df) <- paste("Cluster", seq(1,ncol(q_df)))
   # pfile data reader
   p_df <- fread(pfile, data.table = FALSE, header = FALSE)
   nmarkers <- nrow(p_df)
