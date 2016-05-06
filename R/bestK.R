@@ -10,17 +10,19 @@
 #' @import ggplot2
 #' @export
 #' @examples
-#' # read in Structure files
+#' # Read in Structure files
 #' structure_files <- system.file("extdata/microsat_testfiles", package="starmie")
 #' structure_output_files <- list.files(structure_files, pattern = "*.out_f", full.names = TRUE)
 #' structure_log_files <- list.files(structure_files, pattern = ".*log", full.names = TRUE)
 #' structure_runs <- mapply(loadStructure, structure_output_files, structure_log_files, SIMPLIFY=FALSE)
+#' # Run the evano method and display diagnostic plots.
+#' K <- bestK(structure_runs)
 #'
 bestK <- function(structure_runs, method="evano", plot=TRUE){
   #i/o checks
   if (!all(unlist(lapply(structure_runs, inherits, "struct")) & !is.na(structure_runs))) stop("structure_runs must be a vector of struct objects.")
   if (!(method %in% c("evano", "structure"))) stop("method must be one of 'evano' or 'structure'")
-  if (!is.logical(plot)) stop("plot must be one of (TRUE/FALSE)")
+  if (!is.logical(plot)) stop("plot must be one of TRUE or FALSE")
 
   #order structure runs and collect by K
   posterior_probs = data.frame(
