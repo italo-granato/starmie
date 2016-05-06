@@ -87,6 +87,7 @@ loadStructure <- function(filename, logfile=NULL){
   class(ances_lines) <- "numeric"
   ancest_df <- data.frame(ances_lines)
   colnames(ancest_df)[1:3] <- header
+  colnames(ancest_df)[4:ncol(ancest_df)] <- paste("Cluster", seq(1,ncol(ancest_df)-3))
 
   #Cluster allele frequencies
   clust_allel_lines <- s_f[(which(grepl("^First column gives.*", s_f))+1):(which(grepl("^Values of parameters used.*", s_f))-1)]
