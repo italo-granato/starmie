@@ -1,22 +1,19 @@
 # loadMetaData.R
 # read in sample metadata from a fam or txt file
 
-loadSampleData <- function(starmie_obj, ...)
-UseMethod("loadSampleData")
 #' Load sample metadata
 #'
 #' @description Read in sample information from space delimted PLINK fam file
 #' or plain text file.
 #' @param starmie_obj an object of class \code{\link{starmie}}
 #' @param sample_file filename containing sample information
-#' @param pop_identifoer logical does file contain geographic location?
+#' @param pop_identifier logical does file contain population of origin?
 #' @details Assume that we have PLINK format FAM file with optional location identifier in the final column
 #' @export
-loadSampleData <- function(starmie_obj, sample_file, pop_identifier = FALSE) {
+loadSampleData <- function(sample_file, pop_identifier = FALSE) {
   # i/o checks
   if (!is.character(sample_file)) stop("sample_file must be character variable")
   if (!is.logical(pop_identifier)) stop("pop_identifier must be TRUE/FALSE")
-  if (!inherits(starmie_obj, "starmie")) stop("Not a valid starmie object")
   # set up connection
   fin <- file(sample_file, "r")
   col_names <- c("family.id", "sample.id", "paternal.id",
@@ -34,22 +31,15 @@ loadSampleData <- function(starmie_obj, sample_file, pop_identifier = FALSE) {
     if(ncol(sample_data) != 6) stop("Sample file requires 6 columns to be valid")
   }
   colnames(sample_data) <- col_names
-  starmie_obj$n_samples <- nrow(sample_data)
-  starmie_obj$sample_data <- sample_data
-  close(fin)
-  starmie_obj
-}
+  sample_data
 
-loadMarkerData <- function(starmie_obj, ...)
-UseMethod("loadMarkerData")
+}
 
 #' Read in SNP map file
 #'
-#' @param starmie_obj object of class \code{\link{starmie}}
 #' @param snp_file a PLINK map file to process
-#' @param ploidy ploidy of population (default 2 )
 #' @export
-loadMarkerData <- function(starmie_obj, snp_file, ploidy = 2) {
+loadMarkerData <- function(snp_file) {
   # i/o checks
   if (!inherits(starmie_obj, "starmie")) stop("Not a valid starmie object")
   if (!is.character(snp_file)) stop("snp_file must be character variable")
@@ -60,9 +50,7 @@ loadMarkerData <- function(starmie_obj, snp_file, ploidy = 2) {
   marker_data <- read.table(snp_file, header = FALSE, stringsAsFactors = FALSE)
   colnames(marker_data) <- col_names
   close(fin)
-  starmie_obj$n_markers <- nrow(marker_data)
-  starmie_obj$ploidy <- ploidy
-  starmie_obj$marker_data <- marker_data
-  starmie_obj
+  marker_data
+
 
 }
