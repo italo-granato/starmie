@@ -1,65 +1,79 @@
 # loadAdmixture.R
 # Functions for parsing output from admixture
 
+#' Constructor for admix object
+#'
+#' @return an admix object which is a list with 6 elements:
+#'  K: number of clusters estimated by ADMIXTURE
+#'  nsamples: number of samples used
+#'  nmarkers: number of markers used
+#'  Q_df: a data.frame of cluster membership probabilities
+#'  P_df: a data.frame of estimated marker frequencies in each inferred population
+#'  log_info: a data.frame containing the K, CVerror and logLik of the last model.
+#' @export
+admix <- function() {
+    structure(list(K = NULL, nsamples = NULL, nmarkers = NULL,
+                   Q_df =  NULL, P_df = NULL, log_info = NULL),
+              class = "admix")
+}
 
 #' Read Admixture Output
-#' @param  starmie_obj an object of class \code{\link{starmie}} with sample_data filled
-#' @param  file_list a vector of .Q file names for admixture
-#' @param  logfile_list a vector of logfile names for each admixture run (required for diagnositc plots)
+#' @param  qfile a valid Q file from ADMIXTURE
+#' @param pfile a corresponding P file from ADMXIXTURE
+#' @param  logfile logfile from corresponding AMIXTURE run ()
 #' @importFrom tidyr gather
 #' @importFrom dplyr bind_rows
 #' @importFrom data.table fread
+#' @return an \link{admix} object containing the output of of an admixture run
 #' @export
 #' @examples
-#' my_starmie <- starmie()
-#' # add in sample metadata
-#' sample_file <- system.file("extdata/hapmap3_files", "hapmap3.fam", package="starmie")
-#' my_starmie <- loadSampleData(my_starmie, sample_file)
-#' # read in Q-files
-#' hapmap_files <- system.file("extdata/hapmap3_files", package="starmie")
-#' qfiles <- list.files(hapmap_files, pattern = ".Q$", full.names = TRUE)
-#' my_starmie <- loadAdmixture(my_starmie, qfiles)
-#'
-loadAdmixture <- function(starmie_obj, file_list, logfile_list = NULL) {
+#' qfin <- system.file("extdata/hapmap3_files", "hapmap3.2.Q", package = "starmie")
+#' pfin <- system.file("extdata/hapmap3_files", "hapmap3.2.P", package = "starmie")
+#' loadAdmixture(qfin, pfin)
+#' # add log file
+#' logfin <- system.file("extdata/hapmap3_files", "log2.out", package = "starmie")
+#' loadAdmixture(qfin, pfin, logfin)
+loadAdmixture <- function(qfile, pfile, logfile = NULL) {
   # i/o checks
-  if (!inherits(starmie_obj, "starmie")) stop("Not a valid starmie object.")
-  if (!all(is.character(file_list) & !is.na(file_list))) stop("file_list must be a character vector.")
-  if (!is.null(logfile_list)) {
-    if (!all(is.character(logfile_list) & !is.na(logfile_list))) stop("logfile_list must be a character vector.")
-  }
-  # check whether sample id is available, and sample meta data is inputted
-  # otherwise throw an errror.
-  if (is.null(starmie_obj$sample_data)) {
-    stop("Sample metadata is required.")
-    if(is.null(starmie_obj$sample_data$sample.id)) {
-      stop("Sample identifier required")
-    }
-  }
-  # do the work
-  # at the moment just read in q_files, number of Q-files corresponds to K
-  read_qfiles <- function(qfile) {
-    q_df <- fread(qfile, data.table=FALSE, header=FALSE)
-    stopifnot(nrow(q_df) == nrow(starmie_obj$sample_data))
-    q_df$K <- rep(ncol(q_df), nrow(q_df))
-    q_df$sample.id <- starmie_obj$sample_data$sample.id
-    gather(q_df, cluster, probability, -sample.id, -K)
-  }
+  if ( !(is.character(qfile) & length(qfile) == 1) ) stop("qfile must be a character vector of length 1.")
+  if ( !(is.character(pfile) & length(pfile) == 1) ) stop("pfile must be a character vector of length 1.")
 
-  allQ <- bind_rows(lapply(file_list, read_qfiles))
-  # change cluster character name into integer
-  allQ$cluster <- as.integer(gsub("V", "", allQ$cluster))
+  if ( !is.null(logfile) ) {
+    if ( !(is.character(logfile) & length(logfile) == 1) ) stop("logfile must be a character vector of length 1.")
+  }
+  # create new admixture object
+  admix_obj <- admix()
+  # qfile data reader
+  q_df <- fread(qfile, data.table = FALSE, header = FALSE)
+  K <- ncol(q_df)
+  nsamples <- nrow(q_df)
+  colnames(q_df) <- paste("Cluster", seq(1,ncol(q_df)))
+  # pfile data reader
+  p_df <- fread(pfile, data.table = FALSE, header = FALSE)
+  nmarkers <- nrow(p_df)
+  if(ncol(p_df) != K) {
+    stop("Number of populations does not match between Q and P files")
+  }
 
   # read in logfiles
-  if (!is.null(logfile_list)) {
-    log_info <- bind_rows(lapply(logfile_list, read_logfiles))
+  if ( !is.null(logfile) ) {
+    log_info <- read_logfiles(logfile)
+    if(log_info$K != K) {
+      stop("logfile does not match input P and Q files")
+    }
   } else {
-    log_info <- NULL
+    log_info <- NA
   }
 
-  # output list containing q_info, and log_info
-  starmie_obj$admixture_run <- list(q_info = allQ, log_info = log_info)
-  starmie_obj
+  # output list containing q_info, p_info and log_info
 
+  admix_obj$K <- K
+  admix_obj$nsamples <- nsamples
+  admix_obj$nmarkers <- nmarkers
+  admix_obj$Q_df <- q_df
+  admix_obj$P_df <- p_df
+  admix_obj$log_info <- log_info
+  return(admix_obj)
 }
 
 read_logfiles <- function(logfile) {

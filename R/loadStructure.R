@@ -14,7 +14,7 @@
 #' structure_files <- system.file("extdata/microsat_testfiles", package="starmie")
 #' structure_output_files <- list.files(structure_files, pattern = ".*out_f", full.names = TRUE)
 #' structure_log_files <- list.files(structure_files, pattern = ".*log", full.names = TRUE)
-#' my_struct <- loadStructure(structure_output_file[[1]], structure_log_files[[1]])
+#' my_struct <- loadStructure(structure_output_files[[1]], structure_log_files[[1]])
 #'
 loadStructure <- function(filename, logfile=NULL){
   # i/o checks
@@ -58,19 +58,19 @@ loadStructure <- function(filename, logfile=NULL){
   avg_dist_lines <- s_f[(which(grepl("^Average distances.*", s_f))+1):(which(grepl("^Estimated Ln.*", s_f))-2)]
   avg_dist_lines <- str_trim(avg_dist_lines)
   avg_dist_lines <- str_split_fixed(avg_dist_lines, "  : ", n=2)
-  avg_dist_lines[,1] <- str_replace(avg_dist_lines[,1], "cluster  ", "")
+  avg_dist_lines[,1] <- str_replace(avg_dist_lines[,1], "cluster +", "")
   class(avg_dist_lines) <- "numeric"
   avg_dist_df <- data.frame("Cluster"=avg_dist_lines[,1], "Avg.dist"=avg_dist_lines[,2])
 
   #Model fit stats
-  fit_lines <- s_f[(which(grepl("^Estimated Ln.*", s_f))):(which(grepl("^Mean value of Fst_1.*", s_f))-1)]
+  fit_lines <- s_f[(which(grepl("^Estimated Ln.*", s_f))):(which(grepl("^Mean value of Fst_1 .*", s_f))-1)]
   fit_lines <- str_trim(fit_lines)
   fit_lines <- str_split_fixed(fit_lines, "= ", n=2)
   fit_lines[,1] <- str_trim(fit_lines[,1])
   fit_stats_df <- data.frame(Statistic=fit_lines[,1], Value=as.numeric(fit_lines[,2]))
 
   #Fst values
-  fst_lines <- s_f[which(grepl("^Mean value of Fst_1.*", s_f)):(which(grepl("^Inferred ancestry of.*", s_f))-1)]
+  fst_lines <- s_f[which(grepl("^Mean value of Fst_1 .*", s_f)):(which(grepl("^Inferred ancestry of.*", s_f))-1)]
   fst_lines <- str_trim(fst_lines)
   fst_lines <- str_split_fixed(fst_lines, "= ", n=2)
   fst_lines[,1] <- str_trim(fst_lines[,1])
@@ -87,6 +87,7 @@ loadStructure <- function(filename, logfile=NULL){
   class(ances_lines) <- "numeric"
   ancest_df <- data.frame(ances_lines)
   colnames(ancest_df)[1:3] <- header
+  colnames(ancest_df)[4:ncol(ancest_df)] <- paste("Cluster", seq(1,ncol(ancest_df)-3))
 
   #Cluster allele frequencies
   clust_allel_lines <- s_f[(which(grepl("^First column gives.*", s_f))+1):(which(grepl("^Values of parameters used.*", s_f))-1)]
