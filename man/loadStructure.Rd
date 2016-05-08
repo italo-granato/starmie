@@ -21,7 +21,7 @@ Read Structure Output
 structure_files <- system.file("extdata/microsat_testfiles", package="starmie")
 structure_output_files <- list.files(structure_files, pattern = ".*out_f", full.names = TRUE)
 structure_log_files <- list.files(structure_files, pattern = ".*log", full.names = TRUE)
-my_struct <- loadStructure(structure_output_file[[1]], structure_log_files[[1]])
+my_struct <- loadStructure(structure_output_files[[1]], structure_log_files[[1]])
 
 }
 

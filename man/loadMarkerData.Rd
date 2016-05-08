@@ -4,14 +4,10 @@
 \alias{loadMarkerData}
 \title{Read in SNP map file}
 \usage{
-loadMarkerData(starmie_obj, snp_file, ploidy = 2)
+loadMarkerData(snp_file)
 }
 \arguments{
-\item{starmie_obj}{object of class \code{\link{starmie}}}
-
 \item{snp_file}{a PLINK map file to process}
-
-\item{ploidy}{ploidy of population (default 2 )}
 }
 \description{
 Read in SNP map file

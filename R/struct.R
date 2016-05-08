@@ -39,3 +39,12 @@ getK <- function(structure_obj) {
 getPosterior <- function(structure_obj){
   structure_obj$fit_stats_df[structure_obj$fit_stats_df$Statistic=="Estimated Ln Prob of Data",][2]
 }
+
+#' Accessor methods for structure object
+#' @description Return the Q matrix from a \code{\link{struct_obj}}
+#' @export
+getQ <- function(structure_obj){
+  Q <- data.matrix(structure_obj$ancest_df[,4:ncol(structure_obj$ancest_df)])
+  rownames(Q) <- structure_obj$ancest_df$Label
+  return(Q)
+}

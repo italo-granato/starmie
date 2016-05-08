@@ -4,14 +4,14 @@
 \alias{loadSampleData}
 \title{Load sample metadata}
 \usage{
-loadSampleData(starmie_obj, sample_file, pop_identifier = FALSE)
+loadSampleData(sample_file, pop_identifier = FALSE)
 }
 \arguments{
-\item{starmie_obj}{an object of class \code{\link{starmie}}}
-
 \item{sample_file}{filename containing sample information}
 
-\item{pop_identifoer}{logical does file contain geographic location?}
+\item{pop_identifier}{logical does file contain population of origin?}
+
+\item{starmie_obj}{an object of class \code{\link{starmie}}}
 }
 \description{
 Read in sample information from space delimted PLINK fam file

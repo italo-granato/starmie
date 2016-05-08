@@ -33,11 +33,11 @@ loadStructure <- function(filename, logfile=NULL){
   s_f <- s_f[s_f!=""]
 
   #Get run parameters
-  run_lines <- s_f[(which(s_f=="Run parameters:")+1):(which(grepl("^RANDOMIZE.*", s_f))-1)]
+  run_lines <- s_f[(which(s_f=="Run parameters:")+1):(which(grepl("^Proportion of membership.*", s_f))-2)]
   run_lines <- str_trim(run_lines)
   run_lines <- str_split_fixed(run_lines, " ", n=2)
-  run_params <- data.frame(Parameter=run_lines[,2], Value=as.numeric(run_lines[,1]))
-  pops <- as.numeric(run_params[run_params$Parameter=="populations assumed",][2])
+  run_params <- data.frame(Parameter=run_lines[,2], Value=run_lines[,1], stringsAsFactors = FALSE)
+  pops <- as.numeric(run_params[run_params$Parameter=="populations assumed",2])
 
   #Get membership proportion
   mem_lines <- s_f[(which(grepl("^Proportion of membership.*",s_f))+3):(which(grepl("^Allele-freq", s_f))-2)]
