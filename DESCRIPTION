@@ -14,7 +14,8 @@ Imports:
   stringr,
   tidyr,
   purrr,
-  ggplot2
+  ggplot2,
+  iterpc
 Suggests:
     testthat
 URL: https://github.com/sa-lee/starmie
