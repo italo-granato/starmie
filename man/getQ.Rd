@@ -7,6 +7,6 @@
 getQ(structure_obj)
 }
 \description{
-Return the Q matrix from a \code{\link{struct_obj}}
+Return the Q matrix from a \code{\link{struct}}
 }
 

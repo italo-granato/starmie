@@ -2,9 +2,8 @@
 # Functions for parsing output from STRUCTURE
 
 #' Read Structure Output
-#' @param starmie object
-#' @param  vector of locations for the STRUCTURE output files
-#' @param vector of logfile locations (required if wanting to do MCMC plots)
+#' @param filename a string containing an .out_f file
+#' @param logfile optional string containing logfile produced by structure (default NULL).
 #' @importFrom readr read_lines
 #' @import stringr
 #' @importFrom purrr map

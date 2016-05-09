@@ -7,6 +7,6 @@
 getK(structure_obj)
 }
 \description{
-Return K from a \code{\link{struct_obj}}
+Return K from a \code{\link{struct}}
 }
 

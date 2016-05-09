@@ -7,6 +7,6 @@
 getPosterior(structure_obj)
 }
 \description{
-Return the log posterior probability from a \code{\link{struct_obj}}
+Return the log posterior probability from a \code{\link{struct}}
 }
 
