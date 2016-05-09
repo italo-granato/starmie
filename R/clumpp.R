@@ -21,9 +21,7 @@ clumpp <- function(Q_list, method="greedy"){
   if (method=="greedy"){
     #Greedy clumpp algorithm
     for (i in 1:(length(Q_list)-1)){
-      permuations <- iter_wrapper(iterpc(ncol(Q_list[[i+1]]), ordered = TRUE))
-
-      foreach(x=permuations, .combine=c) %do% J_perm(x, Q_list[[i+1]], Q_list[1:i])
+      permuations <- iterpc(ncol(Q_list[[i+1]]), ordered = TRUE)
 
       max_perm <- 1:ncol(Q_list[[i+1]])
       max <- c(-Inf)
