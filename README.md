@@ -1,3 +1,4 @@
+[![Travis-CI Build Status](https://travis-ci.org/sa-lee/starmie.svg?branch=master)](https://travis-ci.org/sa-lee/starmie)
 # starmie
 Are you tired of spending hours making bar-plots from STRUCTURE or admixture?
 Does deciding on appropriate value of K make you want to tear your hair out in

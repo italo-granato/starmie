@@ -2,7 +2,9 @@ Package: starmie
 Type: Package
 Title: for lazy population geneticisits.
 Version: 0.1.0
-Author: Gerry Tonkin-Hill, Stuart Lee
+Author@R: c(
+    person("Gerry", "Tonkin-Hill", email = "tonkin-hill.g@wehi.edu.au", role = c("cre", "aut")),
+    person( "Stuart", "Lee", email = "lee.s@wehi.edu.au", role = c("cre", aut")))
 Maintainer: Stuart Lee<lee.s@wehi.edu.au>
 Description: What is K? Baby don't hurt me. Don't hurt me. No more.
 License: GPLv3
