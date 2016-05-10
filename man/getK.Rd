@@ -2,11 +2,37 @@
 % Please edit documentation in R/struct.R
 \name{getK}
 \alias{getK}
+\alias{getMCMC}
+\alias{getPosterior}
+\alias{getQ}
 \title{Accessor methods for structure object}
 \usage{
 getK(structure_obj)
+
+getPosterior(structure_obj)
+
+getQ(structure_obj)
+
+getMCMC(structure_obj)
+}
+\arguments{
+\item{structure_obj}{a code{\link{struct}} object}
 }
 \description{
 Return K from a \code{\link{struct}}
+
+Accessor methods for structure object
+
+Accessor methods for structure object
+
+Acessor methods for structure object
 }
+\section{Functions}{
+\itemize{
+\item \code{getPosterior}: Return the log posterior probability from a \code{\link{struct}}
+
+\item \code{getQ}: Return the Q matrix from a \code{\link{struct}}
+
+\item \code{getMCMC}: Return non-burn in MCMC iterations.
+}}
 
