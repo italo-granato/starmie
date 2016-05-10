@@ -7,8 +7,8 @@ structure_log_files <- list.files(structure_files, pattern = ".*log", full.names
 structure_runs <- mapply(loadStructure, structure_output_files, structure_log_files, SIMPLIFY=FALSE)
 
 test_that("loadStructure I/O checks", {
-  expect_error(bestK(c(1,2,3)), "structure_runs must be a vector of struct objects.")
-  expect_error(bestK(structure_runs, method=NA), "method must be one of 'evano' or 'structure'")
-  expect_error(bestK(structure_runs, plot="K"), "plot must be one of TRUE or FALSE")
+  expect_error(bestK(c(1,2,3)), "runs must be a vector of struct or admix objects.")
+  expect_error(bestK(structure_runs, method=NA), "method must be one of 'evanno' or 'structure' or 'cverror'")
+  expect_error(bestK(structure_runs, make_plot="K"), "plot must be one of TRUE or FALSE")
 })
 

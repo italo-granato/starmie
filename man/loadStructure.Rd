@@ -7,11 +7,9 @@
 loadStructure(filename, logfile = NULL)
 }
 \arguments{
-\item{starmie}{object}
+\item{filename}{a string containing an .out_f file}
 
-\item{vector}{of locations for the STRUCTURE output files}
-
-\item{vector}{of logfile locations (required if wanting to do MCMC plots)}
+\item{logfile}{optional string containing logfile produced by structure (default NULL).}
 }
 \description{
 Read Structure Output

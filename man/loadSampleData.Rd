@@ -10,8 +10,6 @@ loadSampleData(sample_file, pop_identifier = FALSE)
 \item{sample_file}{filename containing sample information}
 
 \item{pop_identifier}{logical does file contain population of origin?}
-
-\item{starmie_obj}{an object of class \code{\link{starmie}}}
 }
 \description{
 Read in sample information from space delimted PLINK fam file

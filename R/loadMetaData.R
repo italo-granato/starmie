@@ -5,7 +5,6 @@
 #'
 #' @description Read in sample information from space delimted PLINK fam file
 #' or plain text file.
-#' @param starmie_obj an object of class \code{\link{starmie}}
 #' @param sample_file filename containing sample information
 #' @param pop_identifier logical does file contain population of origin?
 #' @details Assume that we have PLINK format FAM file with optional location identifier in the final column
@@ -41,9 +40,7 @@ loadSampleData <- function(sample_file, pop_identifier = FALSE) {
 #' @export
 loadMarkerData <- function(snp_file) {
   # i/o checks
-  if (!inherits(starmie_obj, "starmie")) stop("Not a valid starmie object")
   if (!is.character(snp_file)) stop("snp_file must be character variable")
-  if (!is.integer(ploidy) && !is.finite(ploidy)) stop("ploidy must be finite integer")
   fin <- file(snp_file, "r")
   col_names <- c("chromosome", "snp.id", "genetic_distance", "position")
 
@@ -51,6 +48,5 @@ loadMarkerData <- function(snp_file) {
   colnames(marker_data) <- col_names
   close(fin)
   marker_data
-
 
 }

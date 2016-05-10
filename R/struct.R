@@ -27,24 +27,35 @@ struct <- function() {
 }
 
 #' Accessor methods for structure object
-#' @description Return K from a \code{\link{struct_obj}}
+#' @description Return K from a \code{\link{struct}}
+#' @param structure_obj a code{\link{struct}} object
 #' @export
 getK <- function(structure_obj) {
   structure_obj$K
 }
 
 #' Accessor methods for structure object
-#' @description Return the log posterior probability from a \code{\link{struct_obj}}
+#' @describeIn getK  Return the log posterior probability from a \code{\link{struct}}
 #' @export
 getPosterior <- function(structure_obj){
   structure_obj$fit_stats_df[structure_obj$fit_stats_df$Statistic=="Estimated Ln Prob of Data",][2]
 }
 
 #' Accessor methods for structure object
-#' @description Return the Q matrix from a \code{\link{struct_obj}}
+#' @describeIn getK Return the Q matrix from a \code{\link{struct}}
 #' @export
 getQ <- function(structure_obj){
   Q <- data.matrix(structure_obj$ancest_df[,4:ncol(structure_obj$ancest_df)])
   rownames(Q) <- structure_obj$ancest_df$Label
   return(Q)
+}
+
+#' Acessor methods for structure object
+#' @describeIn getK Return non-burn in MCMC iterations.
+#' @export
+getMCMC <- function(structure_obj) {
+  mcmc_df <- data.frame(K = getK(structure_obj),
+                        structure_obj$nonburn_df[, c("Rep#:", "Alpha", "Ln Like")])
+  colnames(mcmc_df) <- c("K", "Iteration", "Alpha", "LogL")
+  mcmc_df
 }

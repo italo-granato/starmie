@@ -4,14 +4,14 @@
 \alias{bestK}
 \title{Determine a suitable K value from multiple Structure runs}
 \usage{
-bestK(structure_runs, method = "evano", plot = TRUE)
+bestK(runs, method = "evanno", make_plot = TRUE)
 }
 \arguments{
-\item{structure_runs}{an object of class \code{\link{list}} with structure runs represented as \code{\link{struct}} objects.}
+\item{runs}{a list of \code{\link{struct}} objects or \code{\link{admix}} objects.}
 
 \item{method}{the method used to calculate the best K}
 
-\item{plot}{whether of not to generate diagnostic plots}
+\item{make_plot}{whether of not to generate diagnostic plots}
 }
 \description{
 Determine a suitable K value from multiple Structure runs
@@ -21,9 +21,9 @@ Determine a suitable K value from multiple Structure runs
 structure_files <- system.file("extdata/microsat_testfiles", package="starmie")
 structure_output_files <- list.files(structure_files, pattern = "*.out_f", full.names = TRUE)
 structure_log_files <- list.files(structure_files, pattern = ".*log", full.names = TRUE)
-structure_runs <- mapply(loadStructure, structure_output_files, structure_log_files, SIMPLIFY=FALSE)
-# Run the evano method and display diagnostic plots.
-K <- bestK(structure_runs)
+runs <- mapply(loadStructure, structure_output_files, structure_log_files, SIMPLIFY=FALSE)
+# Run the evanno method and display diagnostic plots.
+K <- bestK(runs)
 
 }
 

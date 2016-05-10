@@ -2,9 +2,8 @@
 # Functions for parsing output from STRUCTURE
 
 #' Read Structure Output
-#' @param starmie object
-#' @param  vector of locations for the STRUCTURE output files
-#' @param vector of logfile locations (required if wanting to do MCMC plots)
+#' @param filename a string containing an .out_f file
+#' @param logfile optional string containing logfile produced by structure (default NULL).
 #' @importFrom readr read_lines
 #' @import stringr
 #' @importFrom purrr map
@@ -83,9 +82,10 @@ loadStructure <- function(filename, logfile=NULL){
   ances_lines <- gsub("[(:)]", "", ances_lines)
   ances_lines <- str_split_fixed(ances_lines, "\\s+", n=4+pops)
   header <- ances_lines[1,][1:3]
-  ances_lines <- ances_lines[2:nrow(ances_lines),2:ncol(ances_lines)]
-  class(ances_lines) <- "numeric"
-  ancest_df <- data.frame(ances_lines)
+  sample_label <- ances_lines[2:nrow(ances_lines), 2]
+  ancest_matrix <- ances_lines[2:nrow(ances_lines), 3:ncol(ances_lines)]
+  class(ancest_matrix) <- "numeric"
+  ancest_df <- data.frame(sample_label, ancest_matrix, stringsAsFactors = FALSE)
   colnames(ancest_df)[1:3] <- header
   colnames(ancest_df)[4:ncol(ancest_df)] <- paste("Cluster", seq(1,ncol(ancest_df)-3))
 
