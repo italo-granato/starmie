@@ -18,7 +18,8 @@ Imports:
   tidyr,
   purrr,
   ggplot2,
-  iterpc
+  iterpc,
+  combinat
 Suggests:
     testthat
 URL: https://github.com/sa-lee/starmie

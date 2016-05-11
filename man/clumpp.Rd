@@ -16,13 +16,12 @@ Run the CLUMPP algorithms.
 }
 \examples{
 # Read in Structure files
-\dontrun{
 structure_files <- system.file("extdata/microsat_testfiles", package="starmie")
-structure_output_files <- list.files(structure_files, pattern = ".*K10.*out_f", full.names = TRUE)
-structure_log_files <- list.files(structure_files, pattern = ".*K10.*log", full.names = TRUE)
+structure_output_files <- list.files(structure_files, pattern = ".*K3.*out_f", full.names = TRUE)
+structure_log_files <- list.files(structure_files, pattern = ".*K3.*log", full.names = TRUE)
 structure_runs <- mapply(loadStructure, structure_output_files, structure_log_files, SIMPLIFY=FALSE)
 Q_list <- lapply(structure_runs, getQ)
 clumpp(Q_list)
-}
+
 }
 
