@@ -30,17 +30,14 @@ clumpp <- function(Q_list, method="greedy"){
     }
 
   } else{
-    #code for LargeKGreedy algorithm
-    for (i in 1:(length(Q_list-1))){
-      apply(combn(1:ncol(Q_list[[i]]), 2), 2, function(x) { c(G(Q_list[[i]][,x[1]], Q_list[[i+1]][,x[2]]),x[1],x[2])})
-
-    }
-
+    #Use LargeKGreedy algorithm
+    Q_list <- largeKGreedy(Q_list)
   }
   return(Q_list)
 }
 
 memoryGreedy <- function(Q_list){
+  #Faster but with a high memory footprint for large K
   for (i in 1:(length(Q_list)-1)){
     permuations <- permn(1:ncol(Q_list[[i+1]]))
     perm_scores <- map_dbl(permuations, J_perm, Q_list[[i+1]], Q_list[1:i])
@@ -50,6 +47,7 @@ memoryGreedy <- function(Q_list){
 }
 
 iterativeGreedy <- function(Q_list){
+  #slower but memory efficient
   for (i in 1:(length(Q_list)-1)){
     permuations <- iterpc(ncol(Q_list[[i+1]]), ordered = TRUE)
 
@@ -69,9 +67,56 @@ iterativeGreedy <- function(Q_list){
   return(Q_list)
 }
 
+largeKGreedy <- function(Q_list){
+  #Initial iteration
+  #calculate pairwise column comparisons
+  column_pairs <- getall(iterpc(ncol(Q_list[[1]]), 2, ordered = TRUE, replace = TRUE))
+  pair_comparisons <- apply(column_pairs, 1
+                            , function(x) { list(G = G(Q_list[[1]][,x[1],drop=FALSE], Q_list[[2]][,x[2],drop=FALSE])
+                                                 , Qy = x[1]
+                                                 , Qz = x[2])})
+  pair_comparisons_df <- data.frame(matrix(unlist(pair_comparisons), ncol=3, byrow=TRUE))
+  #permute the second Q matrix
+  Q_list[[2]] <- Q_list[[2]][,get_best_permutation(pair_comparisons_df)]
+
+  if (length(Q_list)>2){
+    for (i in 3:length(Q_list)){
+      #remaining iterations
+      pair_comparisons <- apply(column_pairs, 1
+                                , function(x) { list(J = J_largeK(Q_list[1:(i-1)], Q_list[[i]], x[1], x[2])
+                                                     , Qy = x[1]
+                                                     , Qz = x[2])})
+      pair_comparisons_df <- data.frame(matrix(unlist(pair_comparisons), ncol=3, byrow=TRUE))
+      Q_list[[i]] <- Q_list[[i]][,get_best_permutation(pair_comparisons_df)]
+    }
+  }
+
+  return(Q_list)
+}
+
 G <- function(Q_1, Q_2){
   W <- matrix(1, nrow(Q_1), ncol(Q_1))/ncol(Q_1)
   1-norm(Q_1-Q_2, type="F")/sqrt(norm(Q_1-W, type="F")*norm(Q_2-W, type="F"))
+}
+
+get_best_permutation <- function(pair_df){
+  #returns the best permutation of columns based on a dataframe of pairwise comparisons
+  K <- max(pair_df[,2])
+  best_pairs_df <- data.frame(x=rep(0.0, K), y=rep(0,K), z=rep(0,K))
+  for (i in 1:K){
+    best_pairs_df[i,] <- pair_df[which.max(pair_df[,1]),]
+    pair_df <- pair_df[pair_df[,2]!=pair_df[which.max(pair_df[,1]),2], ]
+  }
+  best_pairs_df <- best_pairs_df[order(best_pairs_df[,2]),]
+  return(best_pairs_df[,3])
+}
+
+J_largeK <- function(Q_sub_list, Q_x, y, z){
+  1/length(Q_sub_list) * sum(
+    unlist(lapply(Q_sub_list, function(Q){
+      G(Q[,y,drop=FALSE], Q_x[,z,drop=FALSE])
+      }))
+    )
 }
 
 J_perm <- function(perm, Q_x, Q_sub_list){
