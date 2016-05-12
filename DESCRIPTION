@@ -21,7 +21,10 @@ Imports:
   iterpc,
   combinat
 Suggests:
-    testthat
+    testthat,
+    knitr,
+    rmarkdown
 URL: https://github.com/sa-lee/starmie
 BugReports: https://github.com/sa-lee/starmie/issues
 RoxygenNote: 5.0.1
+VignetteBuilder: knitr
