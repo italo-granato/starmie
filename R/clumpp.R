@@ -15,7 +15,7 @@
 #' structure_log_files <- list.files(structure_files, pattern = ".*K3.*log", full.names = TRUE)
 #' structure_runs <- mapply(loadStructure, structure_output_files, structure_log_files, SIMPLIFY=FALSE)
 #' Q_list <- lapply(structure_runs, getQ)
-#' clumpp(Q_list)
+#' clump <- clumpp(Q_list)
 #'
 clumpp <- function(Q_list, method="greedy"){
 
