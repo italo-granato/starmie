@@ -13,10 +13,11 @@
 #' @examples
 #' qfin <- system.file("extdata/hapmap3_files", "hapmap3.2.Q", package = "starmie")
 #' pfin <- system.file("extdata/hapmap3_files", "hapmap3.2.P", package = "starmie")
-#' admix <- loadAdmixture(qfin, pfin)
+#' my_admix <- loadAdmixture(qfin, pfin)
 #' # add log file
 #' logfin <- system.file("extdata/hapmap3_files", "log2.out", package = "starmie")
-#' admix <- loadAdmixture(qfin, pfin, logfin)
+#' my_admix <- loadAdmixture(qfin, pfin, logfin)
+#'
 loadAdmixture <- function(qfile, pfile, logfile = NULL) {
   # i/o checks
   if ( !(is.character(qfile) & length(qfile) == 1) ) stop("qfile must be a character vector of length 1.")
