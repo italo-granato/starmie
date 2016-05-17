@@ -37,16 +37,38 @@ clumpp <- function(Q_list, method="greedy"){
 }
 
 memoryGreedy <- function(Q_list){
+  #Create matrix to store permutations
+  K <- ncol(Q_list[[1]])
+  permutations <- matrix(0, nrow=length(Q_list), ncol=K)
+  permutations[1,] <- seq(1,K)
+
   #Faster but with a high memory footprint for large K
   for (i in 1:(length(Q_list)-1)){
     permuations <- permn(1:ncol(Q_list[[i+1]]))
     perm_scores <- map_dbl(permuations, J_perm, Q_list[[i+1]], Q_list[1:i])
-    Q_list[[i+1]] <- Q_list[[i+1]][,permuations[[which.max(perm_scores)]]]
+    perm <- permuations[[which.max(perm_scores)]]
+    Q_list[[i+1]] <- Q_list[[i+1]][,perm]
+    permutations[i+1,] <- perm
   }
-  return(Q_list)
+
+  #Check for bug in using the same column twice
+  if (!all(unlist(lapply(Q_list, function(x){ length(unique(colnames(x)))==ncol(x) })))) stop("Duplicated column names in output Q matrices")
+
+  #Rename columns
+  column_names <- paste("Cluster ", seq(1,ncol(Q_list[[1]])))
+  Q_list <- lapply(Q_list, function(x){
+    colnames(x) <- column_names
+    return(x)})
+
+  return(list(Q_list=Q_list, permutations=permutations))
 }
 
 iterativeGreedy <- function(Q_list){
+  #Create matrix to store permutations
+  K <- ncol(Q_list[[1]])
+  permutations <- matrix(0, nrow=length(Q_list), ncol=K)
+  permutations[1,] <- seq(1,K)
+
   #slower but memory efficient
   for (i in 1:(length(Q_list)-1)){
     permuations <- iterpc(ncol(Q_list[[i+1]]), ordered = TRUE)
@@ -63,8 +85,19 @@ iterativeGreedy <- function(Q_list){
       j <- j+1
     }
     Q_list[[i+1]] <- Q_list[[i+1]][,max_perm]
+    permutations[i+1,] <- max_perm
   }
-  return(Q_list)
+
+  #Check for bug in using the same column twice
+  if (!all(unlist(lapply(Q_list, function(x){ length(unique(colnames(x)))==ncol(x) })))) stop("Duplicated column names in output Q matrices")
+
+  #Rename columns
+  column_names <- paste("Cluster ", seq(1,ncol(Q_list[[1]])))
+  Q_list <- lapply(Q_list, function(x){
+    colnames(x) <- column_names
+    return(x)})
+
+  return(list(Q_list=Q_list, permutations=permutations))
 }
 
 largeKGreedy <- function(Q_list){
@@ -76,8 +109,16 @@ largeKGreedy <- function(Q_list){
                                                  , Qy = x[1]
                                                  , Qz = x[2])})
   pair_comparisons_df <- data.frame(matrix(unlist(pair_comparisons), ncol=3, byrow=TRUE))
+
+  #Create matrix to store permutations
+  K <- ncol(Q_list[[1]])
+  permutations <- matrix(0, nrow=length(Q_list), ncol=K)
+  permutations[1,] <- seq(1,K)
+
   #permute the second Q matrix
-  Q_list[[2]] <- Q_list[[2]][,get_best_permutation(pair_comparisons_df)]
+  perm <- get_best_permutation(pair_comparisons_df)
+  Q_list[[2]] <- Q_list[[2]][,perm]
+  permutations[2,] <- perm
 
   if (length(Q_list)>2){
     for (i in 3:length(Q_list)){
@@ -87,11 +128,22 @@ largeKGreedy <- function(Q_list){
                                                      , Qy = x[1]
                                                      , Qz = x[2])})
       pair_comparisons_df <- data.frame(matrix(unlist(pair_comparisons), ncol=3, byrow=TRUE))
-      Q_list[[i]] <- Q_list[[i]][,get_best_permutation(pair_comparisons_df)]
+      perm <- get_best_permutation(pair_comparisons_df)
+      Q_list[[i]] <- Q_list[[i]][,perm]
+      permutations[i,] <- perm
     }
   }
 
-  return(Q_list)
+  #Check for bug in using the same column twice
+  if (!all(unlist(lapply(Q_list, function(x){ length(unique(colnames(x)))==ncol(x) })))) stop("Duplicated column names in output Q matrices")
+
+  #Rename columns
+  column_names <- paste("Cluster ", seq(1,ncol(Q_list[[1]])))
+  Q_list <- lapply(Q_list, function(x){
+    colnames(x) <- column_names
+    return(x)})
+
+  return(list(Q_list=Q_list, permutations=permutations))
 }
 
 G <- function(Q_1, Q_2){
@@ -105,7 +157,9 @@ get_best_permutation <- function(pair_df){
   best_pairs_df <- data.frame(x=rep(0.0, K), y=rep(0,K), z=rep(0,K))
   for (i in 1:K){
     best_pairs_df[i,] <- pair_df[which.max(pair_df[,1]),]
-    pair_df <- pair_df[pair_df[,2]!=pair_df[which.max(pair_df[,1]),2], ]
+    dont_keep <- pair_df[,2]!=pair_df[which.max(pair_df[,1]),2]
+    dont_keep <- dont_keep & (pair_df[,3]!=pair_df[which.max(pair_df[,1]),3])
+    pair_df <- pair_df[dont_keep, ]
   }
   best_pairs_df <- best_pairs_df[order(best_pairs_df[,2]),]
   return(best_pairs_df[,3])
