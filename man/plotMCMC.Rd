@@ -2,6 +2,7 @@
 % Please edit documentation in R/plotMCMC.R
 \name{plotMCMC}
 \alias{plotMCMC}
+\title{Plot STRUCTURE MCMC chains}
 \usage{
 plotMCMC(struct_list, make_plot = TRUE, use_logL = TRUE, facet = TRUE)
 }

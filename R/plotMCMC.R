@@ -1,6 +1,8 @@
 # plotMCMC.R
 # Function for plotting MCMC chains for diagnostics
 
+#' Plot STRUCTURE MCMC chains
+#'
 #' @param struct_list a list \code{\link{struct}} objects
 #' @param make_plot logical print resulting plot default TRUE
 #' @param facet logical facet by K default TRUE
