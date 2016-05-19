@@ -42,16 +42,21 @@ getPosterior <- function(structure_obj){
 }
 
 #' Accessor methods for structure object
-#' @describeIn getK Return the Q matrix from a \code{\link{struct}}
+#' @describeIn getQ Return the Q matrix from a \code{\link{struct}}
 #' @export
 getQ <- function(structure_obj){
   Q <- data.matrix(structure_obj$ancest_df[,4:ncol(structure_obj$ancest_df)])
   rownames(Q) <- structure_obj$ancest_df$Label
+
+  if (ncol(Q)==1){
+    colnames(Q) <- "Cluster 1"
+  }
+
   return(Q)
 }
 
 #' Acessor methods for structure object
-#' @describeIn getK Return non-burn in MCMC iterations.
+#' @describeIn getMCMC Return non-burn in MCMC iterations.
 #' @export
 getMCMC <- function(structure_obj) {
   mcmc_df <- data.frame(K = getK(structure_obj),

@@ -20,53 +20,54 @@
 plotBar <- function(cluster_run, populations=NULL, plot=TRUE, facet=TRUE){
 
   #i/o checks
-  if (!inherits(cluster_run, "struct") & !inherits(cluster_run, "admix") & !inherits(cluster_run, "data.frame")) stop("cluster run must be either a struct or admix object or a Q matrix")
+  if (!inherits(cluster_run, "struct") & !inherits(cluster_run, "admix") & !inherits(cluster_run, "matrix")) stop("cluster run must be either a struct or admix object or a Q matrix")
   if (!is.logical(plot)) stop("plot must be one of TRUE or FALSE")
 
   #Get Q matrix out of object
   if (class(cluster_run)=="struct"){
-    Q <- cluster_run$ancest_df[,c(1,3:ncol(cluster_run$ancest_df))]
-    Q <- melt(Q, id.vars=c("Label","Pop"), variable.name="Cluster")
-    if (!is.null(populations)){
-      colnames(populations) <- c("Label", "Family")
-      #check the populations match
-      if (!setequal(populations$Label, Q$Label)) stop("Mismatch between populations and cluster_run populations.")
-      Q <- merge(Q, populations, by.x="Label", by.y="Label")
-    } else{
-      Q$Family <- Q$Pop
+    Q <- getQ(cluster_run)
+    #If no population labels are given try to use those available in the structure run.
+    if (is.null(populations)) {
+      if ("Pop" %in% colnames(cluster_run$ancest_df)){
+        populations <- cluster_run$ancest_df[,c(1,3)]
+      }
     }
-    Q$Pop <- NULL
+  }
+  else if(class(cluster_run)=="admix"){
+    Q <- cluster_run$Q_df
+  }
 
+  plot_results <- plotQ(Q, populations, facet)
+
+  if(plot){
+    return(plot_results$plot)
   } else{
-      if (class(cluster_run)=="admix"){
-        Q <- cluster_run$Q_df
-      } else{
-        # we've been given a Q matrix
-        if (!all(unlist(apply(cluster_run, 2, is.numeric)))) stop("Columns of Q matrix are not numeric.")
-        Q <- cluster_run
-      }
+    return(plot_results$Q_melt)
+  }
 
-      Q$Label <- rownames(Q)
-      Q <- melt(Q, id.vars="Label", variable.name="Cluster")
+}
 
-      if (!is.null(populations)){
-        colnames(populations) <- c("Label", "Family")
-        #check the populations match
-        if (!setequal(populations$Label, Q$Label)) stop("Mismatch between populations and cluster_run populations.")
-        Q <- merge(Q, populations, by.x="Label", by.y="Label")
-      } else{
-        Q$Family <- Q$Label
-      }
+plotQ <- function(Q, populations_df, facet){
+
+  if (is.null(populations_df)){
+    #Generate a plot without any family information
+    Q_melt <- melt(Q, variable.name="Cluster")
+    colnames(Q_melt) <- c("Label", "Cluster", "value")
+  } else{
+    if (!setequal(populations_df[,1], rownames(Q))) stop("Mismatch between populations and cluster_run populations.")
+    colnames(populations_df) <- c("Label", "Population")
+    Q_merge <- merge(populations_df, Q, by.x="Label", by.y=0)
+    Q_melt <- melt(Q_merge, id.vars=c("Label", "Population"), variable.name="Cluster")
   }
 
   #Generate plot
-  Q <- Q[order(Q$Cluster),]
-  gg <- ggplot(Q, aes(x=factor(Label), y=value, fill=factor(Cluster)))
-  if (!is.null(populations)){
+  Q_melt <- Q_melt[order(Q_melt$Cluster),]
+  gg <- ggplot(Q_melt, aes(x=factor(Label), y=value, fill=factor(Cluster)))
+  if (!is.null(populations_df)){
     if (facet){
-      gg <- gg + facet_grid( Cluster ~ Family, scales = "free_x", space = "free_x")
+      gg <- gg + facet_grid( Cluster ~ Population, scales = "free_x", space = "free_x")
     } else{
-      gg <- gg + facet_grid( . ~ Family, scales = "free_x", space = "free_x")
+      gg <- gg + facet_grid( . ~ Population, scales = "free_x", space = "free_x")
     }
   } else{
     if (facet){
@@ -81,10 +82,5 @@ plotBar <- function(cluster_run, populations=NULL, plot=TRUE, facet=TRUE){
   gg <- gg + theme(axis.text.x = element_text(angle = 90))
 
   #print plot or return
-  if (plot){
-    print(gg)
-  } else{
-    return(Q)
-  }
-
+  return(list(Q_melt = Q_melt, plot=gg))
 }
