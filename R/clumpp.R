@@ -7,6 +7,7 @@
 #' @import iterpc
 #' @importFrom combinat permn
 #' @importFrom purrr map_dbl
+#' @importFrom label.switching stephens
 #' @export
 #' @examples
 #' # Read in Structure files
@@ -29,11 +30,35 @@ clumpp <- function(Q_list, method="greedy"){
       Q_list <- memoryGreedy(Q_list)
     }
 
-  } else{
+  } else if (method=="largeKgreedy"){
     #Use LargeKGreedy algorithm
     Q_list <- largeKGreedy(Q_list)
+  } else {
+    Q_list <- getStephens(Q_list)
   }
   return(Q_list)
+}
+
+getStephens <- function(Q_list){
+  #Create #D array for input into stephens function
+  p <- array(0, dim=c(length(Q_list),nrow(Q_list[[1]]), ncol(Q_list[[1]])))
+  for (i in 1:length(Q_list)){
+    p[i,,] <- Q_list[[i]]
+  }
+
+  perm <- label.switching::stephens(p)
+
+  for (i in 1:length(Q_list)){
+    Q_list[[i]] <- Q_list[[i]][,perm$permutations[i,]]
+  }
+
+  #Rename columns
+  column_names <- paste("Cluster ", seq(1,ncol(Q_list[[1]])))
+  Q_list <- lapply(Q_list, function(x){
+    colnames(x) <- column_names
+    return(x)})
+
+  return(list(Q_list=Q_list, permutations=perm$permutations))
 }
 
 memoryGreedy <- function(Q_list){
