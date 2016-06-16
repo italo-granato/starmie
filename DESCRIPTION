@@ -19,7 +19,8 @@ Imports:
   purrr,
   ggplot2,
   iterpc,
-  combinat
+  combinat,
+  label.switching
 Suggests:
     testthat,
     knitr,

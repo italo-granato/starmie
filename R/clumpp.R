@@ -7,7 +7,6 @@
 #' @import iterpc
 #' @importFrom combinat permn
 #' @importFrom purrr map_dbl
-#' @importFrom label.switching stephens
 #' @export
 #' @examples
 #' # Read in Structure files
@@ -39,26 +38,32 @@ clumpp <- function(Q_list, method="greedy"){
   return(Q_list)
 }
 
+#' Use the Stephen's method to permute sample labels
+#' @importFrom label.switching stephens
 getStephens <- function(Q_list){
-  #Create #D array for input into stephens function
-  p <- array(0, dim=c(length(Q_list),nrow(Q_list[[1]]), ncol(Q_list[[1]])))
-  for (i in 1:length(Q_list)){
-    p[i,,] <- Q_list[[i]]
-  }
+  #Create 3-dimensional array for input into stephens function
+  # dimensions are equal to R by n by K
+  # R := number of runs
+  # n := number of rows in Q matrix
+  # K := number of columns in Q matrix
+  # convert list to array then transpose columms
+  p <- aperm(simplify2array(Q_list), c(3,1,2))
 
   perm <- label.switching::stephens(p)
 
-  for (i in 1:length(Q_list)){
-    Q_list[[i]] <- Q_list[[i]][,perm$permutations[i,]]
-  }
+  # reorder columns in according to new permuations
+  # Rename columns
+  column_names <- paste("Cluster ", seq_len(dim(p)[3]))
+  Q_update <- lapply(seq_len(dim(p)[1]),
+         function(i) {
+           q_perm <- Q_list[[i]][, perm$permutations[i, ]]
+           colnames(q_perm) <- column_names
+           q_perm
+         }
+  )
 
-  #Rename columns
-  column_names <- paste("Cluster ", seq(1,ncol(Q_list[[1]])))
-  Q_list <- lapply(Q_list, function(x){
-    colnames(x) <- column_names
-    return(x)})
 
-  return(list(Q_list=Q_list, permutations=perm$permutations))
+  return(list(Q_list=Q_update, permutations=perm$permutations))
 }
 
 memoryGreedy <- function(Q_list){
