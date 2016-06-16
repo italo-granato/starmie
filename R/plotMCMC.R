@@ -10,17 +10,34 @@
 #' @description Plot non-burn MCMC iterations of STRUCTURE for checking convergence.
 #' If make_plot is set to FALSE a data.frame is returned containing the log likelihood
 #' and alpha values over different K and runs and not plot is printed to the device.
+#' @return If make_plot is TRUE a ggplot is printed to the screen and the
+#' plot object and the data to generate it are returned. Otherwise,
+#' a data.frame containing MCMC info it returned.
 #' @import ggplot2
-#' @import dplyr
+#' @importFrom dplyr mutate group_by bind_rows
+#' @examples
+#' #Read in Structure files
+#' structure_files <- system.file("extdata/microsat_testfiles", package="starmie")
+#' structure_output_files <- list.files(structure_files, pattern = "*.out_f", full.names = TRUE)
+#' structure_log_files <- list.files(structure_files, pattern = ".*log", full.names = TRUE)
+#' runs <- mapply(loadStructure, structure_output_files, structure_log_files, SIMPLIFY=FALSE)
+
 plotMCMC <- function(struct_list, make_plot = TRUE, use_logL = TRUE, facet = TRUE) {
   #i/o checks
+  struct_class <- lappy(struct_list, class)
+  if ( any(struct_class != "struct") ) {
+    stop(" struct_list contains non struct objects ")
+  }
+
+  stopifnot(is.logical(make_plot))
+  stopifnot(is.logical(use_logL))
+  stopifnot(is.logical(facet))
 
   # generate data frame of mcmc diagnostics from non-burn iterations
-  mcmc_df <- do.call("rbind", lapply(struct_list, getMCMC))
+  mcmc_df <- bind_rows(lapply(struct_list, getMCMC))
   # run number is kind of arbirtary here
-  mcmc_df2 <- mcmc_df %>%
-    group_by(K, Iteration) %>%
-    mutate(run = row_number())
+  mcmc_df2 <- mutate(group_by(mcmc_df, K, Iteration),
+                     run = row_number())
 
   if (make_plot) {
     if (use_logL) {
@@ -42,7 +59,7 @@ plotMCMC <- function(struct_list, make_plot = TRUE, use_logL = TRUE, facet = TRU
     }
 
     print(gg)
-    return(mcmc_df2)
+    return(list(mcmc_info = mcmc_df2, mcmc_plot = gg))
   }
 
   return(mcmc_df2)

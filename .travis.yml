@@ -2,9 +2,12 @@ language: r
 
 cache: pacakges
 
-warnings_are_errors: true
+warnings_are_errors: false
 
-sudo: false
+sudo: required
+
+before_install: sudo apt-get install libgmp3-dev
+
 
 notifications:
   flowdock:

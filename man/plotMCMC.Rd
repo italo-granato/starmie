@@ -15,9 +15,21 @@ plotMCMC(struct_list, make_plot = TRUE, use_logL = TRUE, facet = TRUE)
 
 \item{facet}{logical facet by K default TRUE}
 }
+\value{
+If make_plot is TRUE a ggplot is printed to the screen and the
+plot object and the data to generate it are returned. Otherwise,
+a data.frame containing MCMC info it returned.
+}
 \description{
 Plot non-burn MCMC iterations of STRUCTURE for checking convergence.
 If make_plot is set to FALSE a data.frame is returned containing the log likelihood
 and alpha values over different K and runs and not plot is printed to the device.
+}
+\examples{
+#Read in Structure files
+structure_files <- system.file("extdata/microsat_testfiles", package="starmie")
+structure_output_files <- list.files(structure_files, pattern = "*.out_f", full.names = TRUE)
+structure_log_files <- list.files(structure_files, pattern = ".*log", full.names = TRUE)
+runs <- mapply(loadStructure, structure_output_files, structure_log_files, SIMPLIFY=FALSE)
 }
 
