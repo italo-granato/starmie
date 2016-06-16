@@ -40,7 +40,7 @@ clumpp <- function(Q_list, method="greedy"){
 }
 
 getStephens <- function(Q_list){
-  #Create #D array for input into stephens function
+  #Create 3D array for input into stephens function
   p <- array(0, dim=c(length(Q_list),nrow(Q_list[[1]]), ncol(Q_list[[1]])))
   for (i in 1:length(Q_list)){
     p[i,,] <- Q_list[[i]]
@@ -48,15 +48,13 @@ getStephens <- function(Q_list){
 
   perm <- label.switching::stephens(p)
 
+  column_names <- paste("Cluster ", seq(1,ncol(Q_list[[1]])))
+
   for (i in 1:length(Q_list)){
     Q_list[[i]] <- Q_list[[i]][,perm$permutations[i,]]
+    #Rename columns
+    colnames(Q_list[[i]]) <- column_names
   }
-
-  #Rename columns
-  column_names <- paste("Cluster ", seq(1,ncol(Q_list[[1]])))
-  Q_list <- lapply(Q_list, function(x){
-    colnames(x) <- column_names
-    return(x)})
 
   return(list(Q_list=Q_list, permutations=perm$permutations))
 }
