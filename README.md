@@ -18,8 +18,14 @@ https://www.genetics.ucla.edu/software/admixture/download.html
 Currently starmie can be installed using the devtools package
 
 First, you need to install the devtools package. You can do this from CRAN. Invoke R and then type
-`install.packages("devtools")`
+```
+install.packages("devtools")
+```
 Load the devtools package.
-`library(devtools)`
+```
+library(devtools)
+```
 Then to install run
-`install_github("sa-lee/starmie")`
+```
+install_github("sa-lee/starmie")
+```
