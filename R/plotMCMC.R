@@ -17,14 +17,12 @@
 #' @importFrom dplyr mutate group_by bind_rows
 #' @examples
 #' #Read in Structure files
-#' structure_files <- system.file("extdata/microsat_testfiles", package="starmie")
-#' structure_output_files <- list.files(structure_files, pattern = "*.out_f", full.names = TRUE)
-#' structure_log_files <- list.files(structure_files, pattern = ".*log", full.names = TRUE)
-#' runs <- mapply(loadStructure, structure_output_files, structure_log_files, SIMPLIFY=FALSE)
-
+#' multiple_runs_k10 <- exampleStructure("mcmc_diagnostics")
+#' print(multiple_runs_k10)
+#' results <- plotMCMC(multiple_runs_k10, make_plot = TRUE)
 plotMCMC <- function(struct_list, make_plot = TRUE, use_logL = TRUE, facet = TRUE) {
   #i/o checks
-  struct_class <- lappy(struct_list, class)
+  struct_class <- lapply(struct_list, class)
   if ( any(struct_class != "struct") ) {
     stop(" struct_list contains non struct objects ")
   }
@@ -62,6 +60,6 @@ plotMCMC <- function(struct_list, make_plot = TRUE, use_logL = TRUE, facet = TRU
     return(list(mcmc_info = mcmc_df2, mcmc_plot = gg))
   }
 
-  return(mcmc_df2)
+  mcmc_df2
 
 }

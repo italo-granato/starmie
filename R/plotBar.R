@@ -10,13 +10,19 @@
 #' @importFrom data.table melt
 #' @export
 #' @examples
-#' # Read in Structure files
-#' structure_files <- system.file("extdata/microsat_testfiles", package="starmie")
-#' structure_output_files <- list.files(structure_files, pattern = "*.out_f", full.names = TRUE)
-#' cluster_run <- loadStructure(structure_output_files[[6]])
+#' # Read file using K = 6 and plot results
+#' k6_data <- exampleStructure("barplot")
+#' print(k6_data)
 #' # Generate barplot
-#' plotBar(cluster_run)
-#'
+#' plotBar(k6_data)
+#' # adding group information
+#' set.seed(212)
+#' pops <- data.frame(id = k6_data$ancest_df[,1],
+#' population = sample(letters[1:3], nrow(k6_data$ancest_df), replace = TRUE))
+#' # our facetted structure plot
+#' plotBar(k6_data, pops)
+#' # standard 'structure' bar plot
+#' plotBar(k6_data, pops, facet = FALSE)
 plotBar <- function(cluster_run, populations=NULL, plot=TRUE, facet=TRUE){
 
   #i/o checks
