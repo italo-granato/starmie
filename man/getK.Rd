@@ -11,6 +11,8 @@ getPosterior(structure_obj)
 }
 \arguments{
 \item{structure_obj}{a code{\link{struct}} object}
+
+\item{structure_obj}{a code{\link{struct}} object}
 }
 \description{
 Return K from a \code{\link{struct}}

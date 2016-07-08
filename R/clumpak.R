@@ -18,8 +18,6 @@
 #' structure_runs <- mapply(loadStructure, structure_output_files, structure_log_files, SIMPLIFY=FALSE)
 #' Q_list <- lapply(structure_runs, getQ)
 #' clumpak_results <- clumpak(Q_list)
-#'
-
 clumpak <- function(Q_list){
   simMatrix <- as.matrix(simil(Q_list, method=G))
   t <- calcThreshold(simMatrix)

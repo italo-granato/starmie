@@ -6,6 +6,9 @@
 \usage{
 getMCMC(structure_obj)
 }
+\arguments{
+\item{structure_obj}{a code{\link{struct}} object}
+}
 \description{
 Acessor methods for structure object
 }

@@ -27,9 +27,8 @@ and alpha values over different K and runs and not plot is printed to the device
 }
 \examples{
 #Read in Structure files
-structure_files <- system.file("extdata/microsat_testfiles", package="starmie")
-structure_output_files <- list.files(structure_files, pattern = "*.out_f", full.names = TRUE)
-structure_log_files <- list.files(structure_files, pattern = ".*log", full.names = TRUE)
-runs <- mapply(loadStructure, structure_output_files, structure_log_files, SIMPLIFY=FALSE)
+multiple_runs_k10 <- exampleStructure("mcmc_diagnostics")
+print(multiple_runs_k10)
+results <- plotMCMC(multiple_runs_k10, make_plot = TRUE)
 }
 

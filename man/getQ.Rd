@@ -6,6 +6,9 @@
 \usage{
 getQ(structure_obj)
 }
+\arguments{
+\item{structure_obj}{a code{\link{struct}} object}
+}
 \description{
 Accessor methods for structure object
 }
