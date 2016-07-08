@@ -36,6 +36,7 @@ getK <- function(structure_obj) {
 
 #' Accessor methods for structure object
 #' @describeIn getK  Return the log posterior probability from a \code{\link{struct}}
+#' @param structure_obj a code{\link{struct}} object
 #' @export
 getPosterior <- function(structure_obj){
   structure_obj$fit_stats_df[structure_obj$fit_stats_df$Statistic=="Estimated Ln Prob of Data",][2]
@@ -43,6 +44,7 @@ getPosterior <- function(structure_obj){
 
 #' Accessor methods for structure object
 #' @describeIn getQ Return the Q matrix from a \code{\link{struct}}
+#' @param structure_obj a code{\link{struct}} object
 #' @export
 getQ <- function(structure_obj){
   Q <- data.matrix(structure_obj$ancest_df[,4:ncol(structure_obj$ancest_df)])
@@ -57,10 +59,45 @@ getQ <- function(structure_obj){
 
 #' Acessor methods for structure object
 #' @describeIn getMCMC Return non-burn in MCMC iterations.
+#' @param structure_obj a code{\link{struct}} object
 #' @export
 getMCMC <- function(structure_obj) {
   mcmc_df <- data.frame(K = getK(structure_obj),
                         structure_obj$nonburn_df[, c("Rep#:", "Alpha", "Ln Like")])
   colnames(mcmc_df) <- c("K", "Iteration", "Alpha", "LogL")
   mcmc_df
+}
+
+#' Example structure objects
+#' @param
+#' @export
+exampleStructure <- function(example_type) {
+  structure_files <- system.file("extdata/microsat_testfiles",
+                                 package="starmie")
+
+  if (example_type == "clumpp") {
+    k3_out <- list.files(structure_files,
+                         pattern = ".*K3.*out_f",
+                         full.names = TRUE)
+
+    #k3_log <- list.files(structure_files,
+    #                     pattern = ".*K3.*log",
+    #                     full.names = TRUE)
+    lapply(k3_out, loadStructure)
+  } else if (example_type == "mcmc_diagnostics") {
+    k10_out <- list.files(structure_files,
+                         pattern = ".*K10.*out_f",
+                         full.names = TRUE)
+    k10_log <- list.files(structure_files,
+                         pattern = ".*K10.*log",
+                         full.names = TRUE)
+    mapply(loadStructure, k10_out, k10_log, SIMPLIFY = FALSE)
+  } else if (example_type == "barplot") {
+    k6_out <- list.files(structure_files,
+                         pattern = "^locprior_K6.out_f",
+                         full.names = TRUE)
+    loadStructure(k6_out)
+
+  }
+
 }
