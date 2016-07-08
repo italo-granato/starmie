@@ -69,7 +69,8 @@ getMCMC <- function(structure_obj) {
 }
 
 #' Example structure objects
-#' @param
+#' @param example_type a character string either "clumpp" or "mcmc_diagnostics" or "barplot"
+#' @description load structure objects for different starmie functions
 #' @export
 exampleStructure <- function(example_type) {
   structure_files <- system.file("extdata/microsat_testfiles",
