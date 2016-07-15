@@ -6,7 +6,6 @@ frustration?
 
 If you answered yes to any of the above then starmie is for you!
 
-COMING SOON
 
 ## external datasets
 Simulated microsat data was taken from 
@@ -14,10 +13,11 @@ http://pritchardlab.stanford.edu/software/example-data/locprior.str
 Simulated SNP data was taken from ADMIXTURE test datasets
 https://www.genetics.ucla.edu/software/admixture/download.html
 
-##Installation
+## Installation
 Currently starmie can be installed using the devtools package
 
-First, you need to install the devtools package. You can do this from CRAN. Invoke R and then type
+First, you need to install the devtools package. You can do this from CRAN. 
+Invoke R and then type
 ```
 install.packages("devtools")
 ```
@@ -28,4 +28,8 @@ library(devtools)
 Then to install run
 ```
 install_github("sa-lee/starmie")
+```
+If you would like to also build the vignette with your installation run
+```
+install_github("sa-lee/starmie", build_vignettes = TRUE)
 ```

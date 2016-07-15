@@ -102,17 +102,59 @@ k6_file <- system.file("extdata/microsat_testfiles/", "locprior_K6.out_f",
 k6_msat <- loadStructure(k6_file)
 
 k6_msat
-str(k6_msat)
 ```
 
+The STRUCTURE object contains the following information about a single run:
+```{r struct-object, echo=FALSE}
+list_names <- names(k6_msat)
+list_description <- c("K parameter supplied to STRUCTURE",
+                      "Input parameters",
+                      "Assigned cluster membership proportions",
+                      "Pairwise Fst values between inferred clusters",
+                      "Average nucleotide distance within clusters",
+                      "Within cluster average Fst values",
+                      "Model fit diagnositcs", 
+                      "Individual ancestral probability of membership to cluster",
+                      "Estimated ancestral allele frequencies for each cluster",
+                      "MCMC burn-in diagnositcs",
+                      "MCMC post burn-in diagnostics")
 
-data structure for the `starmie` package is the 
+knitr::kable(data.frame(attributes = list_names, 
+                        description = list_description))
+```
 
-## Diagnostics for 'struct' objects
+Of most interest to users would be the `ancest_df` which is the Q-matrix of individual
+cluster membership probabilities. To extract that information for inspection 
+use the helper function `getQ`.
+
+```{r qhat}
+Q_hat <- getQ(k6_msat)
+```
+
+## Loading multiple 'struct' objects the 'structList'
+more detail coming soon
+
 
 ## Inference on K is hard
 
-## Why you're here: the bar plot.
+Usually you would run STRUCTURE multiple times for multiple values of $K$ and
+then use estimates of the log-likelihood to determine the 'best' choice of
+$K$ that explaines the population structure in your data. There are two choices
+for model selection - either use the maximum mean log-posterior probability
+estimated by STRUCTURE or use the Evanno method. 
+
+```{r evanno-lyf}
+multi_K <- exampleStructure("multiple_runs")
+bestK(multi_K)
+bestK(multi_K, "structure")
+```
+
+
+## Putting together multiple runs for 'struct' objects
+
+## Why you're here: the bar plot...
+
+
 
 
 ## Why starmie?
