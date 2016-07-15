@@ -7,7 +7,8 @@
 exampleStructure(example_type)
 }
 \arguments{
-\item{example_type}{a character string either "clumpp" or "mcmc_diagnostics" or "barplot"}
+\item{example_type}{a character string either "multiple_runs", "clumpp" or
+"mcmc_diagnostics" or "barplot"}
 }
 \description{
 load structure objects for different starmie functions

@@ -6,7 +6,7 @@
 #' @details The \code{structure} object is a list with 11 elements:
 #'  K: number of clusters estimated by Structure
 #'  run_params: the run paramters given to the Structure program
-#'  mem_df: assigned cluster mebership proportions
+#'  mem_df: assigned cluster membership proportions
 #'  alle_freqs: Estimated allele frequencies
 #'  avg_dist_df: Average distance between individuals
 #'  fit_stats_df: Model fit statistics
@@ -69,7 +69,8 @@ getMCMC <- function(structure_obj) {
 }
 
 #' Example structure objects
-#' @param example_type a character string either "clumpp" or "mcmc_diagnostics" or "barplot"
+#' @param example_type a character string either "multiple_runs", "clumpp" or
+#' "mcmc_diagnostics" or "barplot"
 #' @description load structure objects for different starmie functions
 #' @export
 exampleStructure <- function(example_type) {
@@ -99,6 +100,12 @@ exampleStructure <- function(example_type) {
                          full.names = TRUE)
     loadStructure(k6_out)
 
+  } else if (example_type == "multiple_runs") {
+    runs <-  list.files(structure_files,
+                        pattern = "out_f$",
+                        full.names = TRUE)
+    sequential <- runs[grepl("^run2|^locprior", basename(runs))]
+    lapply(sequential, loadStructure)
   }
 
 }

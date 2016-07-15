@@ -16,7 +16,7 @@ struct object for storing structure run information
 The \code{structure} object is a list with 11 elements:
  K: number of clusters estimated by Structure
  run_params: the run paramters given to the Structure program
- mem_df: assigned cluster mebership proportions
+ mem_df: assigned cluster membership proportions
  alle_freqs: Estimated allele frequencies
  avg_dist_df: Average distance between individuals
  fit_stats_df: Model fit statistics

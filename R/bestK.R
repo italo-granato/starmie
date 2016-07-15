@@ -10,14 +10,10 @@
 #' @import ggplot2
 #' @export
 #' @examples
-#' # Read in Structure files
-#' structure_files <- system.file("extdata/microsat_testfiles", package="starmie")
-#' structure_output_files <- list.files(structure_files, pattern = "*.out_f", full.names = TRUE)
-#' structure_log_files <- list.files(structure_files, pattern = ".*log", full.names = TRUE)
-#' runs <- mapply(loadStructure, structure_output_files, structure_log_files, SIMPLIFY=FALSE)
+#' multi_K <- exampleStructure("multiple_runs")
 #' # Run the evanno method and display diagnostic plots.
-#' K <- bestK(runs)
-#'
+#' bestK(multi_K)
+#' bestK(multi_K, "structure")
 bestK <- function(runs, method="evanno", make_plot=TRUE){
   #i/o checks
   run_types <- unlist(lapply(runs, "class"))
