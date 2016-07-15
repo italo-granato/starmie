@@ -12,11 +12,8 @@
 #' @export
 #' @examples
 #' # Read in Structure files
-#' structure_files <- system.file("extdata/microsat_testfiles", package="starmie")
-#' structure_output_files <- list.files(structure_files, pattern = ".*K10.*out_f", full.names = TRUE)
-#' structure_log_files <- list.files(structure_files, pattern = ".*K10.*log", full.names = TRUE)
-#' structure_runs <- mapply(loadStructure, structure_output_files, structure_log_files, SIMPLIFY=FALSE)
-#' Q_list <- lapply(structure_runs, getQ)
+#' multiple_runs_k10 <- exampleStructure("mcmc_diagnostics")
+#' Q_list <- lapply(multiple_runs_k10, getQ)
 #' clumpak_results <- clumpak(Q_list)
 clumpak <- function(Q_list){
   simMatrix <- as.matrix(simil(Q_list, method=G))
@@ -24,7 +21,7 @@ clumpak <- function(Q_list){
   simMatrix[simMatrix<t] <- 0
   clusters <- mcl(simMatrix, addLoops = TRUE)$Cluster
   split(Q_list, clusters)
-  }
+}
 
 calcThreshold <- function(simMatrix){
   min_edge <- min(simMatrix, na.rm = TRUE)

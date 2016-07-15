@@ -30,6 +30,7 @@ Some key features:
   * Create the 'standard' STRUCTURE bar plot showing cluster memberships.
   * Plot model checks such as MCMC chains on the admixture coeffecient $\alpha$
     and the log-likelihood.
+  * Interactively visualising output from STRUCTURE analysis
 
 This vignette outlines how to use starmie to do basic tasks after running 
 STRUCTURE at the command line.
@@ -86,12 +87,38 @@ mcmapply(run_structure, out_files, log_files,
 
 ## Parsing STRUCTURE files, the 'struct' object
 
+The basic unit of analysis for `starmie` is the `struct` object, which contains
+the model information in the STRUCTURE out_f file and optionally the logging
+information for the MCMC diagnostics. As an example, we have run STRUCTURE
+on [simulated microsatellite data](http://pritchardlab.stanford.edu/software/example-data/locprior.str) 
+from the STRUCTURE example data and save the out_f. To create a `struct` object
+from a run we use the following:
+```{r struct-example}
+library(starmie)
+# path to file name
+k6_file <- system.file("extdata/microsat_testfiles/", "locprior_K6.out_f", 
+                       package = "starmie")
+# create struct object
+k6_msat <- loadStructure(k6_file)
+
+k6_msat
+str(k6_msat)
+```
+
+
+data structure for the `starmie` package is the 
+
 ## Diagnostics for 'struct' objects
 
 ## Inference on K is hard
 
-## Why you're here, the bar plot.
+## Why you're here: the bar plot.
 
 
 ## Why starmie?
 There's a reason.
+
+# session info
+```{r session-info}
+sessionInfo()
+```

@@ -102,3 +102,17 @@ exampleStructure <- function(example_type) {
   }
 
 }
+
+#' @export
+print.struct <- function(x, ...) {
+  cat(paste("struct object containing run information for k =", x$K, "\n"))
+  cat("Model run parameters:\n")
+  cat(paste(paste("\t", x$run_params[,1], ":", x$run_params[,2]),
+            collapse = "\n"))
+  cat("\nModel fit statistics:\n")
+  cat(paste(paste("\t", x$fit_stats_df[,1], ":", x$fit_stats_df[,2]),
+            collapse = "\n"))
+  logfile <- !is.null(x$burn_df)
+  cat(paste("\nMCMC diagnostics available:", logfile))
+
+}

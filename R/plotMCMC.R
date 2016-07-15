@@ -15,6 +15,7 @@
 #' a data.frame containing MCMC info it returned.
 #' @import ggplot2
 #' @importFrom dplyr mutate group_by bind_rows
+#' @export
 #' @examples
 #' #Read in Structure files
 #' multiple_runs_k10 <- exampleStructure("mcmc_diagnostics")
