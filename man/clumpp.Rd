@@ -9,7 +9,7 @@ clumpp(Q_list, method = "greedy")
 \arguments{
 \item{Q_list}{A list of of Q matrices.}
 
-\item{method}{The algorithm to use to infer the correct permutations. One of 'greedy' or 'greedyLargeK'}
+\item{method}{The algorithm to use to infer the correct permutations. One of 'greedy' or 'greedyLargeK' or 'stephens'}
 }
 \description{
 Run the CLUMPP algorithms.

@@ -131,17 +131,59 @@ use the helper function `getQ`.
 Q_hat <- getQ(k6_msat)
 ```
 
+## Why you're here: the infamous bar plot...
+
+To make the bar-plot simply type:
+
+```{r plot-bar}
+plotBar(k6_msat, facet = FALSE)
+```
+
+This will group the known sample labels into population labels if they were supplied to the STRUCTURE run.
+Alternatively, you can facet the inferred cluster labels to make it easier to see outliers and geographical groupings.
+
+```{r plot-bar2}
+plotBar(k6_msat)
+```
+
+If you have not given population labels to your samples you can also add them using the `populations` argument.
+
+
 ## Loading multiple 'struct' objects the 'structList'
 more detail coming soon
+
+
+## Diagnostics: or checking out your chains
+
+A very simple approach to determining whether you need to rerun a STRUCTURE a model
+is to plot the estimated logLikelihood over each iteration over the post burn-in MCMC
+phase. If the chains have converged the log-likelihood should stabilise towards the final
+iterations and the variance within a run should be relatively low. The `plotMCMC`
+can plot the log-likelihood or admixture coeffecient against the iteration over different
+runs and different $K$ values. Note this requires the logging file to be read by `loadStructure`. 
+
+Here we show an example when $K$ = 10 and the number of runs is also 10.
+```{r mcmc1}
+library(dplyr)
+multiple_runs_k10 <- exampleStructure("mcmc_diagnostics")
+
+# not run print multiple_runs_k10
+
+mcmc_out <-plotMCMC(multiple_runs_k10, facet = FALSE)
+
+mcmc_out$mcmc_info %>% group_by(run) %>% summarise(mean_LL = mean(LogL), var_LL = var(LogL))
+
+```
 
 
 ## Inference on K is hard
 
 Usually you would run STRUCTURE multiple times for multiple values of $K$ and
 then use estimates of the log-likelihood to determine the 'best' choice of
-$K$ that explaines the population structure in your data. There are two choices
+$K$ that explains the population structure in your data. There are two choices
 for model selection - either use the maximum mean log-posterior probability
-estimated by STRUCTURE or use the Evanno method. 
+estimated by STRUCTURE or use the Evanno method. The `bestK` function returns the
+value of $K$ that is estimated by these methods and also produces diagnostic plots.
 
 ```{r evanno-lyf}
 multi_K <- exampleStructure("multiple_runs")
@@ -149,16 +191,29 @@ bestK(multi_K)
 bestK(multi_K, "structure")
 ```
 
+## CLUMPPING together
 
-## Putting together multiple runs for 'struct' objects
+We have written R implementations of the popular CLUMMP and CLUMPAK algortihms for
+combining Q-matrices over different runs of STRUCTURE. Usually, this step is performed
+after choosing a value for $K$, when the analyst would like to refine their estimates
+of cluster memberships. To perform CLUMPPING create a `structList` consisting of the
+same value of $K$ for multiple runs. In each case the Q-matrices and a matrix of column permutations
+for each run are returned.
 
-## Why you're here: the bar plot...
+```{r clump-example}
+Q_list <- lapply(multiple_runs_k10, getQ)
+clumpak_results <- clumpak(Q_list)
+clumppy <- clumpp(Q_list, method = "greedyLargeK")
+```
 
 
+# Putting it together - shining starmie
+Coming soon...
 
+# Why starmie?
+There's a reason. It's not very good though. 
 
-## Why starmie?
-There's a reason.
+# References
 
 # session info
 ```{r session-info}

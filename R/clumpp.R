@@ -3,7 +3,7 @@
 
 #' Run the CLUMPP algorithms.
 #' @param Q_list A list of of Q matrices.
-#' @param method The algorithm to use to infer the correct permutations. One of 'greedy' or 'greedyLargeK'
+#' @param method The algorithm to use to infer the correct permutations. One of 'greedy' or 'greedyLargeK' or 'stephens'
 #' @import iterpc
 #' @importFrom combinat permn
 #' @importFrom purrr map_dbl
@@ -15,6 +15,11 @@
 #' Q_list <- lapply(cl_data, getQ)
 #' clumppy <- clumpp(Q_list)
 clumpp <- function(Q_list, method="greedy"){
+
+  # i/o checks
+  if (!(method %in% c("greedy", "greedyLargeK", "stephens"))) {
+    stop("Not a valid CLUMPP method, please use on of: 'greedy', 'greedyLargeK' or 'stephens'")
+  }
 
   if (method=="greedy"){
     #Greedy clumpp algorithm
@@ -29,7 +34,7 @@ clumpp <- function(Q_list, method="greedy"){
   } else if (method=="largeKgreedy"){
     #Use LargeKGreedy algorithm
     Q_list <- largeKGreedy(Q_list)
-  } else {
+  } else if (method == "stephens") {
     Q_list <- getStephens(Q_list)
   }
   return(Q_list)
