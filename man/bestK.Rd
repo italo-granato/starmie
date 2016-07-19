@@ -9,12 +9,23 @@ bestK(runs, method = "evanno", make_plot = TRUE)
 \arguments{
 \item{runs}{a list of \code{\link{struct}} objects or \code{\link{admix}} objects.}
 
-\item{method}{the method used to calculate the best K}
+\item{method}{the method used to calculate the best K  one of c("evanno", "structure", "admixture")}
 
 \item{make_plot}{whether of not to generate diagnostic plots}
 }
+\value{
+a data.frame containing  with columns containing the L_k,
+AIC, BIC, DIC and deltaK. If make_plot = TRUE a ggplot object is printed
+for the method of interest.
+}
 \description{
 Determine a suitable K value from multiple Structure runs
+}
+\details{
+By default bestK will produce diagnostic plots for the 'evanno' method,
+however if the K values are not ordered or there an even numbers of runs
+per K the 'structure' method will be implemented and delta K will not be
+returned in the output.
 }
 \examples{
 multi_K <- exampleStructure("multiple_runs")
