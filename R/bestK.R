@@ -6,7 +6,6 @@
 #' @param  runs a list of \code{\link{struct}} objects or \code{\link{admix}} objects.
 #' @param  method the method used to calculate the best K  one of c("evanno", "structure", "admixture")
 #' @param  make_plot whether of not to generate diagnostic plots
-#' @import dplyr
 #' @import ggplot2
 #' @export
 #' @return a data.frame containing  with columns containing the L_k,
