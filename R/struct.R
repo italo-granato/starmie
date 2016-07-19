@@ -26,25 +26,40 @@ struct <- function() {
             class = "struct")
 }
 
-#' Accessor methods for structure object
-#' @description Return K from a \code{\link{struct}}
-#' @param structure_obj a code{\link{struct}} object
+#' Accessor methods for struct objects
+#' @description Return elements from \code{\link{struct}} objects.
+#' @param structure_obj a \code{\link{struct}} object
 #' @export
 getK <- function(structure_obj) {
   structure_obj$K
 }
 
-#' Accessor methods for structure object
-#' @describeIn getK  Return the log posterior probability from a \code{\link{struct}}
-#' @param structure_obj a code{\link{struct}} object
+#' @describeIn getK Return the number of free parameters in STRUCTURE model
+#' @export
+getD <- function(structure_obj) {
+
+  k <- getK(structure_obj)
+  n <- as.integer(structure_obj$run_params[1,2])
+  l <- as.integer(structure_obj$run_params[2,2])
+  J <-sum(unlist(lapply(structure_obj$clust_allele_list, function(x) x$AlleleNumber)))
+
+  return(list(d = k*(J -l), n = n))
+
+}
+
+#' @describeIn getK Return the estimated log posterior probability (L_k) from a \code{\link{struct}} object
 #' @export
 getPosterior <- function(structure_obj){
   structure_obj$fit_stats_df[structure_obj$fit_stats_df$Statistic=="Estimated Ln Prob of Data",][2]
 }
 
-#' Accessor methods for structure object
-#' @describeIn getQ Return the Q matrix from a \code{\link{struct}}
-#' @param structure_obj a code{\link{struct}} object
+#' @describeIn getK Return the estimated mean and variance of estimated log-likelihood from a \code{\link{struct}} object
+#' @export
+getFitStats <- function(structure_obj) {
+  structure_obj$fit_stats_df[c(2,3), "Value"]
+}
+
+#' @describeIn getK Return the Q matrix
 #' @export
 getQ <- function(structure_obj){
   Q <- data.matrix(structure_obj$ancest_df[,4:ncol(structure_obj$ancest_df)])
@@ -57,9 +72,7 @@ getQ <- function(structure_obj){
   return(Q)
 }
 
-#' Acessor methods for structure object
-#' @describeIn getMCMC Return non-burn in MCMC iterations.
-#' @param structure_obj a code{\link{struct}} object
+#' @describeIn getK Return non-burn in MCMC iterations.
 #' @export
 getMCMC <- function(structure_obj) {
   mcmc_df <- data.frame(K = getK(structure_obj),
