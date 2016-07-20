@@ -139,18 +139,48 @@ To make the bar-plot simply type:
 plotBar(k6_msat, facet = FALSE)
 ```
 
-This will group the known sample labels into population labels if they were supplied to the STRUCTURE run.
-Alternatively, you can facet the inferred cluster labels to make it easier to see outliers and geographical groupings.
+This will group the known sample labels into population labels if they were 
+supplied to the STRUCTURE run.
+Alternatively, you can facet the inferred cluster labels to make it easier to see 
+outliers and geographical groupings.
 
 ```{r plot-bar2}
 plotBar(k6_msat)
 ```
 
-If you have not given population labels to your samples you can also add them using the `populations` argument.
+If you have not given population labels to your samples you can also add them 
+using the `populations` argument.
 
 
 ## Loading multiple 'struct' objects the 'structList'
-more detail coming soon
+
+The `structList` is a container for manipulating multiple `struct` objects.
+Some potential use-cases are:
+
+* load multiple $K$ values from different runs and perform model comparisons.
+* pool a sequence of runs over the same value of $K$ and perform CLUMPPing
+
+On our example microsatellite data to add the second run for 
+the results of running STRUCTURE $K$ = 6 ,we first load the output file, and
+then pass both `struct` objects to the `structList` function.
+```{r structList}
+k6_file_run2 <- system.file("extdata/microsat_testfiles/", 
+                            "run2_locprior_K6.out_f", 
+                       package = "starmie")
+
+k6_run2 <- loadStructure(k6_file_run2)
+
+k6_all <- structList(k6_msat, k6_run2)
+
+k6_all
+```
+
+We can also compare the cluster labelling by using `plotMultiK` (and see
+that label-switching over different MCMC runs is a problem!)
+
+```{r plot-multiK}
+plotMultiK(k6_all)
+```
 
 
 ## Diagnostics: or checking out your chains
@@ -200,12 +230,20 @@ of cluster memberships. To perform CLUMPPING create a `structList` consisting of
 same value of $K$ for multiple runs. In each case the Q-matrices and a matrix of column permutations
 for each run are returned.
 
+We return the the example of our two runs of $K$ = 6, stored in `k6_all` defined
+above. 
+
 ```{r clump-example}
-Q_list <- lapply(multiple_runs_k10, getQ)
+Q_list <- lapply(k6_all, getQ)
 clumpak_results <- clumpak(Q_list)
-clumppy <- clumpp(Q_list, method = "greedyLargeK")
+
+clumppy <- clumpp(Q_list, method = "greedy")
+
+# plot the results
+plotMultiK(clumppy$Q_list)
 ```
 
+We can see thta the clumpping has worked compared to the first plot.
 
 # Putting it together - shining starmie
 Coming soon...
@@ -214,6 +252,7 @@ Coming soon...
 There's a reason. It's not very good though. 
 
 # References
+
 
 # session info
 ```{r session-info}
