@@ -3,7 +3,7 @@
 
 
 #' Determine a suitable K value from multiple Structure runs
-#' @param  runs a list of \code{\link{struct}} objects or \code{\link{admix}} objects.
+#' @param  runs a \code{\link{structList}} or \code{\link{admixList}} object.
 #' @param  method the method used to calculate the best K  one of c("evanno", "structure", "admixture")
 #' @param  make_plot whether of not to generate diagnostic plots
 #' @import ggplot2
@@ -18,18 +18,29 @@
 #' @examples
 #' multi_K <- exampleStructure("multiple_runs")
 #' # Run the evanno method and display diagnostic plots.
-#' bestK(multi_K)
-#' bestK(multi_K, "structure")
+#' evanno_results <- bestK(multi_K)
+#' # Run the default structure method and display diagnostic plots
+#' structure_results <- bestK(multi_K, "structure")
+#' # find 'best' K according to results
+#' deltaK <- evanno_results$variable == 'delta K'
+#' max_deltaK <- which(evanno_results$value == max(evanno_results$value[deltaK], na.rm = TRUE))
+#' evanno_results[max_deltaK, ]
+#' lK <- structure_results$variable == 'L(K)'
+#' max_Lk <- which(structure_results$value == max(structure_results$value[lK], na.rm = TRUE))
+#' structure_results[max_Lk,]
 bestK <- function(runs, method="evanno", make_plot=TRUE){
   #i/o checks
-  run_types <- unlist(lapply(runs, "class"))
+  run_types <- inherits(runs, "structList") | inherits(runs, "admixList")
 
-  if ( !(all(run_types == "struct") | all(run_types == "admix")) )  stop("runs must be a vector of struct or admix objects.")
-  if (!(method %in% c("evanno", "structure", "cverror"))) stop("method must be one of 'evanno' or 'structure' or 'cverror'")
-  if (!is.logical(make_plot)) stop("make_plot must be one of TRUE or FALSE")
+  if ( !run_types )
+    stop("runs must be structList or admixList object")
+  if (!(method %in% c("evanno", "structure", "cverror")))
+    stop("method must be one of 'evanno' or 'structure' or 'cverror'")
+  if ( !is.logical(make_plot) | is.na(make_plot) )
+    stop("make_plot must be one of TRUE or FALSE")
 
   #order structure runs and collect by K
-  if ( all(run_types == "struct") ) {
+  if ( inherits(runs, "structList") ) {
     message("Creating diagnostic plots for structure runs.")
     params_sizes <- lapply(runs, getD)
 
@@ -54,8 +65,7 @@ bestK <- function(runs, method="evanno", make_plot=TRUE){
 
       if (method!="structure") {
         if (all(Ks == 1)) {
-          stop("Not enough information to compute
-                  Evanno statistics, only single runs.")
+          stop("Not enough information to compute Evanno statistics, only single runs.")
         }
         warning("WARNING! K values are not sequential or there are
                 an uneven number of runs per K.
@@ -69,7 +79,7 @@ bestK <- function(runs, method="evanno", make_plot=TRUE){
       model_ll <- .bestK_evanno(posterior_probs, make_plot)
       model_ll
     }
-  } else if ( all(run_types == "admix") ) {
+  } else if ( inherits(runs, "admixList") ) {
     message("Creating diagnositc plots for admixture runs")
 
     log_df <- do.call("rbind", lapply(runs, function(y) y$log_info))

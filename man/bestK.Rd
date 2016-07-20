@@ -7,7 +7,7 @@
 bestK(runs, method = "evanno", make_plot = TRUE)
 }
 \arguments{
-\item{runs}{a list of \code{\link{struct}} objects or \code{\link{admix}} objects.}
+\item{runs}{a \code{\link{structList}} or \code{\link{admixList}} object.}
 
 \item{method}{the method used to calculate the best K  one of c("evanno", "structure", "admixture")}
 
@@ -30,7 +30,15 @@ returned in the output.
 \examples{
 multi_K <- exampleStructure("multiple_runs")
 # Run the evanno method and display diagnostic plots.
-bestK(multi_K)
-bestK(multi_K, "structure")
+evanno_results <- bestK(multi_K)
+# Run the default structure method and display diagnostic plots
+structure_results <- bestK(multi_K, "structure")
+# find 'best' K according to results
+deltaK <- evanno_results$variable == 'delta K'
+max_deltaK <- which(evanno_results$value == max(evanno_results$value[deltaK], na.rm = TRUE))
+evanno_results[max_deltaK, ]
+lK <- structure_results$variable == 'L(K)'
+max_Lk <- which(structure_results$value == max(structure_results$value[lK], na.rm = TRUE))
+structure_results[max_Lk,]
 }
 
