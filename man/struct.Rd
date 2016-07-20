@@ -7,23 +7,39 @@
 struct()
 }
 \value{
-a \code{structure} object
+a \code{\link{struct}} object
 }
 \description{
 struct object for storing structure run information
 }
 \details{
-The \code{structure} object is a list with 11 elements:
+The \code{\link{struct}} object is a list with 11 elements:
+
  K: number of clusters estimated by Structure
+
  run_params: the run paramters given to the Structure program
+
  mem_df: assigned cluster membership proportions
+
  alle_freqs: Estimated allele frequencies
+
  avg_dist_df: Average distance between individuals
+
  fit_stats_df: Model fit statistics
+
  fst_df: Fst values
+
  ancest_df: Inferred ancestory of individuals
+
  clust_allele_list: Cluster allele frequencies
+
  burn_df: Burn in MCMC iteration output
+
  nonburn_df: Main MCMC iteration output
+}
+\seealso{
+\code{\link{loadStructure}} for reading in STRUCTURE out_f files.
+
+\code{\link{structList}} for manipulating multiple struct objects
 }
 
