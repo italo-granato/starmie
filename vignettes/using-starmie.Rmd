@@ -12,7 +12,10 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
-
+```{r setup, echo=FALSE}
+knitr::opts_chunk$set(tidy = TRUE, 
+                      fig.align = 'center', fig.width = 8, fig.height = 6)
+```
 # Starmie: making population structure analyses easier 
 
 A very common part of modern population genetics analysis is inferring
@@ -194,17 +197,18 @@ runs and different $K$ values. Note this requires the logging file to be read by
 
 Here we show an example when $K$ = 10 and the number of runs is also 10.
 ```{r mcmc1}
-library(dplyr)
 multiple_runs_k10 <- exampleStructure("mcmc_diagnostics")
 
 # not run print multiple_runs_k10
 
 mcmc_out <-plotMCMC(multiple_runs_k10, facet = FALSE)
 
-mcmc_out$mcmc_info %>% group_by(run) %>% summarise(mean_LL = mean(LogL), var_LL = var(LogL))
+suppressPackageStartupMessages(library(dplyr))
+mcmc_out$mcmc_info %>% 
+  group_by(run) %>% 
+  summarise(mean_LL = mean(LogL), var_LL = var(LogL))
 
 ```
-
 
 ## Inference on K is hard
 
@@ -227,10 +231,10 @@ We have written R implementations of the popular CLUMMP and CLUMPAK algortihms f
 combining Q-matrices over different runs of STRUCTURE. Usually, this step is performed
 after choosing a value for $K$, when the analyst would like to refine their estimates
 of cluster memberships. To perform CLUMPPING create a `structList` consisting of the
-same value of $K$ for multiple runs. In each case the Q-matrices and a matrix of column permutations
-for each run are returned.
+same value of $K$ for multiple runs. In each case the Q-matrices and a matrix of
+column permutations for each run are returned.
 
-We return the the example of our two runs of $K$ = 6, stored in `k6_all` defined
+We return to the example of our two runs of $K$ = 6, stored in `k6_all` defined
 above. 
 
 ```{r clump-example}
@@ -245,16 +249,31 @@ plotMultiK(clumppy$Q_list)
 
 We can see thta the clumpping has worked compared to the first plot.
 
-# Putting it together - shining starmie
-Coming soon...
+# Putting it together - shiny starmie
+Coming soon... a fully interactive analysis of our population structure methods.
 
 # Why starmie?
 There's a reason. It's not very good though. 
 
 # References
 
+Kopelman, N. M., Mayzel, J., Jakobsson, M., Rosenberg, N. A. & Mayrose, I. Clumpak: a program for identifying clustering modes and packaging population structure inferences across K. Mol. Ecol. Resour. 15, 1179–1191 (2015).
 
-# session info
+Stephens, M. Dealing with label switching in mixture models. J. R. Stat. Soc. Series B Stat. Methodol. 62, 795–809 (2000).
+
+Jakobsson, M. & Rosenberg, N. A. CLUMPP: a cluster matching and permutation program for dealing with label switching and multimodality in analysis of population structure. Bioinformatics 23, 1801–1806 (2007).
+
+Hubisz, M. J., Falush, D., Stephens, M. & Pritchard, J. K. Inferring weak population structure with the assistance of sample group information. Mol. Ecol. Resour. 9, 1322–1332 (2009).
+
+Falush, D., Stephens, M. & Pritchard, J. K. Inference of population structure using multilocus genotype data: dominant markers and null alleles. Mol. Ecol. Notes 7, 574–578 (2007).
+
+Falush, D., Stephens, M. & Pritchard, J. K. Inference of population structure using multilocus genotype data: linked loci and correlated allele frequencies. Genetics 164, 1567–1587 (2003).
+
+Pritchard, J. K., Stephens, M. & Donnelly, P. Inference of population structure using multilocus genotype data. Genetics 155, 945–959 (2000).
+
+Verity, R. & Nichols, R. A. Estimating the Number of Subpopulations (K) in Structured Populations. Genetics (2016). doi:10.1534/genetics.115.180992
+
+# Appendix
 ```{r session-info}
 sessionInfo()
 ```
