@@ -11,7 +11,7 @@
 #'
 #'  mem_df: assigned cluster membership proportions
 #'
-#'  alle_freqs: Estimated allele frequencies
+#'  allele_freqs: Estimated net nucleotide distances between clusters
 #'
 #'  avg_dist_df: Average distance between individuals
 #'
@@ -33,7 +33,7 @@
 #' \code{\link{structList}} for manipulating multiple struct objects
 struct <- function() {
   structure(list(K = NULL, run_params = NULL, mem_df = NULL,
-                 alle_freqs = NULL, avg_dist_df = NULL,
+                 allele_freqs = NULL, avg_dist_df = NULL,
                  fst_df=NULL, fit_stats_df = NULL,  ancest_df = NULL,
                  clust_allele_list = NULL,
                  burn_df=NULL, nonburn_df=NULL),
@@ -111,6 +111,15 @@ getQ <- function(structure_obj){
   return(Q)
 }
 
+getClusterAlleleFreqMat <- function(structure_obj) {
+   do.call("rbind", lapply(structure_obj$clust_allele_list,
+                           function(x) cbind(rep(x$Locus, x$AlleleNumber), x$FreqMatrix[, -2])))
+}
+
+getCompleteAlleleFreqMat <- function(structure_obj) {
+  do.call("rbind", lapply(structure_obj$clust_allele_list,
+                          function(x) cbind(rep(x$Locus, x$AlleleNumber), x$FreqMatrix[, c(1,2)])))
+}
 #' @describeIn getK Return non-burn in MCMC iterations.
 #' @export
 getMCMC <- function(structure_obj) {
