@@ -21,7 +21,7 @@ The \code{\link{struct}} object is a list with 11 elements:
 
  mem_df: assigned cluster membership proportions
 
- alle_freqs: Estimated allele frequencies
+ allele_freqs: Estimated net nucleotide distances between cluster
 
  avg_dist_df: Average distance between individuals
 
