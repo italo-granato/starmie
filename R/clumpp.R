@@ -4,7 +4,7 @@
 #' Run the CLUMPP algorithms.
 #' @param Q_list A list of of Q matrices.
 #' @param method The algorithm to use to infer the correct permutations. One of 'greedy' or 'greedyLargeK' or 'stephens'
-#' @parap iter The number of iterations to use if running either 'greedy' or 'greedyLargeK'
+#' @param iter The number of iterations to use if running either 'greedy' or 'greedyLargeK'
 #' @import iterpc
 #' @importFrom combinat permn
 #' @importFrom purrr map_dbl

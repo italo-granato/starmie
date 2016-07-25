@@ -10,6 +10,8 @@ clumpp(Q_list, method = "greedy", iter = 100)
 \item{Q_list}{A list of of Q matrices.}
 
 \item{method}{The algorithm to use to infer the correct permutations. One of 'greedy' or 'greedyLargeK' or 'stephens'}
+
+\item{iter}{The number of iterations to use if running either 'greedy' or 'greedyLargeK'}
 }
 \description{
 Run the CLUMPP algorithms.
