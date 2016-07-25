@@ -11,7 +11,7 @@
 #'
 #'  mem_df: assigned cluster membership proportions
 #'
-#'  allele_freqs: Estimated net nucleotide distances between clusters
+#'  allele_freqs: Estimated net nucleotide distances between cluster
 #'
 #'  avg_dist_df: Average distance between individuals
 #'
