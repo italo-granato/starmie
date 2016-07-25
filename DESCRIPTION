@@ -23,7 +23,8 @@ Imports:
   label.switching,
   proxy,
   MCL,
-  gridExtra
+  gridExtra,
+  ggdendro
 Suggests:
     testthat,
     knitr,

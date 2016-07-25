@@ -8,6 +8,7 @@
 #' @param  cut an integer vector output by 'cutree' (defaults to cutree k=ncols(Q))
 #' @import ggplot2
 #' @import gridExtra
+#' @import ggdendro
 #' @importFrom data.table melt
 #' @export
 #' @examples
@@ -49,13 +50,13 @@ plotTreeBar <- function(cluster_run, facet=TRUE, dendro=NULL, cut=NULL){
     cut <- cutree(dendro, k=ncol(Q))
   }
 
-  plot_results <- plotQ(Q, facet, dendro, cut)
+  plot_results <- plotTreeQ(Q, facet, dendro, cut)
 
   return(plot_results)
 
 }
 
-plotQ <- function(Q, facet, dendro, cut){
+plotTreeQ <- function(Q, facet, dendro, cut){
 
   populations_df <- data.frame(Label=factor(dendro$labels,levels=dendro$labels[dendro$order]), Population=cut)
 
