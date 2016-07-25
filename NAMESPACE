@@ -3,6 +3,8 @@
 S3method(print,struct)
 S3method(print,structList)
 export(admix)
+export(averagePairWiseSimilarityH)
+export(averageQ)
 export(bestK)
 export(clumpak)
 export(clumpp)

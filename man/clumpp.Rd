@@ -4,7 +4,7 @@
 \alias{clumpp}
 \title{Run the CLUMPP algorithms.}
 \usage{
-clumpp(Q_list, method = "greedy")
+clumpp(Q_list, method = "greedy", iter = 100)
 }
 \arguments{
 \item{Q_list}{A list of of Q matrices.}

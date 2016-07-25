@@ -4,6 +4,7 @@
 #' Run the CLUMPP algorithms.
 #' @param Q_list A list of of Q matrices.
 #' @param method The algorithm to use to infer the correct permutations. One of 'greedy' or 'greedyLargeK' or 'stephens'
+#' @parap iter The number of iterations to use if running either 'greedy' or 'greedyLargeK'
 #' @import iterpc
 #' @importFrom combinat permn
 #' @importFrom purrr map_dbl
@@ -14,28 +15,42 @@
 #' print(cl_data)
 #' Q_list <- lapply(cl_data, getQ)
 #' clumppy <- clumpp(Q_list)
-clumpp <- function(Q_list, method="greedy"){
+clumpp <- function(Q_list, method="greedy", iter=100){
 
   # i/o checks
   if (!(method %in% c("greedy", "greedyLargeK", "stephens"))) {
     stop("Not a valid CLUMPP method, please use on of: 'greedy', 'greedyLargeK' or 'stephens'")
   }
 
+  if(!all(unlist(lapply(Q_list, inherits, "matrix")))) stop("cluster runs must be a list of Q matrices")
+
+  if(!all.equal(iter, as.integer(iter)) || iter<0) stop("number of iterations must be a positive integer")
+
   if (method=="greedy"){
     #Greedy clumpp algorithm
     K <- ncol(Q_list[[1]])
+    perms <- replicate(iter, sample(1:length(Q_list),size=length(Q_list),replace=FALSE))
     if (K>8){
-      Q_list <- iterativeGreedy(Q_list)
+      permQs <- apply(perms, 2, function(p) iterativeGreedy(Q_list[p]))
+      Hs <- lapply(permQs, function(x) averagePairWiseSimilarityH(x$Q_list))
+      Q_list <- permQs[[which.max(Hs)]]
     }
     else{
-      Q_list <- memoryGreedy(Q_list)
+      permQs <- apply(perms, 2, function(p) memoryGreedy(Q_list[p]))
+      Hs <- lapply(permQs, function(x) averagePairWiseSimilarityH(x$Q_list))
+      Q_list <- permQs[[which.max(Hs)]]
     }
 
-  } else if (method=="largeKgreedy"){
+  } else if (method=="greedyLargeK"){
     #Use LargeKGreedy algorithm
-    Q_list <- largeKGreedy(Q_list)
+    perms <- replicate(iter, sample(1:length(Q_list),size=length(Q_list),replace=FALSE))
+    permQs <- apply(perms, 2, function(p) largeKGreedy(Q_list[p]))
+    Hs <- lapply(permQs, function(x) averagePairWiseSimilarityH(x$Q_list))
+    Q_list <- permQs[[which.max(Hs)]]
+
   } else if (method == "stephens") {
     Q_list <- getStephens(Q_list)
+
   }
   return(Q_list)
 }
@@ -173,7 +188,8 @@ largeKGreedy <- function(Q_list){
   column_names <- paste("Cluster ", seq(1,ncol(Q_list[[1]])))
   Q_list <- lapply(Q_list, function(x){
     colnames(x) <- column_names
-    return(x)})
+    return(x)}
+    )
 
   return(list(Q_list=Q_list, permutations=permutations))
 }

@@ -84,6 +84,7 @@ plotQ <- function(Q, populations_df, facet){
   }
   gg <- gg + geom_bar(stat = "identity", width=1)
   gg <- gg + scale_y_continuous(expand=c(0,0), breaks=c(0.25,0.75))
+  gg <- gg + coord_cartesian(ylim=c(0,1))
   gg <- gg + xlab("Sample ID") + ylab("Proportion of cluster")
   gg <- gg + theme_bw()
   gg <- gg + guides(fill=guide_legend(title="Cluster"))

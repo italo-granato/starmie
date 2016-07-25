@@ -4,12 +4,12 @@
 \alias{clumpak}
 \title{Run the CLUMPP algorithms.}
 \usage{
-clumpak(Q_list)
+clumpak(Q_list, method = "none")
 }
 \arguments{
 \item{Q_list}{A list of of Q matrices.}
 
-\item{method}{The algorithm to use to infer the correct permutations. One of 'greedy' or 'greedyLargeK'}
+\item{method}{The method the algorithm uses to infer the correct permutations. One of 'greedy' or 'greedyLargeK' or 'stephens' or 'none'}
 }
 \description{
 Run the CLUMPP algorithms.
