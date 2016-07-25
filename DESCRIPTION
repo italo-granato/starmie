@@ -22,7 +22,8 @@ Imports:
   combinat,
   label.switching,
   proxy,
-  MCL
+  MCL,
+  gridExtra
 Suggests:
     testthat,
     knitr,
