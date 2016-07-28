@@ -6,7 +6,6 @@
 #' @param pfile a corresponding P file from ADMXIXTURE
 #' @param  logfile logfile from corresponding AMIXTURE run ()
 #' @importFrom tidyr gather
-#' @importFrom dplyr bind_rows
 #' @importFrom data.table fread
 #' @return an \link{admix} object containing the output of of an admixture run
 #' @export
@@ -47,7 +46,7 @@ loadAdmixture <- function(qfile, pfile, logfile = NULL) {
       stop("logfile does not match input P and Q files")
     }
   } else {
-    log_info <- NA
+    log_info <- NULL
   }
 
   # output list containing q_info, p_info and log_info
