@@ -14,7 +14,7 @@
 #' plot object and the data to generate it are returned. Otherwise,
 #' a data.frame containing MCMC info it returned.
 #' @import ggplot2
-#' @importFrom dplyr mutate group_by bind_rows
+#' @importFrom data.table rbindlist
 #' @export
 #' @examples
 #' #Read in Structure files
@@ -23,28 +23,25 @@
 #' results <- plotMCMC(multiple_runs_k10, make_plot = TRUE)
 plotMCMC <- function(struct_list, make_plot = TRUE, use_logL = TRUE, facet = TRUE) {
   #i/o checks
-  struct_class <- lapply(struct_list, class)
-  if ( any(struct_class != "struct") ) {
-    stop(" struct_list contains non struct objects ")
-  }
+  if (!inherits(struct_list, "structList"))
+    stop("struct_list is not a structList object.")
 
   stopifnot(is.logical(make_plot))
   stopifnot(is.logical(use_logL))
   stopifnot(is.logical(facet))
 
   # generate data frame of mcmc diagnostics from non-burn iterations
-  mcmc_df <- bind_rows(lapply(struct_list, getMCMC))
-  # run number is kind of arbirtary here
-  mcmc_df2 <- mutate(group_by(mcmc_df, K, Iteration),
-                     run = row_number())
+  mcmc_df <- rbindlist(lapply(struct_list, getMCMC))
+  # run number is kind of arbirtary here, just group by K and iteration
+  mcmc_df[, run := seq_len(.N), by = list(K, Iteration)]
 
   if (make_plot) {
     if (use_logL) {
-      gg <- ggplot(mcmc_df2,
+      gg <- ggplot(mcmc_df,
                    aes(x = Iteration, y = LogL, colour = factor(run)))
         geom_line()
     } else {
-      gg <- ggplot(mcmc_df2,
+      gg <- ggplot(mcmc_df,
                    aes(x = Iteration, y = Alpha, colour = factor(run)))
     }
 
@@ -58,9 +55,9 @@ plotMCMC <- function(struct_list, make_plot = TRUE, use_logL = TRUE, facet = TRU
     }
 
     print(gg)
-    return(list(mcmc_info = mcmc_df2, mcmc_plot = gg))
+    return(list(mcmc_info = mcmc_df, mcmc_plot = gg))
   }
 
-  mcmc_df2
+  mcmc_df
 
 }

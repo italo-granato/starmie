@@ -82,8 +82,9 @@ bestK <- function(runs, method="evanno", make_plot=TRUE){
   } else if ( inherits(runs, "admixList") ) {
     message("Creating diagnositc plots for admixture runs")
 
-    log_df <- do.call("rbind", lapply(runs, function(y) y$log_info))
-    if ( any(is.na(log_df)) ) {
+    log_df <- combineLogs(runs)
+
+    if ( is.null(log_df) ) {
       stop("Need log file information to produce diagnositc plots")
     }
     .bestK_admixture(log_df, make_plot)

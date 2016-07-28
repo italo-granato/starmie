@@ -1,6 +1,6 @@
 Package: starmie
 Type: Package
-Title: for lazy population structure inference and visualisation.
+Title: lazy population structure inference and visualisation
 Version: 0.1.1
 Author@R: c(
     person("Gerry", "Tonkin-Hill", email = "tonkin-hill.g@wehi.edu.au", role = c("cre", "aut")),
@@ -12,7 +12,6 @@ License: GPLv3
 LazyData: TRUE
 Imports:
   data.table,
-  dplyr,
   readr,
   stringr,
   tidyr,
@@ -24,7 +23,7 @@ Imports:
   proxy,
   MCL,
   gridExtra,
-  ggdendro.
+  ggdendro,
   ggrepel
 Suggests:
     testthat,
