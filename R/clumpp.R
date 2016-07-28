@@ -56,6 +56,7 @@ clumpp <- function(Q_list, method="greedy", iter=100){
 }
 
 #' Use the Stephen's method to permute sample labels
+#' @param Q_list A list of of Q matrices.
 #' @importFrom label.switching stephens
 getStephens <- function(Q_list){
   #Create 3-dimensional array for input into stephens function

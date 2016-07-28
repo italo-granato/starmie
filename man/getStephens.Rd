@@ -6,6 +6,9 @@
 \usage{
 getStephens(Q_list)
 }
+\arguments{
+\item{Q_list}{A list of of Q matrices.}
+}
 \description{
 Use the Stephen's method to permute sample labels
 }
