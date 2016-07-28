@@ -24,7 +24,8 @@ Imports:
   proxy,
   MCL,
   gridExtra,
-  ggdendro
+  ggdendro.
+  ggrepel
 Suggests:
     testthat,
     knitr,

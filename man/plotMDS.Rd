@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotMDS.R
 \name{plotMDS}
 \alias{plotMDS}
-\title{Plot prinicipal compenents between inferred clusters}
+\title{Plot prinicipal coordinates between inferred clusters}
 \usage{
 plotMDS(structure_obj, method = "nnd")
 }
@@ -12,12 +12,17 @@ plotMDS(structure_obj, method = "nnd")
 \item{method}{one of "nnd" or "jsd"}
 }
 \description{
-Plot prinicipal compenents between inferred clusters
+Plot prinicipal coordinates between inferred clusters
 }
 \details{
 "nnd" uses the nucleotide distance matrix estimated by STRUCTURE
 to construct the principal coordinates, sizing the points by the expected
 heterozygosity within a cluster. "jsd" produces a principal coordinates
 from the Jensen Shannon Divergence metric as used by the 'ldavis' package.
+}
+\examples{
+k6_data <- exampleStructure("barplot")
+plotMDS(k6_data)
+plotMDS(k6_data, method = "jsd")
 }
 
