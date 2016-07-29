@@ -8,7 +8,7 @@ Author@R: c(
 Author: Gerry Tonkin-Hill, Stuart Lee
 Maintainer: Stuart Lee<lee.s@wehi.edu.au>
 Description: barplots, barplots, barplots!!!
-License: GPLv3
+License: MIT + file LICENSE
 LazyData: TRUE
 Imports:
   data.table,
