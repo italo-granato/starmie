@@ -40,7 +40,7 @@ plotBar <- function(cluster_run, populations=NULL, plot=TRUE, facet=TRUE){
     }
   }
   else if(class(cluster_run)=="admix"){
-    Q <- cluster_run$Q_df
+    Q <- as.matrix(cluster_run$Q_df)
   } else{
     Q <- cluster_run
   }
