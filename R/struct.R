@@ -190,3 +190,22 @@ print.structList <- function(x, ...) {
   Ks <- table(unlist(lapply(x, getK)))
   print(Ks)
 }
+
+#' @export
+`[[.structList` <- function(x, ...) {
+
+  y <- NextMethod("[[")
+  y
+}
+
+#' @export
+`[.structList` <- function(x, ...) {
+  y <- NextMethod("[")
+  # return struct object if list has length 1
+  if (length(y) == 1L) {
+    return(y)
+  } else {
+    class(y) <- oldClass(x)
+    y
+  }
+}

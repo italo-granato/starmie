@@ -89,3 +89,20 @@ combineLogs <- function(x) {
   do.call("rbind", lapply(x, function(y) y$log_info))
 }
 
+#' @export
+`[[.admixList` <- function(x, ...) {
+
+  y <- NextMethod("[[")
+  y
+}
+
+#' @export
+`[.admixList` <- function(x, ...) {
+  y <- NextMethod("[")
+  if (length(y) == 1L) {
+    return(y)
+  } else {
+    class(y) <- oldClass(x)
+    y
+  }
+}
