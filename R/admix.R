@@ -48,6 +48,7 @@ admixList <- function(...) {
 }
 
 #' Example admixture runs
+#' @export
 exampleAdmixture <- function() {
   path <- system.file("extdata/hapmap3_files", package = "starmie")
   logs <- list.files(path, pattern = "*.out", full.names = TRUE)
@@ -75,7 +76,7 @@ print.admix <- function(x, ...) {
 #' @export
 print.admixList <- function(x, ...) {
   n <- length(x)
-  cat(paste("structList object containing", n, " STRUCTURE runs.\n"))
+  cat(paste("admixList object containing", n, " ADMIXTURE runs.\n"))
   cat(paste("Number of Ks by number of runs:"))
   Ks <- table(unlist(lapply(x, getK)))
   print(Ks)
