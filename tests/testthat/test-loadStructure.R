@@ -10,7 +10,11 @@ test_that("loadStructure I/O checks", {
   expect_error(loadStructure(structure_output_files[[1]], 1), "logfile must be a string.")
 })
 
+k10_r1 <-structure_output_files[grepl("locprior_K10.out_f$",
+                                      structure_output_files)][1]
+k6_log <- structure_log_files[grepl("^chain_K6.log",
+                              basename(structure_log_files))]
 test_that("loadStructure population mismatch check", {
-  expect_error(loadStructure(structure_output_files[[2]], structure_log_files[[1]])
+  expect_error(loadStructure(k10_r1, k6_log)
                , "Population mismatch between output and logfile.")
 })
