@@ -2,27 +2,34 @@
 % Please edit documentation in R/plotMDS.R
 \name{plotMDS}
 \alias{plotMDS}
-\title{Plot prinicipal coordinates between inferred clusters}
+\title{Plot principal coordinates from Q-matrix, struct or admix objects}
 \usage{
-plotMDS(structure_obj, method = "nnd")
+plotMDS(x, method = NULL)
 }
 \arguments{
-\item{structure_obj}{a \code{\link{struct}} object}
+\item{x}{a Q-matrix of probability memberships, or \code{\link{struct}} or \code{\link{admix}} object}
 
-\item{method}{one of "nnd" or "jsd"}
+\item{method}{(default = NULL) string either 'nnd' or 'jsd' valid only for \code{\link{struct}} objects}
 }
 \description{
-Plot prinicipal coordinates between inferred clusters
+Plot principal coordinates from Q-matrix, struct or admix objects
 }
 \details{
 "nnd" uses the nucleotide distance matrix estimated by STRUCTURE
 to construct the principal coordinates, sizing the points by the expected
 heterozygosity within a cluster. "jsd" produces a principal coordinates
-from the Jensen Shannon Divergence metric as used by the 'ldavis' package.
+from the Jensen Shannon Divergence metric as used by the 'ldavis' package and
+is the default for Q-matrix or admix objects. By default using plotMDS on
+a struct object will produce principal coordinates on the cluster
+themselves rather than within samples.
 }
 \examples{
+# struct example
 k6_data <- exampleStructure("barplot")
 plotMDS(k6_data)
 plotMDS(k6_data, method = "jsd")
+# admix example
+k3_data <- exampleAdmixture()[[3]]
+plotMDS(k3_data)
 }
 
