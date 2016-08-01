@@ -20,7 +20,7 @@ to construct the principal coordinates, sizing the points by the expected
 heterozygosity within a cluster. "jsd" produces a principal coordinates
 from the Jensen Shannon Divergence metric as used by the 'ldavis' package and
 is the default for Q-matrix or admix objects. By default using plotMDS on
-a struct object will produce principal coordinates on the cluster
+a struct object will produce principal coordinates on the clusters
 themselves rather than within samples.
 }
 \examples{

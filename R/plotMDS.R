@@ -9,7 +9,7 @@
 #' heterozygosity within a cluster. "jsd" produces a principal coordinates
 #' from the Jensen Shannon Divergence metric as used by the 'ldavis' package and
 #' is the default for Q-matrix or admix objects. By default using plotMDS on
-#' a struct object will produce principal coordinates on the cluster
+#' a struct object will produce principal coordinates on the clusters
 #' themselves rather than within samples.
 #' @importFrom proxy dist
 #' @import ggplot2
@@ -24,15 +24,13 @@
 #' k3_data <- exampleAdmixture()[[3]]
 #' plotMDS(k3_data)
 plotMDS <- function(x, method = NULL) {
-    UseMethod("plotMDS")
+    UseMethod("plotMDS", x)
 }
 
-#' @method plotMDS default
+#' @method plotMDS matrix
 #' @export
-plotMDS.default <- function(x, method = NULL) {
-  if (!inherits(x, "matrix")) {
-    stop("plotMDS requires either a Q-matrix, struct, or admix object as input.")
-  }
+plotMDS.matrix <- function(x, method = NULL) {
+
   dist_xy <- proxy::dist(x, method = .JSD)
   mds_clust <- cmdscale(dist_xy)
   mds_df <- data.frame(PC1 = mds_clust[,1],
@@ -102,8 +100,8 @@ plotMDS.struct <- function(x, method = "nnd") {
 #' @method plotMDS admix
 #' @export
 plotMDS.admix <- function(x, method = NULL) {
-  Q_hat <- as.matrix(x$Q_df)
-  plotMDS.default(Q_hat)
+  Q_hat <- getQ(x)
+  plotMDS.matrix(Q_hat)
 }
 
 .JSD<- function(x,y) sqrt(0.5 * .KLD(x, (x+y)/2) + 0.5 * .KLD(y, (x+y)/2))

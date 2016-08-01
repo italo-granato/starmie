@@ -66,14 +66,8 @@ structList <- function(...) {
 }
 
 #' Accessor methods for struct objects
-#' @description Return elements from \code{\link{struct}} objects.
+#' @description getD Return the number of free parameters in STRUCTURE model
 #' @param structure_obj a \code{\link{struct}} object
-#' @export
-getK <- function(structure_obj) {
-  structure_obj$K
-}
-
-#' @describeIn getK Return the number of free parameters in STRUCTURE model
 #' @export
 getD <- function(structure_obj) {
 
@@ -86,41 +80,20 @@ getD <- function(structure_obj) {
 
 }
 
-#' @describeIn getK Return the estimated log posterior probability (L_k) from a \code{\link{struct}} object
+#' @describeIn getD Return the estimated log posterior probability (L_k) from a \code{\link{struct}} object
 #' @export
 getPosterior <- function(structure_obj){
   structure_obj$fit_stats_df[structure_obj$fit_stats_df$Statistic=="Estimated Ln Prob of Data",][2]
 }
 
-#' @describeIn getK Return the estimated mean and variance of estimated log-likelihood from a \code{\link{struct}} object
+#' @describeIn getD Return the estimated mean and variance of estimated log-likelihood from a \code{\link{struct}} object
 #' @export
 getFitStats <- function(structure_obj) {
   structure_obj$fit_stats_df[c(2,3), "Value"]
 }
 
-#' @describeIn getK Return the Q matrix
-#' @export
-getQ <- function(structure_obj){
-  Q <- data.matrix(structure_obj$ancest_df[,4:ncol(structure_obj$ancest_df)])
-  rownames(Q) <- structure_obj$ancest_df$Label
 
-  if (ncol(Q)==1){
-    colnames(Q) <- "Cluster 1"
-  }
-
-  return(Q)
-}
-
-getClusterAlleleFreqMat <- function(structure_obj) {
-   do.call("rbind", lapply(structure_obj$clust_allele_list,
-                           function(x) cbind(rep(x$Locus, x$AlleleNumber), x$FreqMatrix[, -2])))
-}
-
-getCompleteAlleleFreqMat <- function(structure_obj) {
-  do.call("rbind", lapply(structure_obj$clust_allele_list,
-                          function(x) cbind(rep(x$Locus, x$AlleleNumber), x$FreqMatrix[, c(1,2)])))
-}
-#' @describeIn getK Return non-burn in MCMC iterations.
+#' @describeIn getD Return non-burn in MCMC iterations.
 #' @export
 getMCMC <- function(structure_obj) {
   mcmc_df <- data.frame(K = getK(structure_obj),
