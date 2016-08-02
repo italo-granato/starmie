@@ -4,33 +4,35 @@
 \alias{bestK}
 \title{Determine a suitable K value from multiple Structure runs}
 \usage{
-bestK(runs, method = "evanno", make_plot = TRUE)
+bestK(x, method, plot = TRUE)
 }
 \arguments{
-\item{runs}{a \code{\link{structList}} or \code{\link{admixList}} object.}
+\item{x}{a \code{\link{structList}} or \code{\link{admixList}} object.}
 
-\item{method}{the method used to calculate the best K  one of c("evanno", "structure", "admixture")}
+\item{method}{the method used to calculate the best K either 'evanno' or
+'structure', not required for \code{\link{admixList}} objects.}
 
-\item{make_plot}{whether of not to generate diagnostic plots}
+\item{plot}{whether of not to generate diagnostic plots}
 }
 \value{
 a data.frame containing  with columns containing the L_k,
-AIC, BIC, DIC and deltaK. If make_plot = TRUE a ggplot object is printed
+AIC, BIC, DIC and deltaK for  \code{\link{structList}}. If
+an \code{\link{admixList}} was given a data.frame returning the log
+information will be supplied. If plot = TRUE a ggplot object is printed
 for the method of interest.
 }
 \description{
 Determine a suitable K value from multiple Structure runs
 }
 \details{
-By default bestK will produce diagnostic plots for the 'evanno' method,
-however if the K values are not ordered or there an even numbers of runs
-per K the 'structure' method will be implemented and delta K will not be
-returned in the output.
+If the K values are not ordered or there an even numbers of runs
+per K the 'structure' method will be implemented and  the 'evanno' method
+to compute delta K will not be returned in the output.
 }
 \examples{
 multi_K <- exampleStructure("multiple_runs")
 # Run the evanno method and display diagnostic plots.
-evanno_results <- bestK(multi_K)
+evanno_results <- bestK(multi_K, method = "evanno")
 # Run the default structure method and display diagnostic plots
 structure_results <- bestK(multi_K, "structure")
 # find 'best' K according to results
@@ -40,5 +42,8 @@ evanno_results[max_deltaK, ]
 lK <- structure_results$variable == 'L(K)'
 max_Lk <- which(structure_results$value == max(structure_results$value[lK], na.rm = TRUE))
 structure_results[max_Lk,]
+# admixture example
+multi_K_admix <- exampleAdmixture()
+bestK(multi_K_admix)
 }
 

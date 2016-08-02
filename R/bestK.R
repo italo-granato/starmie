@@ -1,24 +1,24 @@
 # bestK.R
 # Functions for determining a suitable K value from multiple Structure runs.
-
-
 #' Determine a suitable K value from multiple Structure runs
-#' @param  runs a \code{\link{structList}} or \code{\link{admixList}} object.
-#' @param  method the method used to calculate the best K  one of c("evanno", "structure", "admixture")
-#' @param  make_plot whether of not to generate diagnostic plots
+#' @param  x a \code{\link{structList}} or \code{\link{admixList}} object.
+#' @param  method the method used to calculate the best K either 'evanno' or
+#' 'structure', not required for \code{\link{admixList}} objects.
+#' @param  plot whether of not to generate diagnostic plots
 #' @import ggplot2
 #' @export
 #' @return a data.frame containing  with columns containing the L_k,
-#' AIC, BIC, DIC and deltaK. If make_plot = TRUE a ggplot object is printed
+#' AIC, BIC, DIC and deltaK for  \code{\link{structList}}. If
+#' an \code{\link{admixList}} was given a data.frame returning the log
+#' information will be supplied. If plot = TRUE a ggplot object is printed
 #' for the method of interest.
-#' @details By default bestK will produce diagnostic plots for the 'evanno' method,
-#' however if the K values are not ordered or there an even numbers of runs
-#' per K the 'structure' method will be implemented and delta K will not be
-#' returned in the output.
+#' @details If the K values are not ordered or there an even numbers of runs
+#' per K the 'structure' method will be implemented and  the 'evanno' method
+#' to compute delta K will not be returned in the output.
 #' @examples
 #' multi_K <- exampleStructure("multiple_runs")
 #' # Run the evanno method and display diagnostic plots.
-#' evanno_results <- bestK(multi_K)
+#' evanno_results <- bestK(multi_K, method = "evanno")
 #' # Run the default structure method and display diagnostic plots
 #' structure_results <- bestK(multi_K, "structure")
 #' # find 'best' K according to results
@@ -28,71 +28,86 @@
 #' lK <- structure_results$variable == 'L(K)'
 #' max_Lk <- which(structure_results$value == max(structure_results$value[lK], na.rm = TRUE))
 #' structure_results[max_Lk,]
-bestK <- function(runs, method="evanno", make_plot=TRUE){
-  #i/o checks
-  run_types <- inherits(runs, "structList") | inherits(runs, "admixList")
-
-  if ( !run_types )
-    stop("runs must be structList or admixList object")
-  if (!(method %in% c("evanno", "structure", "cverror")))
-    stop("method must be one of 'evanno' or 'structure' or 'cverror'")
-  if ( !is.logical(make_plot) | is.na(make_plot) )
-    stop("make_plot must be one of TRUE or FALSE")
-
-  #order structure runs and collect by K
-  if ( inherits(runs, "structList") ) {
-    message("Creating diagnostic plots for structure runs.")
-    params_sizes <- lapply(runs, getD)
-
-    posterior_probs <- data.frame(K=unlist(lapply(runs, getK)),
-                                  pos_prob=unlist(lapply(runs, getPosterior)),
-                                  d = unlist(lapply(params_sizes, function(i) i$d)),
-                                  n = unlist(lapply(params_sizes, function(i) i$n)))
-
-    # fit stats
-    ll_summary <- matrix(unlist(lapply(runs, getFitStats)), ncol = 2, byrow = TRUE)
-    # compute average AIC/BIC over runs + standard errors
-    posterior_probs$aic <- -2*posterior_probs$pos_prob + 2*posterior_probs$d
-    posterior_probs$bic <- -2*posterior_probs$pos_prob + posterior_probs$d * log(posterior_probs$n)
-    # Gelman 2013 method for computing DIC
-    posterior_probs$dic <- -2*ll_summary[,1] + 2*ll_summary[,2]
-
-    # If K are not sequential or do not have equal number of runs just
-    # perform the structure approach and produce a simpler plot
-    Ks <- table(posterior_probs$K)
-
-    if ( !is.sequential(names(Ks)) | !all(Ks[[1]]==Ks) | all(Ks == 1) | method == "structure") {
-
-      if (method!="structure") {
-        if (all(Ks == 1)) {
-          stop("Not enough information to compute Evanno statistics, only single runs.")
-        }
-        warning("WARNING! K values are not sequential or there are
-                an uneven number of runs per K.
-                Reverting to structure method instead.")
-
-      }
-      model_ll <- .bestK_structure(posterior_probs, make_plot)
-      model_ll
-
-    } else {
-      model_ll <- .bestK_evanno(posterior_probs, make_plot)
-      model_ll
-    }
-  } else if ( inherits(runs, "admixList") ) {
-    message("Creating diagnositc plots for admixture runs")
-
-    log_df <- combineLogs(runs)
-
-    if ( is.null(log_df) ) {
-      stop("Need log file information to produce diagnositc plots")
-    }
-    .bestK_admixture(log_df, make_plot)
-  }
-
+#' # admixture example
+#' multi_K_admix <- exampleAdmixture()
+#' bestK(multi_K_admix)
+bestK <- function(x, method, plot = TRUE) {
+  UseMethod("bestK", x)
 }
 
-.bestK_evanno <- function(posterior_probs, make_plot) {
+#' @method bestK structList
+#' @export
+bestK.structList <- function(x, method = "evanno", plot = TRUE) {
+  if (!(method %in% c("evanno", "structure")))
+    stop("method must be one of 'evanno' or 'structure'")
+  if ( !is.logical(plot) | is.na(plot) )
+    stop("plot must be one of TRUE or FALSE")
+
+  message("Creating diagnostic plots for structure runs.")
+  params_sizes <- lapply(x, getD)
+
+  posterior_probs <- data.frame(K=unlist(lapply(x, getK)),
+                                pos_prob=unlist(lapply(x, getPosterior)),
+                                d = unlist(lapply(params_sizes, function(i) i$d)),
+                                n = unlist(lapply(params_sizes, function(i) i$n)))
+
+  # fit stats
+  ll_summary <- matrix(unlist(lapply(x, getFitStats)), ncol = 2, byrow = TRUE)
+  # compute average AIC/BIC over runs + standard errors
+  posterior_probs$aic <- -2*posterior_probs$pos_prob + 2*posterior_probs$d
+  posterior_probs$bic <- -2*posterior_probs$pos_prob + posterior_probs$d * log(posterior_probs$n)
+  # Gelman 2013 method for computing DIC
+  posterior_probs$dic <- -2*ll_summary[,1] + 2*ll_summary[,2]
+
+  # If K are not sequential or do not have equal number of runs just
+  # perform the structure approach and produce a simpler plot
+  Ks <- table(posterior_probs$K)
+  # check for whether it is valid to compute Evanno method
+  evanno_invalid <- !is.sequential(names(Ks)) | !all(Ks[[1]]==Ks) | all(Ks == 1)
+  if (evanno_invalid | method == "structure") {
+    if (method!="structure") {
+      if (all(Ks == 1)) {
+        stop("Not enough information to compute Evanno statistics.")
+      }
+      warning("WARNING! K values are not sequential or there are
+                an uneven number of runs per K.
+                Reverting to structure method instead.")
+    }
+    model_ll <- bestK_structure(posterior_probs, plot)
+    model_ll
+
+  } else {
+    model_ll <- bestK_evanno(posterior_probs, plot)
+    model_ll
+  }
+}
+
+#' @method bestK admixList
+#' @export
+bestK.admixList <- function(x, method = NULL, plot = TRUE) {
+  message("Creating diagnositc plots for admixture runs")
+
+  log_df <- combineLogs(x)
+
+  if ( is.null(log_df) ) {
+    stop("Need log file information to produce diagnositc plots")
+  }
+  log_df_tidy <- data.table::melt(combineLogs(x),
+                                  id.vars = "K",
+                                  variable.name = "statistic")
+  if (plot) {
+    gg <- ggplot(log_df_tidy, aes(x = K, y = value)) +
+      geom_point() +
+      facet_wrap(~ statistic, ncol = 2, scales = "free_y") +
+      theme_bw()
+    suppressWarnings(print(gg))
+  }
+  return(log_df)
+}
+
+
+
+bestK_evanno <- function(posterior_probs, plot) {
   # plot delta K
   # split by K and calculate the first and second derivatives
 
@@ -125,7 +140,7 @@ bestK <- function(runs, method="evanno", make_plot=TRUE){
   }
   posterior_probs_summary <- do.call("rbind", output_values)
 
-  if (make_plot) {
+  if (plot) {
     gg <- ggplot(posterior_probs_summary, aes(x=K, y=value)) +
       geom_point() +
       facet_wrap(~variable, ncol=2, scales = "free_y") +
@@ -138,7 +153,7 @@ bestK <- function(runs, method="evanno", make_plot=TRUE){
   return(posterior_probs_summary)
 
 }
-.bestK_structure <- function(posterior_probs, make_plot) {
+bestK_structure <- function(posterior_probs, plot) {
   # look for change point in log likelihood plot
   # summarise data by K
   posterior_probs_byK <- split(posterior_probs, posterior_probs$K)
@@ -148,7 +163,7 @@ bestK <- function(runs, method="evanno", make_plot=TRUE){
                                                                             value = c(mean(i$pos_prob), mean(i$aic), mean(i$bic), mean(i$dic)),
                                                                             sd = c(sd(i$pos_prob), sd(i$aic), sd(i$bic), sd(i$dic)))))
   #generate plot
-  if (make_plot) {
+  if (plot) {
     gg <- ggplot(posterior_probs_summary, aes(x=K, y=value)) +
       geom_point() +
       geom_errorbar(aes(ymax=value+sd,
@@ -162,18 +177,6 @@ bestK <- function(runs, method="evanno", make_plot=TRUE){
 
   return(posterior_probs_summary)
 
-}
-
-
-
-.bestK_admixture <- function(log_df, make_plot) {
-
-  if (make_plot) {
-    gg <- ggplot(log_df, aes(x = K, y = CVerror)) + geom_point() + theme_bw()
-    suppressWarnings(print(gg))
-  }
-  best <- log_df$K[which.min(log_df$CVerror)]
-  return(best)
 }
 
 is.sequential <- function(x){
