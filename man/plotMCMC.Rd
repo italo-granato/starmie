@@ -4,31 +4,32 @@
 \alias{plotMCMC}
 \title{Plot STRUCTURE MCMC chains}
 \usage{
-plotMCMC(struct_list, make_plot = TRUE, use_logL = TRUE, facet = TRUE)
+plotMCMC(x, plot = TRUE, use_logL = TRUE, facet = TRUE)
 }
 \arguments{
-\item{struct_list}{a list \code{\link{struct}} objects}
+\item{x}{\code{\link{structList}} objects or a \code{\link{struct}} object}
 
-\item{make_plot}{logical print resulting plot default TRUE}
+\item{plot}{logical print resulting plot default TRUE}
 
 \item{use_logL}{logical plot log-likelihood (TRUE) or admixture coeffecient}
 
 \item{facet}{logical facet by K default TRUE}
 }
 \value{
-If make_plot is TRUE a ggplot is printed to the screen and the
+If plot is TRUE a ggplot is printed to the screen and the
 plot object and the data to generate it are returned. Otherwise,
 a data.frame containing MCMC info it returned.
 }
 \description{
 Plot non-burn MCMC iterations of STRUCTURE for checking convergence.
-If make_plot is set to FALSE a data.frame is returned containing the log likelihood
+If plot is set to FALSE a data.frame is returned containing the log likelihood
 and alpha values over different K and runs and not plot is printed to the device.
 }
 \examples{
 #Read in Structure files
 multiple_runs_k10 <- exampleStructure("mcmc_diagnostics")
 print(multiple_runs_k10)
-results <- plotMCMC(multiple_runs_k10, make_plot = TRUE)
+results <- plotMCMC(multiple_runs_k10, plot = TRUE)
+single_run <- plotMCMC(multiple_runs_k10[[1]])
 }
 

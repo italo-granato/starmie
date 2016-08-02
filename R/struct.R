@@ -96,6 +96,9 @@ getFitStats <- function(structure_obj) {
 #' @describeIn getD Return non-burn in MCMC iterations.
 #' @export
 getMCMC <- function(structure_obj) {
+  if(is.null(structure_obj$nonburn_df))
+    stop("Log file required to get MCMC diagnsotics")
+
   mcmc_df <- data.frame(K = getK(structure_obj),
                         structure_obj$nonburn_df[, c("Rep#:", "Alpha", "Ln Like")])
   colnames(mcmc_df) <- c("K", "Iteration", "Alpha", "LogL")
