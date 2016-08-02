@@ -69,7 +69,14 @@ plotMultiQ <- function(Q_list, populations_df){
   }
 
   for (i in 1:length(Q_list)){
-    Q_list[[i]] <- data.frame(Label=rownames(Q_list[[i]]), Q_list[[i]], K=rep(Ks[[i]], nrow(Q_list[[i]])))
+    if (is.null(rownames(Q_list[[i]]))) {
+      Label <- 1:nrow(Q_list[[i]])
+    } else {
+      Label <- rownames(Q_list[[i]])
+    }
+
+    Q_list[[i]] <- data.frame(Label=Label, Q_list[[i]],
+                              K=rep(Ks[[i]], nrow(Q_list[[i]])))
   }
 
   #Melt and append Q matrices
