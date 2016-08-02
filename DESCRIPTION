@@ -24,7 +24,8 @@ Imports:
   MCL,
   gridExtra,
   ggdendro,
-  ggrepel
+  ggrepel,
+  MCMCpack
 Suggests:
     testthat,
     knitr,

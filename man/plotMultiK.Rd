@@ -19,6 +19,6 @@ Generate a barplot for multiple values of K..
 \examples{
 cluster_runs <- exampleStructure("multiple_runs")
 # Generate barplot
-plotMultiK(cluster_runs[2:5])
+plotMultiK(cluster_runs[3:5])
 }
 
