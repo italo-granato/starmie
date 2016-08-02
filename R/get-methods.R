@@ -26,7 +26,6 @@ getK.admix <- function(x) {
 #' @export
 getQ <- function(x) {
   UseMethod("getQ", x)
-
 }
 
 #' @method getQ struct
