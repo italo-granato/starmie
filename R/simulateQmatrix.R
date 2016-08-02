@@ -15,7 +15,7 @@ simulateQ <- function(n, alpha, r) {
                       permutations = 1:length(alpha))
 
   for (i in 2:r) {
-    # add nose and shuffle
+    # add noise and shuffle
     q_random <- t(apply(Q_list[[1]]$Q, 1, addNoise))
     size_factor <- rowSums(q_random)
     q_random <- q_random / size_factor
@@ -27,8 +27,6 @@ simulateQ <- function(n, alpha, r) {
   }
 
   Q_list
-
-
 
 }
 
