@@ -23,7 +23,7 @@ To begin we assume ADMIXTURE has been run on an example PED/BED file to analyse
 and there is a directory containing the resulting .P, .Q and logging files
 (if you want to perform inference). 
 
-To read a single ADMIXTURE with supply the names of .P and .Q file and save
+To read a single ADMIXTURE run first supply the names of .P and .Q file and save
 it as an admix object using the `loadAdmixture` function.
 
 ```{r admix-read}
@@ -68,9 +68,7 @@ The plotBar function works on `admix` objects and produces a facetted barplot
 in the same manner as for `struct` objects.
 
 ```{r plotbar}
-
 plotBar(k3_admix)
-
 ```
 
 A regular barplot can be constructed by setting `facet = FALSE`.

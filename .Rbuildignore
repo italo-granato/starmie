@@ -2,5 +2,7 @@
 ^\.Rproj\.user$
 ^\.travis\.yml$
 .gitignore
-inst/shiny
-
+inst/shiny/
+inst/vingette-supp/
+^README\.Rmd$
+^README-.*\.png$

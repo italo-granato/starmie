@@ -28,10 +28,10 @@ difficult than it should be. This is why we wrote starmie.
 
 Some key features:
 
-  * Parse output from STRUCTURE or ADMXITURE into a useable data structure in R.
+  * Parse output from STRUCTURE or ADMXITURE into a usable data structure in R.
   * Plot model diagnostics to perform inference on choice of 'K'.
   * Create the 'standard' STRUCTURE bar plot showing cluster memberships.
-  * Plot model checks such as MCMC chains on the admixture coeffecient $\alpha$
+  * Plot model checks such as MCMC chains on the admixture coefficient $\alpha$
     and the log-likelihood.
   * Interactively visualising output from STRUCTURE analysis
 
@@ -189,10 +189,10 @@ plotMultiK(k6_all)
 ## Diagnostics: or checking out your chains
 
 A very simple approach to determining whether you need to rerun a STRUCTURE a model
-is to plot the estimated logLikelihood over each iteration over the post burn-in MCMC
+is to plot the estimated log-likelihood over each iteration over the post burn-in MCMC
 phase. If the chains have converged the log-likelihood should stabilise towards the final
 iterations and the variance within a run should be relatively low. The `plotMCMC`
-can plot the log-likelihood or admixture coeffecient against the iteration over different
+can plot the log-likelihood or admixture coefficient against the iteration over different
 runs and different $K$ values. Note this requires the logging file to be read by `loadStructure`. 
 
 Here we show an example when $K$ = 10 and the number of runs is also 10.
@@ -227,7 +227,7 @@ bestK(multi_K, "structure")
 
 ## CLUMPPING together
 
-We have written R implementations of the popular CLUMMP and CLUMPAK algortihms for
+We have written R implementations of the popular CLUMMP and CLUMPAK algorithms for
 combining Q-matrices over different runs of STRUCTURE. Usually, this step is performed
 after choosing a value for $K$, when the analyst would like to refine their estimates
 of cluster memberships. To perform CLUMPPING create a `structList` consisting of the
@@ -247,7 +247,7 @@ clumppy <- clumpp(Q_list, method = "greedy")
 plotMultiK(clumppy$Q_list)
 ```
 
-We can see thta the clumpping has worked compared to the first plot.
+We can see that the clumpping has worked compared to the first plot.
 
 # Putting it together - shiny starmie
 Coming soon... a fully interactive analysis of our population structure methods.

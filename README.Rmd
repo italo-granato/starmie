@@ -1,0 +1,55 @@
+---
+output: 
+  github_document:
+    toc: true
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "inst/vignette-supp/",
+  tidy = TRUE
+)
+```
+
+[![Travis-CI Build Status](https://travis-ci.org/sa-lee/starmie.svg?branch=master)](https://travis-ci.org/sa-lee/starmie)
+```{r, echo = FALSE}
+
+intro_rmd <- 'vignettes/using-starmie.Rmd'
+
+raw_rmd <- readLines(intro_rmd)
+
+# remove yaml 
+yaml_lines <- grep("---", raw_rmd)
+
+# remove appendix (session info)
+appendix <- grep("Appendix", raw_rmd)
+
+compressed_rmd <- raw_rmd[c(-seq(yaml_lines[1], yaml_lines[2], by = 1), 
+                            -seq(appendix, length(raw_rmd)))]
+writeLines(compressed_rmd, "child.Rmd")
+```
+
+```{r, child = 'child.Rmd'}
+```
+
+# Installation
+Currently `starmie` can be installed using the devtools package
+
+```{r, eval = FALSE}
+install.packages("devtools")
+library(devtools)
+install_github("sa-lee/starmie")
+```
+If you would like to also build the vignette with your installation run:
+
+```{r, eval=FALSE}
+install_github("sa-lee/starmie", build_vignettes = TRUE)
+```
+
+```{r cleanup, echo=FALSE, include=FALSE}
+file.remove("child.Rmd")
+```
