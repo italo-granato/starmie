@@ -10,9 +10,10 @@ Maintainer: Stuart Lee<lee.s@wehi.edu.au>
 Description: barplots, barplots, barplots!!!
 License: MIT + file LICENSE
 LazyData: TRUE
+Depends: R (>= 3.3.1)
 Imports:
   data.table,
-  readr,
+  readr (>= 1.0.0),
   stringr,
   tidyr,
   purrr,
