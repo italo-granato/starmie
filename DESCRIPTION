@@ -25,7 +25,8 @@ Imports:
   gridExtra,
   ggdendro,
   ggrepel,
-  MCMCpack
+  MCMCpack,
+  parallel
 Suggests:
     testthat,
     knitr,
