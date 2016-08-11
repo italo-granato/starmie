@@ -45,45 +45,15 @@ for each run the 'out_f' file produced by the program and the logging informatio
 so we can produce MCMC diagnostics. To get the latter the output of STRUCTURE
 must be redirected to a file. Below we present an example of running STRUCTURE
 in multiple runs for each K in parallel. We assume that the `mainparams` and
-`extraparams`  files are in the same directory and that the user has access
-to the STRUCTURE binary. Also make sure RANDOMIZE option is turned off,
+`extraparams`  files are correctly specified and that the user has access to the
+path of the STRUCTURE binary. Also make sure RANDOMIZE option is turned off,
 so independent seeds can be set in each run.
 
 ```{r parallel-structure, eval=FALSE}
-# use parallel library
-library(parallel)
-n.cores <- detectCores() # run on all possible cores machine has
-# prelim setup
-structure_binary <- "/path/to/structure"
-# number of Ks to try
-tryK <- 1L:20L
-# number of runs for each K
-n.runs <- 1L:20L
-
-# output files (will be appended by out_f from structure)
-out_files <- outer(n.runs, tryK, 
-                   function(x,y) paste0("str_run_", 
-                                        stringr::str_pad(x, width = 2, pad = 0), 
-                                        "_K_", 
-                                        stringr::str_pad(y, width = 2, pad = 0), 
-                                        ".out")
-                   )
-
-log_files <- gsub("out", "log", out_files)
-
-# create function to run structure, assumes that mainparams/extraparams 
-# file is in same path as current wd in Rscript
-run_structure <- function(out_file, log_file) {
-  k <- as.integer(stringr::str_extract(out_file, "[0-9]{2}\\b"))
-  return(system(paste(structure_binary, 
-                      "-K", k, 
-                      "-D", round(runif(1) * 1e8), 
-                      "-o", out_file, "&>", log_file)))
-}
-
-# prepare run with mcapply
-mcmapply(run_structure, out_files, log_files, 
-                    mc.cores = n.cores, mc.set.seed = TRUE)
+input_file <- system.file("inst/extdata/microsat_testfiles", "locprior.str", package = "starmie")
+main_params <- system.file("inst/extdata/microsat_testfiles", "mainparams", package = "starmie")
+extra_params <-  system.file("inst/extdata/microsat_testfiles", "extraparams", package = "starmie")
+runStructure("path/to/structure", input_file, main_params, extra_params, "run", 5, 2, 2)
 
 ```
 
@@ -199,15 +169,9 @@ Here we show an example when $K$ = 10 and the number of runs is also 10.
 ```{r mcmc1}
 multiple_runs_k10 <- exampleStructure("mcmc_diagnostics")
 
-# not run print multiple_runs_k10
-
 mcmc_out <-plotMCMC(multiple_runs_k10, facet = FALSE)
 
-suppressPackageStartupMessages(library(dplyr))
-mcmc_out$mcmc_info %>% 
-  group_by(run) %>% 
-  summarise(mean_LL = mean(LogL), var_LL = var(LogL))
-
+head(mcmc_out$mcmc_info)
 ```
 
 ## Inference on K is hard

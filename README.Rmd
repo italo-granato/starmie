@@ -16,6 +16,30 @@ knitr::opts_chunk$set(
 ```
 
 [![Travis-CI Build Status](https://travis-ci.org/sa-lee/starmie.svg?branch=master)](https://travis-ci.org/sa-lee/starmie)
+
+# Quick Start
+Construct a barplot for your STRUCTURE/ADMIXTURE output using `starmie` in three
+lines of code!
+```{r, fig.width =8, fig.height=6, fig.align='center'}
+library(starmie)
+k5_data <- loadStructure("./inst/extdata/microsat_testfiles/locprior_K5.out_f")
+k5_data
+plotBar(k5_data)
+```
+
+# Installation
+Currently `starmie` can be installed using the devtools package
+```{r, eval = FALSE}
+install.packages("devtools")
+library(devtools)
+install_github("sa-lee/starmie")
+```
+If you would like to also build the vignette with your installation run:
+
+```{r, eval=FALSE}
+install_github("sa-lee/starmie", build_vignettes = TRUE)
+```
+
 ```{r, echo = FALSE}
 
 intro_rmd <- 'vignettes/using-starmie.Rmd'
@@ -36,20 +60,8 @@ writeLines(compressed_rmd, "child.Rmd")
 ```{r, child = 'child.Rmd'}
 ```
 
-# Installation
-Currently `starmie` can be installed using the devtools package
-
-```{r, eval = FALSE}
-install.packages("devtools")
-library(devtools)
-install_github("sa-lee/starmie")
-```
-If you would like to also build the vignette with your installation run:
-
-```{r, eval=FALSE}
-install_github("sa-lee/starmie", build_vignettes = TRUE)
-```
-
 ```{r cleanup, echo=FALSE, include=FALSE}
-file.remove("child.Rmd")
+if (file.exists("child.Rmd")) {
+  file.remove("child.Rmd")
+}
 ```

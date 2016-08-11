@@ -1,4 +1,6 @@
 
+-   [Quick Start](#quick-start)
+-   [Installation](#installation)
 -   [Starmie: making population structure analyses easier](#starmie-making-population-structure-analyses-easier)
     -   [A basic STRUCTURE pipeline in R.](#a-basic-structure-pipeline-in-r.)
     -   [Parsing STRUCTURE files, the 'struct' object](#parsing-structure-files-the-struct-object)
@@ -10,10 +12,55 @@
 -   [Putting it together - shiny starmie](#putting-it-together---shiny-starmie)
 -   [Why starmie?](#why-starmie)
 -   [References](#references)
--   [Installation](#installation)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 [![Travis-CI Build Status](https://travis-ci.org/sa-lee/starmie.svg?branch=master)](https://travis-ci.org/sa-lee/starmie)
+
+Quick Start
+===========
+
+Construct a barplot for your STRUCTURE/ADMIXTURE output using `starmie` in three lines of code!
+
+``` r
+library(starmie)
+k5_data <- loadStructure("./inst/extdata/microsat_testfiles/locprior_K5.out_f")
+k5_data
+#> struct object containing run information for k = 5 
+#> Model run parameters:
+#>   individuals : 100
+#>   loci : 10
+#>   populations assumed : 5
+#>   Burn-in period : 10000
+#>   Reps : 20000
+#>   turned off : RANDOMIZE
+#> Model fit statistics:
+#>   Estimated Ln Prob of Data : -1408.8
+#>   Mean value of ln likelihood : -1343
+#>   Variance of ln likelihood : 131.5
+#>   Mean value of alpha : 0.0452
+#> MCMC diagnostics available: FALSE
+plotBar(k5_data)
+#> Extracting population labels from STRUCTURE output.
+```
+
+<img src="inst/vignette-supp/unnamed-chunk-2-1.png" style="display: block; margin: auto;" />
+
+Installation
+============
+
+Currently `starmie` can be installed using the devtools package
+
+``` r
+install.packages("devtools")
+library(devtools)
+install_github("sa-lee/starmie")
+```
+
+If you would like to also build the vignette with your installation run:
+
+``` r
+install_github("sa-lee/starmie", build_vignettes = TRUE)
+```
 
 Starmie: making population structure analyses easier
 ====================================================
@@ -33,35 +80,17 @@ This vignette outlines how to use starmie to do basic tasks after running STRUCT
 A basic STRUCTURE pipeline in R.
 --------------------------------
 
-To use all the options in starmie for STRUCTURE output, we require for each run the 'out\_f' file produced by the program and the logging information so we can produce MCMC diagnostics. To get the latter the output of STRUCTURE must be redirected to a file. Below we present an example of running STRUCTURE in multiple runs for each K in parallel. We assume that the `mainparams` and `extraparams` files are in the same directory and that the user has access to the STRUCTURE binary. Also make sure RANDOMIZE option is turned off, so independent seeds can be set in each run.
+To use all the options in starmie for STRUCTURE output, we require for each run the 'out\_f' file produced by the program and the logging information so we can produce MCMC diagnostics. To get the latter the output of STRUCTURE must be redirected to a file. Below we present an example of running STRUCTURE in multiple runs for each K in parallel. We assume that the `mainparams` and `extraparams` files are correctly specified and that the user has access to the path of the STRUCTURE binary. Also make sure RANDOMIZE option is turned off, so independent seeds can be set in each run.
 
 ``` r
-# use parallel library
-library(parallel)
-n.cores <- detectCores()  # run on all possible cores machine has
-# prelim setup
-structure_binary <- "/path/to/structure"
-# number of Ks to try
-tryK <- 1L:20L
-# number of runs for each K
-n.runs <- 1L:20L
-
-# output files (will be appended by out_f from structure)
-out_files <- outer(n.runs, tryK, function(x, y) paste0("str_run_", stringr::str_pad(x, 
-    width = 2, pad = 0), "_K_", stringr::str_pad(y, width = 2, pad = 0), ".out"))
-
-log_files <- gsub("out", "log", out_files)
-
-# create function to run structure, assumes that mainparams/extraparams file
-# is in same path as current wd in Rscript
-run_structure <- function(out_file, log_file) {
-    k <- as.integer(stringr::str_extract(out_file, "[0-9]{2}\\b"))
-    return(system(paste(structure_binary, "-K", k, "-D", round(runif(1) * 1e+08), 
-        "-o", out_file, "&>", log_file)))
-}
-
-# prepare run with mcapply
-mcmapply(run_structure, out_files, log_files, mc.cores = n.cores, mc.set.seed = TRUE)
+input_file <- system.file("inst/extdata/microsat_testfiles", "locprior.str", 
+    package = "starmie")
+main_params <- system.file("inst/extdata/microsat_testfiles", "mainparams", 
+    package = "starmie")
+extra_params <- system.file("inst/extdata/microsat_testfiles", "extraparams", 
+    package = "starmie")
+runStructure("path/to/structure", input_file, main_params, extra_params, "run", 
+    5, 2, 2)
 ```
 
 Parsing STRUCTURE files, the 'struct' object
@@ -100,7 +129,7 @@ The STRUCTURE object contains the following information about a single run:
 | K                   | K parameter supplied to STRUCTURE                         |
 | run\_params         | Input parameters                                          |
 | mem\_df             | Assigned cluster membership proportions                   |
-| alle\_freqs         | Pairwise Fst values between inferred clusters             |
+| allele\_freqs       | Pairwise Fst values between inferred clusters             |
 | avg\_dist\_df       | Average nucleotide distance within clusters               |
 | fst\_df             | Within cluster average Fst values                         |
 | fit\_stats\_df      | Model fit diagnositcs                                     |
@@ -122,6 +151,7 @@ To make the bar-plot simply type:
 
 ``` r
 plotBar(k6_msat, facet = FALSE)
+#> Extracting population labels from STRUCTURE output.
 ```
 
 <img src="inst/vignette-supp/plot-bar-1.png" style="display: block; margin: auto;" />
@@ -130,6 +160,7 @@ This will group the known sample labels into population labels if they were supp
 
 ``` r
 plotBar(k6_msat)
+#> Extracting population labels from STRUCTURE output.
 ```
 
 <img src="inst/vignette-supp/plot-bar2-1.png" style="display: block; margin: auto;" />
@@ -165,6 +196,7 @@ We can also compare the cluster labelling by using `plotMultiK` (and see that la
 
 ``` r
 plotMultiK(k6_all)
+#> Extracting population labels from STRUCTURE output.
 ```
 
 <img src="inst/vignette-supp/plot-multiK-1.png" style="display: block; margin: auto;" />
@@ -179,8 +211,6 @@ Here we show an example when \(K\) = 10 and the number of runs is also 10.
 ``` r
 multiple_runs_k10 <- exampleStructure("mcmc_diagnostics")
 
-# not run print multiple_runs_k10
-
 mcmc_out <- plotMCMC(multiple_runs_k10, facet = FALSE)
 ```
 
@@ -188,21 +218,14 @@ mcmc_out <- plotMCMC(multiple_runs_k10, facet = FALSE)
 
 ``` r
 
-suppressPackageStartupMessages(library(dplyr))
-mcmc_out$mcmc_info %>% group_by(run) %>% summarise(mean_LL = mean(LogL), var_LL = var(LogL))
-#> # A tibble: 10 x 3
-#>      run   mean_LL   var_LL
-#>    <int>     <dbl>    <dbl>
-#> 1      1 -1314.990 294.7336
-#> 2      2 -1321.930 290.8795
-#> 3      3 -1321.640 361.9904
-#> 4      4 -1316.970 497.2654
-#> 5      5 -1341.510 343.6180
-#> 6      6 -1325.415 423.9324
-#> 7      7 -1320.950 318.3191
-#> 8      8 -1338.385 415.2932
-#> 9      9 -1305.835 352.3395
-#> 10    10 -1314.395 364.7929
+head(mcmc_out$mcmc_info)
+#>     K Iteration Alpha  LogL run
+#> 1: 10     10100 0.034 -1289   1
+#> 2: 10     10200 0.038 -1318   1
+#> 3: 10     10300 0.039 -1312   1
+#> 4: 10     10400 0.040 -1314   1
+#> 5: 10     10500 0.042 -1344   1
+#> 6: 10     10600 0.042 -1305   1
 ```
 
 Inference on K is hard
@@ -355,20 +378,3 @@ Falush, D., Stephens, M. & Pritchard, J. K. Inference of population structure us
 Pritchard, J. K., Stephens, M. & Donnelly, P. Inference of population structure using multilocus genotype data. Genetics 155, 945–959 (2000).
 
 Verity, R. & Nichols, R. A. Estimating the Number of Subpopulations (K) in Structured Populations. Genetics (2016). <doi:10.1534/genetics.115.180992>
-
-Installation
-============
-
-Currently `starmie` can be installed using the devtools package
-
-``` r
-install.packages("devtools")
-library(devtools)
-install_github("sa-lee/starmie")
-```
-
-If you would like to also build the vignette with your installation run:
-
-``` r
-install_github("sa-lee/starmie", build_vignettes = TRUE)
-```
