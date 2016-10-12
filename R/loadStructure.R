@@ -35,19 +35,36 @@ loadStructure <- function(filename, logfile=NULL){
   s_f <- s_f[s_f!=""]
 
   #Get run parameters
-  run_lines <- s_f[(which(s_f=="Run parameters:")+1):(which(grepl("^Proportion of membership.*", s_f))-2)]
+  # extract line for membership proportion, this is output from locprior model
+  prop_membership <- grep("^Proportion of membership.*", s_f)
+  locprior <- TRUE
+  if (length(prop_membership) == 0) {
+    prop_membership <- grep("^Overall proportion of membership*", s_f)
+    locprior <- FALSE
+  }
+  run_lines <- s_f[(grep("Run parameters:", s_f)+1):(prop_membership-2)]
   run_lines <- str_trim(run_lines)
   run_lines <- str_split_fixed(run_lines, " ", n=2)
   run_params <- data.frame(Parameter=run_lines[,2], Value=run_lines[,1], stringsAsFactors = FALSE)
   pops <- as.numeric(run_params[run_params$Parameter=="populations assumed",2])
 
   #Get membership proportion
-  mem_lines <- s_f[(which(grepl("^Proportion of membership.*",s_f))+3):(which(grepl("^Allele-freq", s_f))-2)]
+  mem_lines <- s_f[(prop_membership+3):(grep("^Allele-freq", s_f)-2)]
   mem_lines <- str_trim(mem_lines)
-  mem_lines <- str_split_fixed(mem_lines, "\\s+", n=pops+2)
-  mem_lines[,1] <- str_replace(mem_lines[,1], ":", "")
-  mem_df <- data.matrix(data.frame(mem_lines[-1, ], stringsAsFactors = FALSE))
-  colnames(mem_df) <- mem_lines[1,]
+  if (!locprior) {
+    mem_lines <- str_split_fixed(mem_lines, "\\s+", n=pops)
+    mem_lines <- t(mem_lines)
+    class(mem_lines) <- "numeric"
+    mem_df <- data.frame("Cluster" = mem_lines[,1],
+                         "Proportion" = mem_lines[,2],
+                         stringsAsFactors = FALSE)
+  } else {
+    mem_lines <- str_split_fixed(mem_lines, "\\s+", n=pops+2)
+    mem_lines[,1] <- str_replace(mem_lines[,1], ":", "")
+    mem_df <- data.matrix(data.frame(mem_lines[-1, ], stringsAsFactors = FALSE))
+    colnames(mem_df) <- mem_lines[1,]
+  }
+
 
   #Get Allele-freq
   alle_lines <- s_f[(which(grepl("^Allele-freq", s_f))+4):which(grepl("^Average distances.*", s_f))-1]
@@ -72,32 +89,49 @@ loadStructure <- function(filename, logfile=NULL){
   fit_stats_df <- data.frame(Statistic=fit_lines[,1], Value=as.numeric(fit_lines[,2]))
 
   #Fst values
-  fst_lines <- s_f[which(grepl("^Mean value of Fst_1 .*", s_f)):(which(grepl("^Inferred ancestry of.*", s_f))-1)]
+  fst_lines <- s_f[(grep("^Mean value of Fst_1 .*", s_f)):(grep("^Inferred ancestry of.*", s_f)-1)]
   fst_lines <- str_trim(fst_lines)
   fst_lines <- str_split_fixed(fst_lines, "= ", n=2)
   fst_lines[,1] <- str_trim(fst_lines[,1])
   fst_lines[,1] <- str_replace(fst_lines[,1], "Mean value of Fst_", "")
   fst_df <- data.frame(Fst.Group=as.numeric(fst_lines[,1]), Value=as.numeric(fst_lines[,2]))
 
-  #Inferred ancestory individuals
-  ances_lines <- s_f[(which(grepl("^Inferred ancestry of.*", s_f))+1):(which(grepl("^Estimated Allele Frequencies .*", s_f))-1)]
+  #Inferred ancestry individuals
+  ances_lines <- s_f[(grep("^Inferred ancestry of.*", s_f)+1):(grep("^Estimated Allele Frequencies .*", s_f)-1)]
   ances_lines <- str_trim(ances_lines)
-  ances_lines <- gsub("[(:)]", "", ances_lines)
-  ances_lines <- str_split_fixed(ances_lines, "\\s+", n=4+pops)
-  header <- ances_lines[1,][1:3]
-  sample_label <- ances_lines[2:nrow(ances_lines), 2]
-  ancest_matrix <- ances_lines[2:nrow(ances_lines), 3:ncol(ances_lines)]
+  # extract genotype missing proportions for individuals
+  header <- gsub("\\(|\\)|:","", ances_lines[1], " ")
+  header <- str_split(header, " ")[[1]]
+  ances_lines <- ances_lines[-1]
+  missing_proportions <- as.numeric(gsub("[\\(\\)]", "",
+                              regmatches(ances_lines, regexpr("\\(.*?\\)", ances_lines))))
+  sample_label <- str_trim(gsub("\\(", "",
+                        regmatches(ances_lines, regexpr(".*\\(", ances_lines))))
+  sample_label <- str_split_fixed(sample_label, "\\s+", n = 2)[,-1]
+
+  if (!locprior) {
+    sample_summary <- data.frame(sample_label, missing_proportions)
+    split_n <- 2
+  } else {
+    population_assignment <- as.integer(str_trim(gsub("\\)|:", "",
+                                                      regmatches(ances_lines, regexpr("\\).*?:", ances_lines)))))
+    sample_summary <- data.frame(sample_label, missing_proportions, population_assignment)
+    split_n <- 3
+  }
+  ancest_matrix <- gsub(":  ", "", regmatches(ances_lines, regexpr(":(.*)", ances_lines)))
+  ancest_matrix <- str_split_fixed(ancest_matrix, "\\s+", n=pops)
   class(ancest_matrix) <- "numeric"
-  ancest_df <- data.frame(sample_label, ancest_matrix, stringsAsFactors = FALSE)
-  colnames(ancest_df)[1:3] <- header
-  colnames(ancest_df)[4:ncol(ancest_df)] <- paste("Cluster", seq(1,ncol(ancest_df)-3))
+  ancest_df <- data.frame(sample_summary,
+                          ancest_matrix, stringsAsFactors = FALSE)
+  colnames(ancest_df)[1:split_n] <- header[1:split_n]
+  colnames(ancest_df)[(split_n+1):ncol(ancest_df)] <- paste("Cluster", seq(1,ncol(ancest_matrix)))
 
   #Cluster allele frequencies
-  clust_allel_lines <- s_f[(which(grepl("^First column gives.*", s_f))+1):(which(grepl("^Values of parameters used.*", s_f))-1)]
-  pos <- which(grepl("^Locus .*", clust_allel_lines))
+  clust_allel_lines <- s_f[(grep("^First column gives.*", s_f)+1):(grep("^Values of parameters used.*", s_f)-1)]
+  pos <- grep("^Locus .*", clust_allel_lines)
   clust_allel_lines <- gsub("[()%]", "", clust_allel_lines)
   clust_allel_lines <- unname(split(clust_allel_lines, cumsum(seq_along(clust_allel_lines) %in% pos)))
-  clust_allele_list <- purrr::map(clust_allel_lines, function(x){
+  clust_allele_list <- purrr::map(clust_allel_lines[1:2], function(x){
     list(Locus=as.numeric(str_split(x[[1]], "\\s+")[[1]][2])
          , AlleleNumber=as.numeric(str_split(x[[2]], "\\s+")[[1]][1])
          , MissingDataPercentage=as.numeric(str_split(x[[3]], "\\s+")[[1]][1])
