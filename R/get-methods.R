@@ -31,13 +31,10 @@ getQ <- function(x) {
 #' @method getQ struct
 #' @export
 getQ.struct <- function(x) {
-  Q <- data.matrix(x$ancest_df[,4:ncol(x$ancest_df)])
+  columns_to_keep <- colnames(x$ancest_df)
+  columns_to_keep <- grep("^Cluster", columns_to_keep)
+  Q <- data.matrix(x$ancest_df[, columns_to_keep])
   rownames(Q) <- x$ancest_df$Label
-
-  if (ncol(Q)==1){
-    colnames(Q) <- "Cluster 1"
-  }
-
   return(Q)
 }
 
