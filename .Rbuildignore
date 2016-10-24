@@ -6,3 +6,4 @@ inst/shiny/
 inst/vingette-supp/
 ^README\.Rmd$
 ^README-.*\.png$
+^cran-comments\.md$
