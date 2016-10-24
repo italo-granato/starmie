@@ -2,10 +2,8 @@ Package: starmie
 Type: Package
 Title: Population Structure Model Inference and Visualisation
 Version: 0.1.2
-Authors@R: c(person("Gerry", "Tonkin-Hill", email = "tonkin-hill.g@wehi.edu.au", role = c("cre", "aut")),
+Authors@R: c(person("Gerry", "Tonkin-Hill", email = "tonkin-hill.g@wehi.edu.au", role = c("aut")),
     person( "Stuart", "Lee", email = "lee.s@wehi.edu.au", role = c("cre", "aut")))
-Author: Gerry Tonkin-Hill, Stuart Lee
-Maintainer: Stuart Lee<lee.s@wehi.edu.au>
 Description: Parse output from ADMIXTURE/STRUCTURE and perform model selection and visualisation.
 License: MIT + file LICENSE
 LazyData: TRUE
