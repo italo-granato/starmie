@@ -74,7 +74,7 @@ Some key features:
 -   Parse output from STRUCTURE or ADMXITURE into a usable data structure in R.
 -   Plot model diagnostics to perform inference on choice of 'K'.
 -   Create the 'standard' STRUCTURE bar plot showing cluster memberships.
--   Plot model checks such as MCMC chains on the admixture coefficient \(\alpha\) and the log-likelihood.
+-   Plot model checks such as MCMC chains on the admixture coefficient *α* and the log-likelihood.
 -   Visualizing output from STRUCTURE analysis
 
 This vignette outlines how to use starmie to do basic tasks after running STRUCTURE at the command line.
@@ -174,10 +174,10 @@ Loading multiple 'struct' objects the 'structList'
 
 The `structList` is a container for manipulating multiple `struct` objects. Some potential use-cases are:
 
--   load multiple \(K\) values from different runs and perform model comparisons.
--   pool a sequence of runs over the same value of \(K\) and perform CLUMPPing
+-   load multiple *K* values from different runs and perform model comparisons.
+-   pool a sequence of runs over the same value of *K* and perform CLUMPPing
 
-On our example microsatellite data to add the second run for the results of running STRUCTURE \(K\) = 6 ,we first load the output file, and then pass both `struct` objects to the `structList` function.
+On our example microsatellite data to add the second run for the results of running STRUCTURE *K* = 6 ,we first load the output file, and then pass both `struct` objects to the `structList` function.
 
 ``` r
 k6_file_run2 <- system.file("extdata/microsat_testfiles/", "run2_locprior_K6.out_f", 
@@ -206,9 +206,9 @@ plotMultiK(k6_all)
 Diagnostics: or checking out your chains
 ----------------------------------------
 
-A very simple approach to determining whether you need to rerun a STRUCTURE a model is to plot the estimated log-likelihood over each iteration over the post burn-in MCMC phase. If the chains have converged the log-likelihood should stabilize towards the final iterations and the variance within a run should be relatively low. The `plotMCMC` can plot the log-likelihood or admixture coefficient against the iteration over different runs and different \(K\) values. Note this requires the logging file to be read by `loadStructure`.
+A very simple approach to determining whether you need to rerun a STRUCTURE a model is to plot the estimated log-likelihood over each iteration over the post burn-in MCMC phase. If the chains have converged the log-likelihood should stabilize towards the final iterations and the variance within a run should be relatively low. The `plotMCMC` can plot the log-likelihood or admixture coefficient against the iteration over different runs and different *K* values. Note this requires the logging file to be read by `loadStructure`.
 
-Here we show an example when \(K\) = 10 and the number of runs is also 10.
+Here we show an example when *K* = 10 and the number of runs is also 10.
 
 ``` r
 multiple_runs_k10 <- exampleStructure("mcmc_diagnostics")
@@ -233,7 +233,7 @@ head(mcmc_out$mcmc_info)
 Inference on K is hard
 ----------------------
 
-Usually you would run STRUCTURE multiple times for multiple values of \(K\) and then use estimates of the log-likelihood to determine the 'best' choice of \(K\) that explains the population structure in your data. There are two choices for model selection - either use the maximum mean log-posterior probability estimated by STRUCTURE or use the Evanno method. The `bestK` function returns the value of \(K\) that is estimated by these methods and also produces diagnostic plots.
+Usually you would run STRUCTURE multiple times for multiple values of *K* and then use estimates of the log-likelihood to determine the 'best' choice of *K* that explains the population structure in your data. There are two choices for model selection - either use the maximum mean log-posterior probability estimated by STRUCTURE or use the Evanno method. The `bestK` function returns the value of *K* that is estimated by these methods and also produces diagnostic plots.
 
 ``` r
 multi_K <- exampleStructure("multiple_runs")
@@ -334,9 +334,9 @@ bestK(multi_K)
 CLUMPPING together - avoiding label switching
 ---------------------------------------------
 
-We have written R implementations of the popular CLUMMP and CLUMPAK algorithms for combining Q-matrices over different runs of STRUCTURE. Usually, this step is performed after choosing a value for \(K\), when the analyst would like to refine their estimates of cluster memberships. To perform CLUMPPING create a `structList` consisting of the same value of \(K\) for multiple runs. In each case the Q-matrices and a matrix of column permutations for each run are returned.
+We have written R implementations of the popular CLUMMP and CLUMPAK algorithms for combining Q-matrices over different runs of STRUCTURE. Usually, this step is performed after choosing a value for *K*, when the analyst would like to refine their estimates of cluster memberships. To perform CLUMPPING create a `structList` consisting of the same value of *K* for multiple runs. In each case the Q-matrices and a matrix of column permutations for each run are returned.
 
-We return to the example of our two runs of \(K\) = 6, stored in `k6_all` defined above.
+We return to the example of our two runs of *K* = 6, stored in `k6_all` defined above.
 
 ``` r
 Q_list <- lapply(k6_all, getQ)
@@ -368,7 +368,7 @@ plotMDS(k6_msat)
 Bugs, feature requests and miscellana
 =====================================
 
-Please submit any bugs or features requests as an issue to <https://github.com/sa-lee/starmie/issues> Pull requests are completely welcome.
+Please submit any bugs or feature requests as an issue to <https://github.com/sa-lee/starmie/issues>
 
 References
 ==========
@@ -387,4 +387,4 @@ Falush, D., Stephens, M. & Pritchard, J. K. Inference of population structure us
 
 Pritchard, J. K., Stephens, M. & Donnelly, P. Inference of population structure using multilocus genotype data. Genetics 155, 945–959 (2000).
 
-Verity, R. & Nichols, R. A. Estimating the Number of Subpopulations (K) in Structured Populations. Genetics (2016). <doi:10.1534/genetics.115.180992>
+Verity, R. & Nichols, R. A. Estimating the Number of Subpopulations (K) in Structured Populations. Genetics (2016).
