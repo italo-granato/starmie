@@ -36,10 +36,10 @@ plotMCMC.struct <- function(x, plot = TRUE, use_logL = TRUE, facet = NULL) {
   if (plot) {
     if (use_logL) {
       gg <- ggplot(mcmc_df,
-                   aes(x = Iteration, y = LogL))
+                   aes_(x = ~Iteration, y = ~LogL))
     } else {
       gg <- ggplot(mcmc_df,
-                   aes(x = Iteration, y = Alpha))
+                   aes_(x = ~Iteration, y = ~Alpha))
     }
 
     gg <-  gg +
@@ -53,6 +53,7 @@ plotMCMC.struct <- function(x, plot = TRUE, use_logL = TRUE, facet = NULL) {
 }
 
 #' @method plotMCMC structList
+#' @importFrom stats ave
 #' @export
 plotMCMC.structList <- function(x, plot = TRUE, use_logL = TRUE, facet = TRUE) {
 
@@ -60,15 +61,15 @@ plotMCMC.structList <- function(x, plot = TRUE, use_logL = TRUE, facet = TRUE) {
   # generate data frame of mcmc diagnostics from non-burn iterations
   mcmc_df <- rbindlist(lapply(x, getMCMC))
   # run number is kind of arbirtary here, just group by K and iteration
-  mcmc_df[, run := seq_len(.N), by = list(K, Iteration)]
+  mcmc_df$run <- factor(ave(mcmc_df$K, mcmc_df$Iteration, FUN = seq_along))
 
   if (plot) {
     if (use_logL) {
       gg <- ggplot(mcmc_df,
-                   aes(x = Iteration, y = LogL, colour = factor(run)))
+                   aes_(x = ~Iteration, y = ~LogL, colour = ~run))
     } else {
       gg <- ggplot(mcmc_df,
-                   aes(x = Iteration, y = Alpha, colour = factor(run)))
+                   aes_(x = ~Iteration, y = ~Alpha, colour = ~run))
     }
 
     gg <-  gg +

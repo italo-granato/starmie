@@ -44,6 +44,7 @@ struct <- function() {
 #' @description  the structList class is a conatainer for storing a collection
 #' of struct objects.
 #' @param ... a list of a \code{\link{struct}} objects
+#' @importFrom methods is
 #' @export
 structList <- function(...) {
 

@@ -27,6 +27,7 @@ admix <- function() {
 #' @description Collect many  \code{\link{admix}} objects
 #' @param ... a list of \code{\link{admix}} objects
 #' @return an admixList object
+#' @importFrom methods is
 #' @export
 admixList <- function(...) {
   listOut <- list(...)

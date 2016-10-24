@@ -14,7 +14,7 @@ Imports:
   stringr,
   tidyr,
   purrr,
-  ggplot2,
+  ggplot2 (>= 2.1.0),
   iterpc,
   combinat,
   label.switching,
@@ -24,7 +24,9 @@ Imports:
   ggdendro,
   ggrepel,
   MCMCpack,
-  parallel
+  parallel,
+  methods,
+  stats
 Suggests:
     testthat,
     knitr,

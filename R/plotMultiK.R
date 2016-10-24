@@ -57,6 +57,7 @@ plotMultiK.admixList <- function(x, populations, plot = TRUE) {
 
 }
 
+#' @importFrom stats ave
 plotMultiQ <- function(Q_list, populations_df){
 
   #get K labels
@@ -90,7 +91,8 @@ plotMultiQ <- function(Q_list, populations_df){
 
   #Generate plot
   Q_melt <- Q_melt[order(Q_melt$Cluster),]
-  gg <- ggplot(Q_melt, aes(x=factor(Label), y=value, fill=factor(Cluster)))
+  Q_melt$Label <- factor(Q_melt$Label)
+  gg <- ggplot(Q_melt, aes_(x=~Label, y=~value, fill=~Cluster))
   if (!is.null(populations_df)){
     gg <- gg + facet_grid( K ~ Population, scales = "free_x", space = "free_x")
   } else{

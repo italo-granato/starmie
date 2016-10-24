@@ -14,6 +14,7 @@
 #' on Windows.
 #' @importFrom stringr str_pad str_extract
 #' @importFrom parallel mcmapply detectCores
+#' @importFrom stats runif
 #' @export
 #' @examples
 #'\dontrun{

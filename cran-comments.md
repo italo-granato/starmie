@@ -5,9 +5,15 @@
 
 ## R CMD check results
 
-0 errors | 0 warnings | 4 notes
+0 errors | 0 warnings | 1 notes
 
-There were no errors or warnings but there were 4 NOTES.
+There were no errors or warnings but there were 1 NOTES.
+
+checking installed package size ... NOTE
+  installed size is  6.9Mb
+  sub-directories of 1Mb or more:
+    doc       1.1Mb
+    extdata   4.9Mb
 
 * This is a new release.
 

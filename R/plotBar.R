@@ -81,7 +81,9 @@ plotQ <- function(Q, populations_df, facet) {
 
   #Generate plot
   Q_melt <- Q_melt[order(Q_melt$Cluster),]
-  gg <- ggplot(Q_melt, aes(x=factor(Label), y=value, fill=factor(Cluster)))
+  Q_melt$Label <- factor(Q_melt$Label)
+
+  gg <- ggplot(Q_melt, aes_(x=~Label, y=~value, fill=~Cluster))
   if (!is.null(populations_df)){
     if (facet){
       gg <- gg + facet_grid( Cluster ~ Population, scales = "free_x", space = "free_x")
