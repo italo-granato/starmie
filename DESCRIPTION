@@ -4,7 +4,11 @@ Title: Population Structure Model Inference and Visualisation
 Version: 0.1.2
 Authors@R: c(person("Gerry", "Tonkin-Hill", email = "tonkin-hill.g@wehi.edu.au", role = c("aut")),
     person( "Stuart", "Lee", email = "lee.s@wehi.edu.au", role = c("cre", "aut")))
-Description: Parse output from ADMIXTURE/STRUCTURE and perform model selection and visualisation.
+Description: Data structures and methods for  manipulating output of genetic population structure clustering algorithms.
+  Starmie can parse output from 'STRUCTURE' (see <https://pritchardlab.stanford.edu/structure.html> for details) or
+  'ADMIXTURE' (see <https://www.genetics.ucla.edu/software/admixture/> for details). Starmie performs model selection via
+  information criterion, and provides functions for MCMC diagnositics, correcting label
+  switching and visualisation of admixture coeffecients.
 License: MIT + file LICENSE
 LazyData: TRUE
 Depends: R (>= 3.3.0)
