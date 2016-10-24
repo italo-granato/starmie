@@ -247,7 +247,7 @@ Falush, D., Stephens, M. & Pritchard, J. K. Inference of population structure us
 
 Pritchard, J. K., Stephens, M. & Donnelly, P. Inference of population structure using multilocus genotype data. Genetics 155, 945–959 (2000).
 
-Verity, R. & Nichols, R. A. Estimating the Number of Subpopulations (K) in Structured Populations. Genetics (2016). doi:10.1534/genetics.115.180992
+Verity, R. & Nichols, R. A. Estimating the Number of Subpopulations (K) in Structured Populations. Genetics (2016).
 
 # Appendix
 ```{r session-info}
