@@ -8,9 +8,9 @@
     -   [Loading multiple 'struct' objects the 'structList'](#loading-multiple-struct-objects-the-structlist)
     -   [Diagnostics: or checking out your chains](#diagnostics-or-checking-out-your-chains)
     -   [Inference on K is hard](#inference-on-k-is-hard)
-    -   [CLUMPPING together](#clumpping-together)
--   [Putting it together - shiny starmie](#putting-it-together---shiny-starmie)
--   [Why starmie?](#why-starmie)
+    -   [CLUMPPING together - avoiding label switching](#clumpping-together---avoiding-label-switching)
+    -   [Other visualisations](#other-visualisations)
+-   [Bugs, feature requests and miscellana](#bugs-feature-requests-and-miscellana)
 -   [References](#references)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -19,11 +19,13 @@
 Quick Start
 ===========
 
-Construct a barplot for your STRUCTURE/ADMIXTURE output using `starmie` in three lines of code!
+Construct a barplot for your STRUCTURE/ADMIXTURE output using `starmie` in a few lines of code!
 
 ``` r
 library(starmie)
-k5_data <- loadStructure("./inst/extdata/microsat_testfiles/locprior_K5.out_f")
+str_output <- system.file("extdata/microsat_testfiles/", "locprior_K5.out_f", 
+    package = "starmie")
+k5_data <- loadStructure(str_output)
 k5_data
 #> struct object containing run information for k = 5 
 #> Model run parameters:
@@ -65,7 +67,7 @@ install_github("sa-lee/starmie", build_vignettes = TRUE)
 Starmie: making population structure analyses easier
 ====================================================
 
-A very common part of modern population genetics analysis is inferring underlying population structure from genetic markers such as single nucleotide polymorphisms (SNPs) or microsatellites. The two main methods for this task are the Bayesian STRUCTURE algorithm or the frequentist ADMIXTURE. We have found that processing the output of these programs and performing meaningful inference and visualisation of the results is far more difficult than it should be. This is why we wrote starmie.
+A very common part of modern population genetics analysis is inferring underlying population structure from genetic markers such as single nucleotide polymorphisms (SNPs) or microsatellites. The two main methods for this task are the Bayesian STRUCTURE algorithm or the frequentist ADMIXTURE. We have found that processing the output of these programs and performing meaningful inference and visualization of the results is far more difficult than it should be. This is why we wrote starmie.
 
 Some key features:
 
@@ -73,7 +75,7 @@ Some key features:
 -   Plot model diagnostics to perform inference on choice of 'K'.
 -   Create the 'standard' STRUCTURE bar plot showing cluster memberships.
 -   Plot model checks such as MCMC chains on the admixture coefficient \(\alpha\) and the log-likelihood.
--   Interactively visualising output from STRUCTURE analysis
+-   Visualizing output from STRUCTURE analysis
 
 This vignette outlines how to use starmie to do basic tasks after running STRUCTURE at the command line.
 
@@ -192,7 +194,7 @@ k6_all
 #> 2
 ```
 
-We can also compare the cluster labelling by using `plotMultiK` (and see that label-switching over different MCMC runs is a problem!)
+We can also compare the cluster labeling by using `plotMultiK` (and see that label-switching over different MCMC runs is a problem!)
 
 ``` r
 plotMultiK(k6_all)
@@ -204,7 +206,7 @@ plotMultiK(k6_all)
 Diagnostics: or checking out your chains
 ----------------------------------------
 
-A very simple approach to determining whether you need to rerun a STRUCTURE a model is to plot the estimated log-likelihood over each iteration over the post burn-in MCMC phase. If the chains have converged the log-likelihood should stabilise towards the final iterations and the variance within a run should be relatively low. The `plotMCMC` can plot the log-likelihood or admixture coefficient against the iteration over different runs and different \(K\) values. Note this requires the logging file to be read by `loadStructure`.
+A very simple approach to determining whether you need to rerun a STRUCTURE a model is to plot the estimated log-likelihood over each iteration over the post burn-in MCMC phase. If the chains have converged the log-likelihood should stabilize towards the final iterations and the variance within a run should be relatively low. The `plotMCMC` can plot the log-likelihood or admixture coefficient against the iteration over different runs and different \(K\) values. Note this requires the logging file to be read by `loadStructure`.
 
 Here we show an example when \(K\) = 10 and the number of runs is also 10.
 
@@ -289,48 +291,48 @@ bestK(multi_K)
 
     #>       K variable     value          sd
     #> 1.1   1     L(K) -1833.400   0.1414214
-    #> 1.2   1      AIC  3716.800   0.2828427
-    #> 1.3   1      BIC  3781.929   0.2828427
+    #> 1.2   1      AIC  3662.800   0.2828427
+    #> 1.3   1      BIC  3657.590   0.2828427
     #> 1.4   1      DIC  3679.300   0.4242641
     #> 2.1   2     L(K) -1649.550   1.7677670
-    #> 2.2   2      AIC  3399.100   3.5355339
-    #> 2.3   2      BIC  3529.359   3.5355339
+    #> 2.2   2      AIC  3291.100   3.5355339
+    #> 2.3   2      BIC  3280.679   3.5355339
     #> 2.4   2      DIC  3367.300   5.7982756
     #> 3.1   3     L(K) -1536.950   9.9702056
-    #> 3.2   3      AIC  3223.900  19.9404112
-    #> 3.3   3      BIC  3419.288  19.9404112
+    #> 3.2   3      AIC  3061.900  19.9404112
+    #> 3.3   3      BIC  3046.269  19.9404112
     #> 3.4   3      DIC  3160.600  19.7989899
     #> 4.1   4     L(K) -1425.650   0.9192388
-    #> 4.2   4      AIC  3051.300   1.8384776
-    #> 4.3   4      BIC  3311.817   1.8384776
+    #> 4.2   4      AIC  2835.300   1.8384776
+    #> 4.3   4      BIC  2814.459   1.8384776
     #> 4.4   4      DIC  2959.200   3.9597980
     #> 5.1   5     L(K) -1410.700   2.6870058
-    #> 5.2   5      AIC  3071.400   5.3740115
-    #> 5.3   5      BIC  3397.046   5.3740115
+    #> 5.2   5      AIC  2801.400   5.3740115
+    #> 5.3   5      BIC  2775.348   5.3740115
     #> 5.4   5      DIC  2955.900   9.7580736
     #> 6.1   6     L(K) -1447.400  21.2132034
-    #> 6.2   6      AIC  3194.800  42.4264069
-    #> 6.3   6      BIC  3585.576  42.4264069
+    #> 6.2   6      AIC  2870.800  42.4264069
+    #> 6.3   6      BIC  2839.538  42.4264069
     #> 6.4   6      DIC  3109.800 102.3890619
     #> 7.1   7     L(K) -1498.400  44.1234631
-    #> 7.2   7      AIC  3346.800  88.2469263
-    #> 7.3   7      BIC  3802.705  88.2469263
+    #> 7.2   7      AIC  2968.800  88.2469263
+    #> 7.3   7      BIC  2932.328  88.2469263
     #> 7.4   7      DIC  3313.400 163.2002451
     #> 8.1   8     L(K) -1485.500  15.9806133
-    #> 8.2   8      AIC  3371.000  31.9612265
-    #> 8.3   8      BIC  3892.034  31.9612265
+    #> 8.2   8      AIC  2939.000  31.9612265
+    #> 8.3   8      BIC  2897.317  31.9612265
     #> 8.4   8      DIC  3291.700  68.3065151
     #> 9.1   9     L(K) -1477.700  28.1428499
-    #> 9.2   9      AIC  3405.400  56.2856998
-    #> 9.3   9      BIC  3991.563  56.2856998
+    #> 9.2   9      AIC  2919.400  56.2856998
+    #> 9.3   9      BIC  2872.507  56.2856998
     #> 9.4   9      DIC  3279.400 107.7630735
     #> 10.1 10     L(K) -1491.900   0.0000000
-    #> 10.2 10      AIC  3483.800   0.0000000
-    #> 10.3 10      BIC  4135.093   0.0000000
+    #> 10.2 10      AIC  2943.800   0.0000000
+    #> 10.3 10      BIC  2891.697   0.0000000
     #> 10.4 10      DIC  3330.400   5.3740115
 
-CLUMPPING together
-------------------
+CLUMPPING together - avoiding label switching
+---------------------------------------------
 
 We have written R implementations of the popular CLUMMP and CLUMPAK algorithms for combining Q-matrices over different runs of STRUCTURE. Usually, this step is performed after choosing a value for \(K\), when the analyst would like to refine their estimates of cluster memberships. To perform CLUMPPING create a `structList` consisting of the same value of \(K\) for multiple runs. In each case the Q-matrices and a matrix of column permutations for each run are returned.
 
@@ -348,17 +350,25 @@ plotMultiK(clumppy$Q_list)
 
 <img src="inst/vignette-supp/clump-example-1.png" style="display: block; margin: auto;" />
 
-We can see that the clumpping has worked compared to the first plot.
+Several other algorithms to correct label switching are available, including fast implementations for large values of K.
 
-Putting it together - shiny starmie
-===================================
+Other visualisations
+--------------------
 
-Coming soon... a fully interactive analysis of our population structure methods.
+As the STRUCTURE model outputs other information, we have implemented some multidimensional scaling plots to visualize some of the neglected features of the STRUCTURE model.
 
-Why starmie?
-============
+For example, we can plot the net nucleotide distance between clusters:
 
-There's a reason. It's not very good though.
+``` r
+plotMDS(k6_msat)
+```
+
+<img src="inst/vignette-supp/plotMDS-1.png" style="display: block; margin: auto;" />
+
+Bugs, feature requests and miscellana
+=====================================
+
+Please submit any bugs or features requests as an issue to <https://github.com/sa-lee/starmie/issues> Pull requests are completely welcome.
 
 References
 ==========

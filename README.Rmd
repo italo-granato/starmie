@@ -18,11 +18,12 @@ knitr::opts_chunk$set(
 [![Travis-CI Build Status](https://travis-ci.org/sa-lee/starmie.svg?branch=master)](https://travis-ci.org/sa-lee/starmie)
 
 # Quick Start
-Construct a barplot for your STRUCTURE/ADMIXTURE output using `starmie` in three
+Construct a barplot for your STRUCTURE/ADMIXTURE output using `starmie` in a few
 lines of code!
 ```{r, fig.width =8, fig.height=6, fig.align='center'}
 library(starmie)
-k5_data <- loadStructure("./inst/extdata/microsat_testfiles/locprior_K5.out_f")
+str_output <- system.file("extdata/microsat_testfiles/",  "locprior_K5.out_f", package = "starmie")
+k5_data <- loadStructure(str_output)
 k5_data
 plotBar(k5_data)
 ```

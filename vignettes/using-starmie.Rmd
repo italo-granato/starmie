@@ -23,7 +23,7 @@ underlying population structure from genetic markers such as single
 nucleotide polymorphisms (SNPs) or microsatellites. The two main methods
 for this task are the Bayesian STRUCTURE algorithm or the frequentist
 ADMIXTURE. We have found that processing the output of these programs and
-performing meaningful inference and visualisation of the results is far more
+performing meaningful inference and visualization of the results is far more
 difficult than it should be. This is why we wrote starmie. 
 
 Some key features:
@@ -33,7 +33,7 @@ Some key features:
   * Create the 'standard' STRUCTURE bar plot showing cluster memberships.
   * Plot model checks such as MCMC chains on the admixture coefficient $\alpha$
     and the log-likelihood.
-  * Interactively visualising output from STRUCTURE analysis
+  * Visualizing output from STRUCTURE analysis
 
 This vignette outlines how to use starmie to do basic tasks after running 
 STRUCTURE at the command line.
@@ -148,7 +148,7 @@ k6_all <- structList(k6_msat, k6_run2)
 k6_all
 ```
 
-We can also compare the cluster labelling by using `plotMultiK` (and see
+We can also compare the cluster labeling by using `plotMultiK` (and see
 that label-switching over different MCMC runs is a problem!)
 
 ```{r plot-multiK}
@@ -160,7 +160,7 @@ plotMultiK(k6_all)
 
 A very simple approach to determining whether you need to rerun a STRUCTURE a model
 is to plot the estimated log-likelihood over each iteration over the post burn-in MCMC
-phase. If the chains have converged the log-likelihood should stabilise towards the final
+phase. If the chains have converged the log-likelihood should stabilize towards the final
 iterations and the variance within a run should be relatively low. The `plotMCMC`
 can plot the log-likelihood or admixture coefficient against the iteration over different
 runs and different $K$ values. Note this requires the logging file to be read by `loadStructure`. 
@@ -189,7 +189,7 @@ bestK(multi_K)
 bestK(multi_K, "structure")
 ```
 
-## CLUMPPING together
+## CLUMPPING together - avoiding label switching
 
 We have written R implementations of the popular CLUMMP and CLUMPAK algorithms for
 combining Q-matrices over different runs of STRUCTURE. Usually, this step is performed
@@ -211,13 +211,25 @@ clumppy <- clumpp(Q_list, method = "greedy")
 plotMultiK(clumppy$Q_list)
 ```
 
-We can see that the clumpping has worked compared to the first plot.
+Several other algorithms to correct label switching are available, including
+fast implementations for large values of K. 
 
-# Putting it together - shiny starmie
-Coming soon... a fully interactive analysis of our population structure methods.
+## Other visualisations
 
-# Why starmie?
-There's a reason. It's not very good though. 
+As the STRUCTURE model outputs other information, we have implemented some
+multidimensional scaling plots to visualize some of the neglected features
+of the STRUCTURE model. 
+
+For example, we can plot the net nucleotide distance between clusters:
+```{r plotMDS}
+plotMDS(k6_msat)
+```
+
+
+# Bugs, feature requests and miscellana
+Please submit any bugs or feature requests as an issue to https://github.com/sa-lee/starmie/issues
+
+
 
 # References
 
