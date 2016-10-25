@@ -7,7 +7,7 @@
 #'
 #'  K: number of clusters estimated by Structure
 #'
-#'  run_params: the run paramters given to the Structure program
+#'  run_params: the run parameters given to the Structure program
 #'
 #'  mem_df: assigned cluster membership proportions
 #'
@@ -19,7 +19,7 @@
 #'
 #'  fst_df: Fst values
 #'
-#'  ancest_df: Inferred ancestory of individuals
+#'  ancest_df: Inferred ancestry of individuals
 #'
 #'  clust_allele_list: Cluster allele frequencies
 #'

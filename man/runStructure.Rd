@@ -8,7 +8,7 @@ runStructure(path_to_structure, input_file, main_params, extra_params,
   out_prefix, n_K, n_replicates, n_cores)
 }
 \arguments{
-\item{path_to_structure}{path to structure binary executatable (ie. /usr/bin/structure)}
+\item{path_to_structure}{path to structure binary executable (ie. /usr/bin/structure)}
 
 \item{input_file}{file name of input data}
 

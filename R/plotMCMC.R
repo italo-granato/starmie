@@ -6,7 +6,7 @@
 #' @param x \code{\link{structList}} objects or a \code{\link{struct}} object
 #' @param plot logical print resulting plot default TRUE
 #' @param facet logical facet by K default TRUE
-#' @param use_logL logical plot log-likelihood (TRUE) or admixture coeffecient
+#' @param use_logL logical plot log-likelihood (TRUE) or admixture coefficient
 #' @description Plot non-burn MCMC iterations of STRUCTURE for checking convergence.
 #' If plot is set to FALSE a data.frame is returned containing the log likelihood
 #' and alpha values over different K and runs and not plot is printed to the device.
