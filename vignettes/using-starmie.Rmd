@@ -220,15 +220,16 @@ As the STRUCTURE model outputs other information, we have implemented some
 multidimensional scaling plots to visualize some of the neglected features
 of the STRUCTURE model. 
 
-For example, we can plot the net nucleotide distance between clusters:
+For example, we can plot the net nucleotide distance between clusters using
+multidimensional scaling, to the see the relationships between inferred 
+clusters.
 ```{r plotMDS}
 plotMDS(k6_msat)
 ```
 
-
+ 
 # Bugs, feature requests and miscellana
 Please submit any bugs or feature requests as an issue to https://github.com/sa-lee/starmie/issues
-
 
 
 # References
