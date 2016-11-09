@@ -1,20 +1,6 @@
 
--   [Quick Start](#quick-start)
--   [Installation](#installation)
--   [Starmie: making population structure analyses easier](#starmie-making-population-structure-analyses-easier)
-    -   [A basic STRUCTURE pipeline in R.](#a-basic-structure-pipeline-in-r.)
-    -   [Parsing STRUCTURE files, the 'struct' object](#parsing-structure-files-the-struct-object)
-    -   [Why you're here: the infamous bar plot...](#why-youre-here-the-infamous-bar-plot...)
-    -   [Loading multiple 'struct' objects the 'structList'](#loading-multiple-struct-objects-the-structlist)
-    -   [Diagnostics: or checking out your chains](#diagnostics-or-checking-out-your-chains)
-    -   [Inference on K is hard](#inference-on-k-is-hard)
-    -   [CLUMPPING together - avoiding label switching](#clumpping-together---avoiding-label-switching)
-    -   [Other visualisations](#other-visualisations)
--   [Bugs, feature requests and miscellana](#bugs-feature-requests-and-miscellana)
--   [References](#references)
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-[![Travis-CI Build Status](https://travis-ci.org/sa-lee/starmie.svg?branch=master)](https://travis-ci.org/sa-lee/starmie)
+[![Travis-CI Build Status](https://travis-ci.org/sa-lee/starmie.svg?branch=master)](https://travis-ci.org/sa-lee/starmie) [![](http://cranlogs.r-pkg.org/badges/grand-total/starmie?color=brightgreen)](http://cran.rstudio.com/web/packages/starmie/index.html)
 
 Quick Start
 ===========
@@ -22,6 +8,7 @@ Quick Start
 Construct a barplot for your STRUCTURE/ADMIXTURE output using `starmie` in a few lines of code!
 
 ``` r
+# install.packages('starmie')
 library(starmie)
 str_output <- system.file("extdata/microsat_testfiles/", "locprior_K5.out_f", 
     package = "starmie")
@@ -41,28 +28,11 @@ k5_data
 #>   Variance of ln likelihood : 131.5
 #>   Mean value of alpha : 0.0452
 #> MCMC diagnostics available: FALSE
-plotBar(k5_data)
+plotBar(k5_data, facet = FALSE)
 #> Extracting population labels from STRUCTURE output.
 ```
 
 <img src="inst/vignette-supp/unnamed-chunk-2-1.png" style="display: block; margin: auto;" />
-
-Installation
-============
-
-Currently `starmie` can be installed using the devtools package
-
-``` r
-install.packages("devtools")
-library(devtools)
-install_github("sa-lee/starmie")
-```
-
-If you would like to also build the vignette with your installation run:
-
-``` r
-install_github("sa-lee/starmie", build_vignettes = TRUE)
-```
 
 Starmie: making population structure analyses easier
 ====================================================
@@ -357,7 +327,7 @@ Other visualisations
 
 As the STRUCTURE model outputs other information, we have implemented some multidimensional scaling plots to visualize some of the neglected features of the STRUCTURE model.
 
-For example, we can plot the net nucleotide distance between clusters:
+For example, we can plot the net nucleotide distance between clusters using multidimensional scaling, to the see the relationships between inferred clusters.
 
 ``` r
 plotMDS(k6_msat)
@@ -368,7 +338,7 @@ plotMDS(k6_msat)
 Bugs, feature requests and miscellana
 =====================================
 
-Please submit any bugs or features requests as an issue to <https://github.com/sa-lee/starmie/issues> Pull requests are completely welcome.
+Please submit any bugs or feature requests as an issue to <https://github.com/sa-lee/starmie/issues>
 
 References
 ==========
@@ -388,3 +358,26 @@ Falush, D., Stephens, M. & Pritchard, J. K. Inference of population structure us
 Pritchard, J. K., Stephens, M. & Donnelly, P. Inference of population structure using multilocus genotype data. Genetics 155, 945–959 (2000).
 
 Verity, R. & Nichols, R. A. Estimating the Number of Subpopulations (K) in Structured Populations. Genetics (2016).
+
+Installation
+============
+
+`starmie` is available as an R package on CRAN
+
+``` r
+install.packages("starmie")
+```
+
+The development version of `starmie` can be installed with `devtools`
+
+``` r
+install.packages("devtools")
+
+devtools::install_github("sa-lee/starmie")
+```
+
+If you would like to also build the vignette with your installation run:
+
+``` r
+devtools::install_github("sa-lee/starmie", build_vignettes = TRUE)
+```
