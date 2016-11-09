@@ -11,7 +11,7 @@ plotMCMC(x, plot = TRUE, use_logL = TRUE, facet = TRUE)
 
 \item{plot}{logical print resulting plot default TRUE}
 
-\item{use_logL}{logical plot log-likelihood (TRUE) or admixture coeffecient}
+\item{use_logL}{logical plot log-likelihood (TRUE) or admixture coefficient}
 
 \item{facet}{logical facet by K default TRUE}
 }

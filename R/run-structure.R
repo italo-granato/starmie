@@ -2,7 +2,7 @@
 
 #' Run STRUCTURE in current path
 #'
-#' @param path_to_structure path to structure binary executatable (ie. /usr/bin/structure)
+#' @param path_to_structure path to structure binary executable (ie. /usr/bin/structure)
 #' @param input_file file name of input data
 #' @param main_params file name of mainparams file for STRUCTURE
 #' @param extra_params file name of extraparams file for STRUCTURE
@@ -14,6 +14,7 @@
 #' on Windows.
 #' @importFrom stringr str_pad str_extract
 #' @importFrom parallel mcmapply detectCores
+#' @importFrom stats runif
 #' @export
 #' @examples
 #'\dontrun{

@@ -1,5 +1,5 @@
 # clumpak.R
-# Function for inferring modes withing multiple structure runs.
+# Function for inferring modes within multiple structure runs.
 
 #' Run the CLUMPP algorithms.
 #' @param Q_list A list of of Q matrices.

@@ -96,7 +96,7 @@ bestK.admixList <- function(x, method = NULL, plot = TRUE) {
                                   id.vars = "K",
                                   variable.name = "statistic")
   if (plot) {
-    gg <- ggplot(log_df_tidy, aes(x = K, y = value)) +
+    gg <- ggplot(log_df_tidy, aes_(x = ~K, y = ~value)) +
       geom_point() +
       facet_wrap(~ statistic, ncol = 2, scales = "free_y") +
       theme_bw()
@@ -106,7 +106,7 @@ bestK.admixList <- function(x, method = NULL, plot = TRUE) {
 }
 
 
-
+#' @importFrom stats sd
 bestK_evanno <- function(posterior_probs, plot) {
   # plot delta K
   # split by K and calculate the first and second derivatives
@@ -141,10 +141,10 @@ bestK_evanno <- function(posterior_probs, plot) {
   posterior_probs_summary <- do.call("rbind", output_values)
 
   if (plot) {
-    gg <- ggplot(posterior_probs_summary, aes(x=K, y=value)) +
+    gg <- ggplot(posterior_probs_summary, aes_(x=~K, y=~value)) +
       geom_point() +
       facet_wrap(~variable, ncol=2, scales = "free_y") +
-      geom_errorbar(aes(ymax=value+sd, ymin=value-sd)) +
+      geom_errorbar(aes_q(ymax=quote(value+sd), ymin=quote(value-sd))) +
       theme_bw() +
       scale_x_continuous(breaks = min(posterior_probs_summary$K):max(posterior_probs_summary$K))
     suppressWarnings(print(gg))
@@ -153,6 +153,8 @@ bestK_evanno <- function(posterior_probs, plot) {
   return(posterior_probs_summary)
 
 }
+
+#' @importFrom stats sd
 bestK_structure <- function(posterior_probs, plot) {
   # look for change point in log likelihood plot
   # summarise data by K
@@ -164,10 +166,10 @@ bestK_structure <- function(posterior_probs, plot) {
                                                                             sd = c(sd(i$pos_prob), sd(i$aic), sd(i$bic), sd(i$dic)))))
   #generate plot
   if (plot) {
-    gg <- ggplot(posterior_probs_summary, aes(x=K, y=value)) +
+    gg <- ggplot(posterior_probs_summary, aes_(x=~K, y=~value)) +
       geom_point() +
-      geom_errorbar(aes(ymax=value+sd,
-                        ymin=value-sd), width=0.1) +
+      geom_errorbar(aes_q(ymax=quote(value+sd),
+                        ymin=quote(value-sd)), width=0.1) +
       theme_bw() +
       facet_wrap(~variable, ncol=2, scales = "free_y") +
       scale_x_continuous(breaks = min(posterior_probs_summary$K):max(posterior_probs_summary$K)) +

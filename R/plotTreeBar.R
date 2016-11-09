@@ -26,6 +26,7 @@ plotTreeBar <- function(x, facet = TRUE, dendro = NULL, cut = NULL ) {
 }
 
 #' @method plotTreeBar matrix
+#' @importFrom stats hclust cutree
 #' @export
 plotTreeBar.matrix <- function(x, facet = TRUE, dendro = NULL, cut = NULL) {
   #If no clustering is given default to average linkage
@@ -93,7 +94,7 @@ plotTreeQ <- function(Q, facet, dendro, cut) {
                  variable.name="Cluster")
 
   ##Barplot
-  gg <- ggplot(Q_melt, aes(x=x, y=value, fill=factor(Cluster)))
+  gg <- ggplot(Q_melt, aes_(x=~x, y=~value, fill=~Cluster))
 
   if (facet){
     gg <- gg + facet_grid( Cluster ~ ., scales = "free_x", space = "free_x")
@@ -144,7 +145,7 @@ mydplot <- function(ddata, row=!col, col=!row, labels=col) {
   tangle <- if(row) { 0 } else { 90 }
   tshow <- col
   p <- ggplot() +
-    geom_segment(data=segment(ddata), aes(x=x, y=y, xend=xend, yend=yend)) +
+    geom_segment(data=segment(ddata), aes_(x=~x, y=~y, xend=~xend, yend=~yend)) +
     labs(x = NULL, y = NULL) + theme_dendro()
   if(row) {
     p <- p +

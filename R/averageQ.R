@@ -1,5 +1,5 @@
 # averageQ.R
-# Function for averageing multiple Q matrices.
+# Function for averaging multiple Q matrices.
 
 #' Average Q matrices.
 #' @param Q_list A list of of Q matrices.

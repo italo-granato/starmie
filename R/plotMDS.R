@@ -14,6 +14,8 @@
 #' @importFrom proxy dist
 #' @import ggplot2
 #' @importFrom ggrepel geom_text_repel
+#' @importFrom stats cmdscale
+
 #' @export
 #' @examples
 #' # struct example
@@ -35,7 +37,7 @@ plotMDS.matrix <- function(x, method = NULL) {
   mds_clust <- cmdscale(dist_xy)
   mds_df <- data.frame(PC1 = mds_clust[,1],
                        PC2 = mds_clust[,2])
-  ggplot(mds_df, aes(x = PC1, y = PC2)) +
+  ggplot(mds_df, aes_(x = ~PC1, y = ~PC2)) +
     geom_point() +
     theme_bw()
 }
@@ -58,10 +60,10 @@ plotMDS.struct <- function(x, method = "nnd") {
 
     mds_df <- data.frame(clust_eh, PC1 = mds_clust[,1], PC2 = mds_clust[,2])
 
-    ggplot(mds_df, aes(x = PC1, y = PC2, size = Avg.dist)) +
+    ggplot(mds_df, aes_(x = ~PC1, y = ~PC2, size = ~Avg.dist)) +
       geom_point() +
       ggrepel::geom_text_repel(
-        aes(label = Cluster),
+        aes_(label = ~Cluster),
         size = 4,
         box.padding = unit(0.35, "lines"),
         point.padding = unit(0.3, "lines")
@@ -78,10 +80,10 @@ plotMDS.struct <- function(x, method = "nnd") {
                          Relative.Contribution = colSums(Q) / sum(Q),
                          PC1 = mds_clust[,1],
                          PC2 = mds_clust[,2])
-    ggplot(mds_df, aes(x = PC1, y = PC2, size = Relative.Contribution)) +
+    ggplot(mds_df, aes_(x = ~PC1, y = ~PC2, size = ~Relative.Contribution)) +
     geom_point() +
       ggrepel::geom_text_repel(
-        aes(label = Cluster),
+        aes_(label = ~Cluster),
         size = 4,
         box.padding = unit(0.35, "lines"),
         point.padding = unit(0.3, "lines")
