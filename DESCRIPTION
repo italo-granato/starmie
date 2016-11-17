@@ -25,15 +25,15 @@ Imports:
   MCL,
   gridExtra,
   ggdendro,
-  ggrepel,
   MCMCpack,
-  parallel,
   methods,
   stats
 Suggests:
     testthat,
     knitr,
-    rmarkdown
+    rmarkdown,
+    ggrepel,
+    parallel
 URL: https://github.com/sa-lee/starmie
 BugReports: https://github.com/sa-lee/starmie/issues
 RoxygenNote: 5.0.1

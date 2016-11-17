@@ -2,7 +2,7 @@
 % Please edit documentation in R/averageQ.R
 \name{averageQ}
 \alias{averageQ}
-\title{Average Q matrices.}
+\title{Convenience function for creating final Q-matrix after CLUMMP}
 \usage{
 averageQ(Q_list)
 }
@@ -10,7 +10,7 @@ averageQ(Q_list)
 \item{Q_list}{A list of of Q matrices.}
 }
 \description{
-Average Q matrices.
+Convenience function for creating final Q-matrix after CLUMMP
 }
 \examples{
 # Read in Structure files

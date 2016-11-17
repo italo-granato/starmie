@@ -40,10 +40,6 @@ runStructure <- function(path_to_structure, input_file, main_params, extra_param
     stop("Number of replicates must be greater than 1")
   }
 
-  if (n_cores > parallel::detectCores()) {
-    stop("Number of cores greater than available on machine.")
-  }
-
   # set up vectors for running replictes
   K <- 1L:n_K
   replicates <- 1L:n_replicates
@@ -74,9 +70,24 @@ runStructure <- function(path_to_structure, input_file, main_params, extra_param
 
   message(paste("Running STRUCTURE on", n_cores, "core with",
                 n_K, "populations with", n_replicates, "replicates."))
+  if(requireNamespace("parallel", quietly = TRUE)) {
 
-  cmds_run <- parallel::mcmapply(run_structure_single, out_files, log_files,
-                     mc.cores = n_cores, mc.set.seed = TRUE)
-  message(paste("Commands run\n", paste(cmds_run, collapse = "\n")))
+    if (n_cores > parallel::detectCores()) {
+      stop("Number of cores greater than number available on machine.")
+    }
 
+    cmds_run <- parallel::mcmapply(run_structure_single, out_files, log_files,
+                                   mc.cores = n_cores, mc.set.seed = TRUE)
+    message(paste("Commands run\n", paste(cmds_run, collapse = "\n")))
+
+  } else {
+    if (n_cores > 1L) {
+      stop("parallel package needed to run multiple calls. Please install it.",
+           call. = FALSE)
+    } else {
+      cmds_run <- mcmapply(run_structure_single, out_files, log_files)
+      message(paste("Commands run\n", paste(cmds_run, collapse = "\n")))
+
+    }
+  }
 }
