@@ -1,17 +1,15 @@
-# simulate_Q.R
-# functions for simulating Q matrices
-
 #' Simulate random Q-matrix and permutations with replications
 #'
 #' @param n integer number of samples
 #' @param alpha vector of length K (number of columns)
 #' @param r number of replicates
 #' @importFrom MCMCpack rdirichlet
+#' @importFrom stats rnorm
 #' @export
 simulateQ <- function(n, alpha, r) {
 
   Q_list <- list()
-  Q_list[[1]] <- list(Q = MCMCpack::rdirichlet(n, alpha),
+  Q_list[[1]] <- list(Q = rdirichlet(n, alpha),
                       permutations = 1:length(alpha))
 
   for (i in 2:r) {
