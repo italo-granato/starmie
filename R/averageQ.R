@@ -1,7 +1,6 @@
 # averageQ.R
-# Function for averaging multiple Q matrices.
 
-#' Average Q matrices.
+#' Convenience function for creating final Q-matrix after CLUMMP
 #' @param Q_list A list of of Q matrices.
 #' @export
 #' @examples
@@ -11,8 +10,8 @@
 #' avgQ <- averageQ(Q_list)
 averageQ <- function(Q_list){
   #i/o checks
-  if(!all(unlist(lapply(Q_list, inherits, "matrix")))) stop("cluster runs must be a list of Q matrices")
-
+  if(!all(unlist(lapply(Q_list, inherits, "matrix"))))
+    stop("cluster runs must be a list of Q matrices")
   Reduce("+", Q_list) / length(Q_list)
 }
 

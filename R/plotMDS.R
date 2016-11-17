@@ -13,9 +13,7 @@
 #' themselves rather than within samples.
 #' @importFrom proxy dist
 #' @import ggplot2
-#' @importFrom ggrepel geom_text_repel
 #' @importFrom stats cmdscale
-
 #' @export
 #' @examples
 #' # struct example
@@ -46,7 +44,8 @@ plotMDS.matrix <- function(x, method = NULL) {
 #' @export
 plotMDS.struct <- function(x, method = "nnd") {
   # gather visual elements
-
+  if (!(method %in% c("nnd", "jsd")))
+    stop("Not a valid method, must be either 'nnd' or 'jsd'")
   if (method == "nnd") {
     # use structure allele-freqs diveragnes as distance matrix
     dist_xy <- x$allele_freqs
@@ -60,19 +59,12 @@ plotMDS.struct <- function(x, method = "nnd") {
 
     mds_df <- data.frame(clust_eh, PC1 = mds_clust[,1], PC2 = mds_clust[,2])
 
-    ggplot(mds_df, aes_(x = ~PC1, y = ~PC2, size = ~Avg.dist)) +
+    plot_out <- ggplot(mds_df, aes_(x = ~PC1, y = ~PC2, size = ~Avg.dist)) +
       geom_point() +
-      ggrepel::geom_text_repel(
-        aes_(label = ~Cluster),
-        size = 4,
-        box.padding = unit(0.35, "lines"),
-        point.padding = unit(0.3, "lines")
-      ) +
       guides(size = guide_legend(title = "Expected Heterozygosity"))+
       theme_bw()
-
-
-  } else if (method == "jsd") {
+  }
+  if (method == "jsd") {
     Q <- getQ(x)
     dist_xy <- proxy::dist(t(Q), method = .JSD)
     mds_clust <- cmdscale(dist_xy)
@@ -80,23 +72,20 @@ plotMDS.struct <- function(x, method = "nnd") {
                          Relative.Contribution = colSums(Q) / sum(Q),
                          PC1 = mds_clust[,1],
                          PC2 = mds_clust[,2])
-    ggplot(mds_df, aes_(x = ~PC1, y = ~PC2, size = ~Relative.Contribution)) +
-    geom_point() +
-      ggrepel::geom_text_repel(
-        aes_(label = ~Cluster),
-        size = 4,
-        box.padding = unit(0.35, "lines"),
-        point.padding = unit(0.3, "lines")
-      ) +
+    plot_out <- ggplot(mds_df,
+                       aes_(x = ~PC1, y = ~PC2, size = ~Relative.Contribution)) +
+      geom_point() +
+      guides(size = guide_legend(title = "Relative Cluster Contribution")) +
       theme_bw()
-
-
-
-
-  } else {
-    stop("Not a valid method, must be either 'nnd' or 'jsd'")
   }
-
+  if (requireNamespace("ggrepel", quietly = TRUE)) {
+    plot_out + ggrepel::geom_text_repel(aes_(label = ~Cluster),
+                                        size = 4,
+                                        box.padding = unit(0.35, "lines"),
+                                        point.padding = unit(0.3, "lines"))
+  } else {
+    plot_out
+  }
 }
 
 #' @method plotMDS admix
@@ -108,4 +97,3 @@ plotMDS.admix <- function(x, method = NULL) {
 
 .JSD<- function(x,y) sqrt(0.5 * .KLD(x, (x+y)/2) + 0.5 * .KLD(y, (x+y)/2))
 .KLD <- function(x,y) sum(x * log(x/y))
-

@@ -1,8 +1,9 @@
 # averagePairWiseSimilarityH.R
-# Function for computing the average pairwise similarity between Q matrices (H) as defined in Jakobsson et al.
 
-#' Average Q matrices.
+#' Compute average pairwise similarity between Q matrices.
 #' @param Q_list A list of of Q matrices.
+#' @details Implementation of the pairwise similarity metric as
+#' defined in Jakobsson, M. and Rosenberg, N. A., 2007.
 #' @export
 #' @examples
 #' # Read in Structure files
@@ -11,7 +12,8 @@
 #' avgQ <- averagePairWiseSimilarityH(Q_list)
 averagePairWiseSimilarityH <- function(Q_list){
   #i/o checks
-  if(!all(unlist(lapply(Q_list, inherits, "matrix")))) stop("cluster runs must be a list of Q matrices")
+  if(!all(unlist(lapply(Q_list, inherits, "matrix"))))
+    stop("cluster runs must be a list of Q matrices")
 
   R <- length(Q_list)
   H <- 0
