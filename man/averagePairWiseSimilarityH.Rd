@@ -2,7 +2,7 @@
 % Please edit documentation in R/averagePairWiseSimilarityH.R
 \name{averagePairWiseSimilarityH}
 \alias{averagePairWiseSimilarityH}
-\title{Average Q matrices.}
+\title{Compute average pairwise similarity between Q matrices.}
 \usage{
 averagePairWiseSimilarityH(Q_list)
 }
@@ -10,7 +10,11 @@ averagePairWiseSimilarityH(Q_list)
 \item{Q_list}{A list of of Q matrices.}
 }
 \description{
-Average Q matrices.
+Compute average pairwise similarity between Q matrices.
+}
+\details{
+Implementation of the pairwise similarity metric as
+defined in Jakobsson, M. and Rosenberg, N. A., 2007.
 }
 \examples{
 # Read in Structure files
