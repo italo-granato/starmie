@@ -19,7 +19,6 @@ getK.admix <- function(x) {
   x$K
 }
 
-
 #' Retrieve Q matrix from \code{\link{struct}} or \code{\link{admix}} objects.
 #'
 #' @param x a \code{\link{struct}} or \code{\link{admix}} object.
@@ -61,7 +60,8 @@ getClusterAlleleFreqMat.struct <- function(x) {
 
 }
 
-
+#' @method getClusterAlleleFreqMat admix
+#' @export
 getClusterAlleleFreqMat.admix <- function(x) {
   x$P_df
 }

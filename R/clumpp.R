@@ -57,9 +57,8 @@ clumpp <- function(Q_list, method="greedy", iter=100){
 
 #' Use the Stephen's method to permute sample labels
 #' @param Q_list A list of of Q matrices.
-#' @importFrom label.switching stephens
 getStephens <- function(Q_list){
-  #Create 3-dimensional array for input into stephens function
+  # Create 3-dimensional array for input into stephens function
   # dimensions are equal to R by n by K
   # R := number of runs
   # n := number of rows in Q matrix
@@ -67,7 +66,11 @@ getStephens <- function(Q_list){
   # convert list to array then transpose columms
   p <- aperm(simplify2array(Q_list), c(3,1,2))
 
-  perm <- label.switching::stephens(p)
+  if(requireNamespace("label.switching", quietly = TRUE)) {
+    perm <- label.switching::stephens(p)
+  } else {
+    stop("label.switching package not installed, please install it")
+  }
 
   # reorder columns in according to new permuations
   # Rename columns

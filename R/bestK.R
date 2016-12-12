@@ -6,6 +6,7 @@
 #' 'structure', not required for \code{\link{admixList}} objects.
 #' @param  plot whether of not to generate diagnostic plots
 #' @import ggplot2
+#' @importFrom data.table rbindlist
 #' @export
 #' @return a data.frame containing  with columns containing the L_k,
 #' AIC, BIC, DIC and deltaK for  \code{\link{structList}}. If
@@ -138,7 +139,7 @@ bestK_evanno <- function(posterior_probs, plot) {
 
 
   }
-  posterior_probs_summary <- do.call("rbind", output_values)
+  posterior_probs_summary <- rbindlist(output_values)
 
   if (plot) {
     gg <- ggplot(posterior_probs_summary, aes_(x=~K, y=~value)) +
@@ -159,7 +160,7 @@ bestK_structure <- function(posterior_probs, plot) {
   # look for change point in log likelihood plot
   # summarise data by K
   posterior_probs_byK <- split(posterior_probs, posterior_probs$K)
-  posterior_probs_summary <- do.call("rbind", lapply(posterior_probs_byK,
+  posterior_probs_summary <- rbindlist(lapply(posterior_probs_byK,
                                                      function(i) data.frame(K = unique(i$K),
                                                                             variable = c('L(K)', 'AIC', 'BIC', 'DIC'),
                                                                             value = c(mean(i$pos_prob), mean(i$aic), mean(i$bic), mean(i$dic)),
