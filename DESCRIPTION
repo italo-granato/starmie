@@ -12,17 +12,14 @@ License: MIT + file LICENSE
 LazyData: TRUE
 Depends: R (>= 3.3.0)
 Imports:
-  data.table,
   readr (>= 1.0.0),
+  data.table,
   stringr,
-  tidyr,
   purrr,
   ggplot2 (>= 2.1.0),
   iterpc,
   combinat,
-  label.switching,
   proxy,
-  MCL,
   gridExtra,
   ggdendro,
   MCMCpack,
@@ -33,7 +30,9 @@ Suggests:
     knitr,
     rmarkdown,
     ggrepel,
-    parallel
+    parallel,
+    label.switching,
+    MCL
 URL: https://github.com/sa-lee/starmie
 BugReports: https://github.com/sa-lee/starmie/issues
 RoxygenNote: 5.0.1

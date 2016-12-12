@@ -5,9 +5,8 @@
 #' @param  qfile a valid Q file from ADMIXTURE
 #' @param pfile a corresponding P file from ADMXIXTURE
 #' @param  logfile logfile from corresponding AMIXTURE run ()
-#' @importFrom tidyr gather
-#' @importFrom data.table fread
 #' @return an \link{admix} object containing the output of of an admixture run
+#' @importFrom data.table fread
 #' @export
 #' @examples
 #' qfin <- system.file("extdata/hapmap3_files", "hapmap3.2.Q", package = "starmie")
@@ -16,7 +15,6 @@
 #' # add log file
 #' logfin <- system.file("extdata/hapmap3_files", "log2.out", package = "starmie")
 #' my_admix <- loadAdmixture(qfin, pfin, logfin)
-#'
 loadAdmixture <- function(qfile, pfile, logfile = NULL) {
   # i/o checks
   if ( !(is.character(qfile) & length(qfile) == 1) ) stop("qfile must be a character vector of length 1.")
@@ -28,12 +26,12 @@ loadAdmixture <- function(qfile, pfile, logfile = NULL) {
   # create new admixture object
   admix_obj <- admix()
   # qfile data reader
-  q_df <- fread(qfile, data.table = FALSE, header = FALSE)
+  q_df <- fread(qfile, header = FALSE, data.table = FALSE)
   K <- ncol(q_df)
   nsamples <- nrow(q_df)
   colnames(q_df) <- paste("Cluster", seq(1,ncol(q_df)))
   # pfile data reader
-  p_df <- fread(pfile, data.table = FALSE, header = FALSE)
+  p_df <- fread(pfile, header = FALSE, data.table = FALSE)
   nmarkers <- nrow(p_df)
   if(ncol(p_df) != K) {
     stop("Number of populations does not match between Q and P files")

@@ -4,7 +4,6 @@
 #' Run the CLUMPP algorithms.
 #' @param Q_list A list of of Q matrices.
 #' @param method The method the algorithm uses to infer the correct permutations. One of 'greedy' or 'greedyLargeK' or 'stephens' or 'none'
-#' @importFrom MCL mcl
 #' @importFrom proxy simil
 #' @export
 #' @examples
@@ -14,22 +13,33 @@
 #' clumpak_results <- clumpak(Q_list)
 clumpak <- function(Q_list, method="none"){
 
+
+
   # i/o checks
   if (!(method %in% c("greedy", "greedyLargeK", "stephens", "none"))) {
-    stop("Not a valid CLUMPP method, please use on of: 'greedy', 'greedyLargeK' or 'stephens' or 'none'")
+    stop("Not a valid CLUMPP method, please use one of: 'greedy', 'greedyLargeK', 'stephens' or 'none'")
   }
-  if(!all(unlist(lapply(Q_list, inherits, "matrix")))) stop("cluster runs must be a list of Q matrices")
+  if(!all(unlist(lapply(Q_list, inherits, "matrix"))))
+    stop("cluster runs must be a list of Q matrices")
 
   if (method!="none"){
     Q_list <- clumpp(Q_list, method)$Q_list
   }
 
-  simMatrix <- as.matrix(simil(Q_list, method=G))
-  diag(simMatrix) <- 1
-  t <- calcThreshold(simMatrix)
-  simMatrix[simMatrix<t] <- 0
-  clusters <- mcl(simMatrix, addLoops = TRUE)$Cluster
-  split(Q_list, clusters)
+  # check MCL installed
+  if (requireNamespace("MCL", quietly = TRUE)) {
+    simMatrix <- as.matrix(simil(Q_list, method=G))
+    diag(simMatrix) <- 1
+    t <- calcThreshold(simMatrix)
+    simMatrix[simMatrix<t] <- 0
+    clusters <- MCL::mcl(simMatrix, addLoops = TRUE)$Cluster
+    split(Q_list, clusters)
+  } else {
+    message("MCL package required for CLUMPAK, please install it.")
+    message(paste("Returning Q_list...with method", method))
+    Q_list
+  }
+
 }
 
 calcThreshold <- function(simMatrix){
