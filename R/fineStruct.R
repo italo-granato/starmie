@@ -22,7 +22,11 @@ fineStruct <- function() {
 #' @export
 print.fineStruct <- function(x, ...) {
   cat("fineStruct object containing run information\n")
-  cat("Model parameters:\n")
   cat(paste("  ", "No. samples:", x$nsamples, "\n"))
-  cat(paste("  ", "No. markers:", x$nmarkers, "\n"))
+  cat("Chunk count dataframe:\n")
+  print(head(x$chunkcounts_df, n=2))
+  cat("Dendrogram:\n")
+  print(x$dendro)
+  cat("MCMC dataframe:\n")
+  print(head(x$mcmc_df, n=2))
 }

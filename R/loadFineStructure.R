@@ -6,9 +6,7 @@
 #' @param treefile a string containing a tree file produce by fineStructure
 #' @param mcmcfile a string containing a mcmc file produce by fineStructure
 #' @importFrom data.table fread
-#' @import xml2
 #' @importFrom stringr str_split
-#' @importFrom ape read.tree
 #' @export
 #' @examples
 #' # read in example fineSTRUCTURE output
@@ -32,49 +30,24 @@ loadFineStructure <- function(chunkfile, treefile, mcmcfile){
   #Load the chunk counts file
   fine_obj$cfactor <- as.numeric(str_split(readLines(chunkfile, n=1), " ", simplify = TRUE)[[2]])
   fine_obj$chunkcounts_df <- fread(chunkfile, skip=1, header=TRUE, data.table=FALSE)
+  fine_obj$nsamples <- ncol(fine_obj$chunkcounts_df)-1
 
   #Load tree file
-  xml <- read_xml(treefile)
-  fine_obj$dendro <- read.tree(
-    text=xml_text(xml_find_all(xml,".//Tree"))
+  xml <- xml2::read_xml(treefile)
+  fine_obj$dendro <- ape::read.tree(
+    text=xml2::xml_text(xml2::xml_find_all(xml,".//Tree"))
   )
 
   #Load mcmc file
-  xml <- read_xml(mcmcfile)
-  xml <- xml_find_all(xml,".//Iteration")
-  xml_attrs(xml[[1]])
-  iterations <- xml$doc$children$outputFile[which(names(xml$doc$children$outputFile)=="Iteration")]
-  names(iterations[[1]])
+  xml <- xml2::read_xml(mcmcfile)
+  xml <- xml2::xml_find_all(xml,".//Iteration")
+  fine_obj$mcmc_df <- data.frame(do.call(rbind
+                        , lapply(xml, function(x) xml2::xml_text(xml2::xml_children(x)))
+                        )
+                        , stringsAsFactors = FALSE)
+  fine_obj$mcmc_df[] <- lapply(fine_obj$mcmc_df
+                               , function(x) type.convert(as.character(x), as.is=TRUE))
+  colnames(fine_obj$mcmc_df) <- xml2::xml_name(xml2::xml_children(xml[[1]]))
+
+  return(fine_obj)
 }
-
-
-as.data.frame.myres<-function(txml){
-  ## Converts our xml file format into a matrix, one row per iteration
-  tmpits<-xml$doc$children$outputFile[which(names(xml$doc$children$outputFile)=="Iteration")]
-  #	xmlChildren(tmpits[[1]])
-  cnames<-names(tmpits[[1]])
-  res<-as.data.frame(matrix(nrow=length(tmpits),ncol=length(cnames)))
-  for(i in 1:length(cnames)) {
-    res[,i]<-extractValue(xml,cnames[i])
-  }
-  colnames(res)<-cnames
-  res[,which(!names(res) %in% c("Pop","P","Q"))]  <-apply(res[,which(!names(res) %in% c("Pop","P","Q"))],2,as.numeric)
-  res
-}
-
-extractValue<-function(txml,v,getNames=FALSE){
-  ## Important utility function for extracting element v from the xml
-  if(getNames) num<-sapply(txml,getV,v="Number")
-  res<-sapply(txml,getV,v=v)
-  if(!getNames) names(res)<-NULL
-  else names(res)<-num
-  return(res)
-}
-getV<-function(it,v){
-  ## extract element v from iteration it
-  return(xmlValue(xmlChildren(it)[[v]]))
-}
-
-
-
-
