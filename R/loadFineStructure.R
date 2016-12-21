@@ -13,13 +13,22 @@
 #' chunkfile <- system.file("extdata/fine_structure_files", "EastAsiaSimple.EMlinked.chunkcounts.out", package = "starmie")
 #' treefile <- system.file("extdata/fine_structure_files", "EastAsiaSimple.EMlinked.tree.xml", package = "starmie")
 #' mcmcfile <- system.file("extdata/fine_structure_files", "EastAsiaSimple.EMlinked.mcmc.xml", package = "starmie")
-#' fineData <- loadFineStructure(chunkfile, treefile, mcmcfile)
+#' meancoincidencefile <- system.file("extdata/fine_structure_files", "EastAsiaSimple.EMlinked.meancoincidence.csv", package = "starmie")
+#' mappopchunkfile <- system.file("extdata/fine_structure_files", "EastAsiaSimple.EMlinked.mapstate.csv", package = "starmie")
+#' fineData <- loadFineStructure(chunkfile, treefile, mcmcfile, meancoincidencefile, mappopchunkfile)
 #' fineData
-loadFineStructure <- function(chunkfile, treefile, mcmcfile){
+loadFineStructure <- function(chunkfile, treefile, mcmcfile
+                              , meancoincidencefile=NULL, mappopchunkfile=NULL){
   # i/o checks
   if (!is.na(chunkfile) & !is.character(chunkfile)) stop("chunkfile must be a string.")
   if (!is.na(treefile) & !is.character(treefile)) stop("treefile must be a string.")
   if (!is.na(mcmcfile) & !is.character(mcmcfile)) stop("mcmcfile must be a string.")
+  if (!is.null(meancoincidencefile)) {
+    if (!is.character(meancoincidencefile) & !is.na(meancoincidencefile)) stop("meancoincidencefile must be a string.")
+  }
+  if (!is.null(mappopchunkfile)) {
+    if (!is.character(mappopchunkfile) & !is.na(mappopchunkfile)) stop("mappopchunkfile must be a string.")
+  }
   if(!requireNamespace("XML", quietly = TRUE)) stop("XML package not installed, please install it")
   if(!requireNamespace("ape", quietly = TRUE)) stop("ape package not installed, please install it")
 
@@ -50,6 +59,20 @@ loadFineStructure <- function(chunkfile, treefile, mcmcfile){
   fine_obj$mcmc_df[] <- lapply(fine_obj$mcmc_df
                                , function(x) type.convert(as.character(x), as.is=TRUE))
   colnames(fine_obj$mcmc_df) <- xml2::xml_name(xml2::xml_children(xml[[1]]))
+
+  #Load mean coincidence file
+  if (!is.null(meancoincidencefile)){
+    t_df <- fread(meancoincidencefile, data.table = FALSE, header = TRUE)
+    fine_obj$meancoincedence_matrix <- data.matrix(t_df[,2:ncol(t_df)])
+    rownames(fine_obj$meancoincedence_matrix) <- t_df[,1]
+  }
+
+  #Load mappopchunk file
+  if (!is.null(meancoincidencefile)){
+    t_df <- fread(mappopchunkfile, data.table = FALSE, header = TRUE)
+    fine_obj$mappopchunk_matrix <- data.matrix(t_df[,2:ncol(t_df)])
+    rownames(fine_obj$mappopchunk_matrix) <- t_df[,1]
+  }
 
   return(fine_obj)
 }

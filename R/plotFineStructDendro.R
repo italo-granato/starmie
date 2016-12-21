@@ -14,14 +14,17 @@
 #' fineData <- loadFineStructure(chunkfile, treefile, mcmcfile)
 #' plotFineStructDendro(fineData)
 plotFineStructDendro <- function(x, cex=0.7, ...) {
+  #i/o checks
+  if(!requireNamespace("ape", quietly = TRUE)) stop("ape package not installed, please install it")
+
   UseMethod("plotFineStructDendro", x)
 }
 
 #' @method plotFineStructDendro phylo
 #' @export
 plotFineStructDendro.phylo <- function(x, cex=0.7, ...) {
-  plot(x, direction = "right", label.offset = 0.1, cex = cex, ...)
-  nodelabels(x$node.label, frame = "none", adj = c(2,-0.5), cex=cex)
+  ape::plot.phylo(x, direction = "right", label.offset = 0.1, cex = cex, ...)
+  ape::nodelabels(x$node.label, frame = "none", adj = c(2,-0.5), cex=cex)
 }
 
 #' @method plotFineStructDendro fineStruct
