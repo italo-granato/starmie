@@ -37,6 +37,8 @@ loadFineStructure <- function(chunkfile, treefile, mcmcfile){
   fine_obj$dendro <- ape::read.tree(
     text=xml2::xml_text(xml2::xml_find_all(xml,".//Tree"))
   )
+  fine_obj$dendro$node.label[fine_obj$dendro$node.label==""] <- 0
+  fine_obj$dendro$node.label <- as.character(1-as.numeric(fine_obj$dendro$node.label))
 
   #Load mcmc file
   xml <- xml2::read_xml(mcmcfile)
