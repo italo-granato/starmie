@@ -20,7 +20,7 @@ loadFineStructure <- function(chunkfile, treefile, mcmcfile){
   if (!is.na(chunkfile) & !is.character(chunkfile)) stop("chunkfile must be a string.")
   if (!is.na(treefile) & !is.character(treefile)) stop("treefile must be a string.")
   if (!is.na(mcmcfile) & !is.character(mcmcfile)) stop("mcmcfile must be a string.")
-  if(!requireNamespace("XML", quietly = TRUE)) stop("XML package not installed, please install it")
+  if(!requireNamespace("xml2", quietly = TRUE)) stop("xml2 package not installed, please install it")
   if(!requireNamespace("ape", quietly = TRUE)) stop("ape package not installed, please install it")
 
   #create new structure object
