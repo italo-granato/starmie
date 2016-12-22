@@ -15,7 +15,8 @@
 #' @export
 fineStruct <- function() {
   structure(list(nsamples = NULL, chunkcounts_df = NULL, cfactor = NULL,
-                 tree =  NULL, mcmc_df = NULL),
+                 dendro =  NULL, mcmc_df = NULL, meancoincedence_matrix=NULL,
+                 mappopchunk_matrix=NULL),
             class = "fineStruct")
 }
 
@@ -29,4 +30,6 @@ print.fineStruct <- function(x, ...) {
   print(x$dendro)
   cat("MCMC dataframe:\n")
   print(head(x$mcmc_df, n=2))
+  if (!is.null(x$meancoincedence_matrix)) print("Includes mean coincedence matrix")
+  if (!is.null(x$mappopchunk_matrix)) print("Includes population-by-population chunkcount matrix")
 }
