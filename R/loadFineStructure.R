@@ -5,6 +5,8 @@
 #' @param chunkfile a string containing a chunk counts file produce by fineStructure
 #' @param treefile a string containing a tree file produce by fineStructure
 #' @param mcmcfile a string containing a mcmc file produce by fineStructure
+#' @param meancoincidencefile (default=NULL) a string containing a pairwise coincidence produce by fineStructure
+#' @param mappopchunkfile (default=NULL) a string containing a population level chunk counts file produce by fineStructure
 #' @importFrom data.table fread
 #' @importFrom stringr str_split
 #' @export
@@ -38,8 +40,10 @@ loadFineStructure <- function(chunkfile, treefile, mcmcfile
   # do the work (much of this code is adapted from Daniel Lawson's R scripts https://people.maths.bris.ac.uk/~madjl/finestructure/index.html)
   #Load the chunk counts file
   fine_obj$cfactor <- as.numeric(str_split(readLines(chunkfile, n=1), " ", simplify = TRUE)[[2]])
-  fine_obj$chunkcounts_df <- fread(chunkfile, skip=1, header=TRUE, data.table=FALSE)
-  fine_obj$nsamples <- ncol(fine_obj$chunkcounts_df)-1
+  t_df <- fread(chunkfile, skip=1, header=TRUE, data.table=FALSE)
+  fine_obj$chunkcounts_matrix <- data.matrix(t_df[,2:ncol(t_df)])
+  rownames(fine_obj$chunkcounts_matrix) <- t_df[,1]
+  fine_obj$nsamples <- ncol(fine_obj$chunkcounts_matrix)
 
   #Load tree file
   xml <- xml2::read_xml(treefile)

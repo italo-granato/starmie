@@ -34,7 +34,8 @@ Suggests:
     label.switching,
     MCL,
     xml2,
-    ape
+    ape,
+    phytools
 URL: https://github.com/sa-lee/starmie
 BugReports: https://github.com/sa-lee/starmie/issues
 RoxygenNote: 5.0.1

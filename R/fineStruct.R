@@ -6,15 +6,19 @@
 #'
 #'  cfactor: estimate of the c parameter in the fineStructure model
 #'
-#'  chunkcounts_df: a data.frame of chunkcounts
+#'  chunkcounts_matrix: a data.matrix of chunkcounts
 #'
 #'  dendro: a dendrogram object estimated by fineStructure
 #'
 #'  mcmc_df: a data.frame containing the mcmc output of fineStructure
 #'
+#'  meancoincedence_matrix: a data.matrix of pairwise coincidence, showing the MAP state
+#'
+#'  mappopchunk_matrix: a data.matrix of population-by-population chunkcounts
+#'
 #' @export
 fineStruct <- function() {
-  structure(list(nsamples = NULL, chunkcounts_df = NULL, cfactor = NULL,
+  structure(list(nsamples = NULL, chunkcounts_matrix = NULL, cfactor = NULL,
                  dendro =  NULL, mcmc_df = NULL, meancoincedence_matrix=NULL,
                  mappopchunk_matrix=NULL),
             class = "fineStruct")
@@ -25,7 +29,7 @@ print.fineStruct <- function(x, ...) {
   cat("fineStruct object containing run information\n")
   cat(paste("  ", "No. samples:", x$nsamples, "\n"))
   cat("Chunk count dataframe:\n")
-  print(head(x$chunkcounts_df, n=2))
+  print(head(x$chunkcounts_matrix, n=2))
   cat("Dendrogram:\n")
   print(x$dendro)
   cat("MCMC dataframe:\n")
