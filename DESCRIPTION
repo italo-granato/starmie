@@ -32,7 +32,10 @@ Suggests:
     ggrepel,
     parallel,
     label.switching,
-    MCL
+    MCL,
+    xml2,
+    ape,
+    phytools
 URL: https://github.com/sa-lee/starmie
 BugReports: https://github.com/sa-lee/starmie/issues
 RoxygenNote: 5.0.1
