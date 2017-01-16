@@ -4,7 +4,6 @@
 #' @return an admix object which is a list with 6 elements:
 #'  K: number of clusters estimated by ADMIXTURE
 #'
-#'
 #'  nsamples: number of samples used
 #'
 #'  nmarkers: number of markers used
@@ -13,12 +12,19 @@
 #'
 #'  P_df: a data.frame of estimated marker frequencies in each inferred population
 #'
+#'  Q_bias_df: a data.frame of bias estimates in cluster membership probabilities
+#'
+#'  Q_se_df: a data.frame of standard error estimates in cluster membership probabilities
+#'
+#'  fst_matrix: a symmetric matrix of F_st values between inferred clusters
+#'
 #'  log_info: a data.frame containing the K, CVerror and logLik of the last model.
 #'
 #' @export
 admix <- function() {
   structure(list(K = NULL, nsamples = NULL, nmarkers = NULL,
-                 Q_df =  NULL, P_df = NULL, log_info = NULL),
+                 Q_df =  NULL, P_df = NULL, Q_bias_df = NULL,
+                 Q_se_df = NULL, fst_matrix = NULL, log_info = NULL),
             class = "admix")
 }
 
@@ -52,9 +58,9 @@ admixList <- function(...) {
 #' @export
 exampleAdmixture <- function() {
   path <- system.file("extdata/hapmap3_files", package = "starmie")
-  logs <- list.files(path, pattern = "*.out", full.names = TRUE)
-  qfin <- list.files(path, pattern = "*.Q", full.names = TRUE)
-  pfin <- list.files(path, pattern = "*.P", full.names = TRUE)
+  logs <- list.files(path, pattern = "*.out$", full.names = TRUE)
+  qfin <- list.files(path, pattern = "*.Q$", full.names = TRUE)
+  pfin <- list.files(path, pattern = "*.P$", full.names = TRUE)
   admixList(mapply(loadAdmixture, qfin, pfin, logs,
                    SIMPLIFY = FALSE, USE.NAMES = FALSE))
 }

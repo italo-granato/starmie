@@ -1,7 +1,7 @@
 Package: starmie
 Type: Package
 Title: Population Structure Model Inference and Visualisation
-Version: 0.1.2
+Version: 0.1.3
 Authors@R: c(person("Gerry", "Tonkin-Hill", email = "tonkin-hill.g@wehi.edu.au", role = c("aut")),
     person( "Stuart", "Lee", email = "lee.s@wehi.edu.au", role = c("cre", "aut")))
 Description: Data structures and methods for  manipulating output of genetic population structure clustering algorithms.
@@ -32,7 +32,10 @@ Suggests:
     ggrepel,
     parallel,
     label.switching,
-    MCL
+    MCL,
+    xml2,
+    ape,
+    phytools
 URL: https://github.com/sa-lee/starmie
 BugReports: https://github.com/sa-lee/starmie/issues
 RoxygenNote: 5.0.1

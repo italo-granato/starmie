@@ -4,14 +4,19 @@
 \alias{loadAdmixture}
 \title{Read Admixture Output}
 \usage{
-loadAdmixture(qfile, pfile, logfile = NULL)
+loadAdmixture(qfile, pfile, logfile = NULL, bootstrap_bias = NULL,
+  bootstrap_se = NULL)
 }
 \arguments{
 \item{qfile}{a valid Q file from ADMIXTURE}
 
 \item{pfile}{a corresponding P file from ADMXIXTURE}
 
-\item{logfile}{logfile from corresponding AMIXTURE run ()}
+\item{logfile}{optional logfile from corresponding ADMIXTURE run}
+
+\item{bootstrap_bias}{optional file containing bias estimates for Q matrix}
+
+\item{bootstrap_se}{optional file containing standard error estiamtes for Q matrix}
 }
 \value{
 an \link{admix} object containing the output of of an admixture run
@@ -25,6 +30,6 @@ pfin <- system.file("extdata/hapmap3_files", "hapmap3.2.P", package = "starmie")
 my_admix <- loadAdmixture(qfin, pfin)
 # add log file
 logfin <- system.file("extdata/hapmap3_files", "log2.out", package = "starmie")
-my_admix <- loadAdmixture(qfin, pfin, logfin)
+my_admix <- loadAdmixture(qfin, pfin, logfile = logfin)
 }
 
