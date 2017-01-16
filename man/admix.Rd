@@ -10,7 +10,6 @@ admix()
 an admix object which is a list with 6 elements:
  K: number of clusters estimated by ADMIXTURE
 
-
  nsamples: number of samples used
 
  nmarkers: number of markers used
@@ -18,6 +17,12 @@ an admix object which is a list with 6 elements:
  Q_df: a data.frame of cluster membership probabilities
 
  P_df: a data.frame of estimated marker frequencies in each inferred population
+
+ Q_bias_df: a data.frame of bias estimates in cluster membership probabilities
+
+ Q_se_df: a data.frame of standard error estimates in cluster membership probabilities
+
+ fst_matrix: a symmetric matrix of F_st values between inferred clusters
 
  log_info: a data.frame containing the K, CVerror and logLik of the last model.
 }

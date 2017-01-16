@@ -57,6 +57,7 @@ list_description <- c("K parameter supplied to ADMIXTURE",
                       "Number of markers",
                       "Individual ancestral probability of membership to cluster",
                       "Estimated ancestral allele frequencies for each cluster",
+                      "Fst between each cluster",
                       "Model fit statistics")
 
 knitr::kable(data.frame(attributes = list_names, 
