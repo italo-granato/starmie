@@ -22,13 +22,32 @@ clumpp <- function(Q_list, method="greedy", iter=100){
     stop("Not a valid CLUMPP method, please use on of: 'greedy', 'greedyLargeK' or 'stephens'")
   }
 
-  if(!all(unlist(lapply(Q_list, inherits, "matrix")))) stop("cluster runs must be a list of Q matrices")
+  if(!all(unlist(lapply(Q_list, inherits, "matrix"))))
+    stop("cluster runs must be a list of Q matrices")
 
   if(!all.equal(iter, as.integer(iter)) || iter<0) stop("number of iterations must be a positive integer")
 
+  # if length of Q_list is 1, clummping is not necessary
+  if (length(Q_list) == 1) {
+    message("Q_list only contains 1 element, clumpping is not necessary.")
+    return(Q_list)
+  }
+
+  # check dims of input Q_list are all equal
+  dim_Q <- dim(Q_list[[1]])
+  if(!all(unlist(lapply(Q_list[-1], function(x) all(dim(x) == dim_Q))) == TRUE))
+    stop("size of all matrices in Q_list must be equal")
+
+  K <- dim_Q[2]
+
+  # gracefully return Q_list if K=1
+  if(K == 1) {
+    message("Number of assumed populations = 1 for all Q matrices, clummping is unecessary, returning Q_list")
+    return(Q_list)
+  }
+
   if (method=="greedy"){
     #Greedy clumpp algorithm
-    K <- ncol(Q_list[[1]])
     perms <- replicate(iter, sample(1:length(Q_list),size=length(Q_list),replace=FALSE))
     if (K>8){
       permQs <- apply(perms, 2, function(p) iterativeGreedy(Q_list[p]))
