@@ -1,0 +1,28 @@
+library(shiny)
+
+fluidPage(
+  # Application title
+  titlePanel("starmie - interactive analysis of population structure models"),
+  sidebarLayout(
+    sidebarPanel(
+      selectInput('program',
+                   'Which program did you run?',
+                   c("structure", "admixture", "fineStructure")),
+
+      conditionalPanel(condition = "input.program == 'structure'",
+                       fileInput("out_files", "out_f files", multiple = TRUE, accept = c(".out_f")),
+                       fileInput("log_files", "log files (optional)", multiple = TRUE, accept = c(".out", ".log"))
+                       ),
+      conditionalPanel(condition = "input.program == 'admixture'",
+                       fileInput("Q_files", "Q files", multiple = TRUE, accept = ".Q"),
+                       fileInput("P_files", "P files", multiple = TRUE, accept = ".P"),
+                       fileInput("log_files", "admixture log files", multiple = TRUE, accept = c(".out", ".log")),
+                       fileInput("Q_bias_files", "bootstrap bias files (optional)", multiple = TRUE, accept = ".Q_bias"),
+                       fileInput("Q_se_files", "bootstrap standard error files (optional)", multiple = TRUE, accept = ".Q_se")
+                      )
+    ),
+  mainPanel(
+    textOutput('contents')
+    )
+  )
+)
