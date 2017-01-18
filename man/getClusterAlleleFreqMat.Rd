@@ -7,7 +7,7 @@
 getClusterAlleleFreqMat(x)
 }
 \arguments{
-\item{x}{a \code{\link{struct}} or \code{\link{admix}} object.}
+\item{x}{a \code{\link{struct}} or \code{\link{admix}} or \code{\link{fast}} object.}
 }
 \description{
 Retrieve estimated within-cluster allele frequencies

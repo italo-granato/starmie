@@ -2,14 +2,14 @@
 % Please edit documentation in R/get-methods.R
 \name{getQ}
 \alias{getQ}
-\title{Retrieve Q matrix from \code{\link{struct}} or \code{\link{admix}} objects.}
+\title{Retrieve Q matrix from \code{\link{struct}} or \code{\link{admix}} \code{\link{fast}} objects.}
 \usage{
 getQ(x)
 }
 \arguments{
-\item{x}{a \code{\link{struct}} or \code{\link{admix}} object.}
+\item{x}{a \code{\link{struct}} or \code{\link{admix}} or \code{\link{fast}} object.}
 }
 \description{
-Retrieve Q matrix from \code{\link{struct}} or \code{\link{admix}} objects.
+Retrieve Q matrix from \code{\link{struct}} or \code{\link{admix}} \code{\link{fast}} objects.
 }
 

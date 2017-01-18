@@ -7,7 +7,7 @@
 getCompleteAlleleFreqMat(x)
 }
 \arguments{
-\item{x}{a \code{\link{struct}} or \code{\link{admix}} object.}
+\item{x}{a \code{\link{struct}} object.}
 }
 \description{
 Retrieve estimated population allele frequencies

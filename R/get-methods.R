@@ -19,9 +19,15 @@ getK.admix <- function(x) {
   x$K
 }
 
-#' Retrieve Q matrix from \code{\link{struct}} or \code{\link{admix}} objects.
+#' @method getK fast
+#' @export
+getK.fast <- function(x) {
+  x$K
+}
+
+#' Retrieve Q matrix from \code{\link{struct}} or \code{\link{admix}} \code{\link{fast}} objects.
 #'
-#' @param x a \code{\link{struct}} or \code{\link{admix}} object.
+#' @param x a \code{\link{struct}} or \code{\link{admix}} or \code{\link{fast}} object.
 #' @export
 getQ <- function(x) {
   UseMethod("getQ", x)
@@ -43,9 +49,15 @@ getQ.admix <- function(x) {
   as.matrix(x$Q_df)
 }
 
+#' @method getQ fast
+#' @export
+getQ.fast <- function(x) {
+  as.matrix(x$Q_df)
+}
+
 #' Retrieve estimated within-cluster allele frequencies
 #'
-#' @param x a \code{\link{struct}} or \code{\link{admix}} object.
+#' @param x a \code{\link{struct}} or \code{\link{admix}} or \code{\link{fast}} object.
 #' @export
 getClusterAlleleFreqMat <- function(x) {
   UseMethod("getClusterAlleleFreqMat", x)
@@ -66,9 +78,15 @@ getClusterAlleleFreqMat.admix <- function(x) {
   x$P_df
 }
 
+#' @method getClusterAlleleFreqMat fast
+#' @export
+getClusterAlleleFreqMat.fast <- function(x) {
+  x$P_df
+}
+
 #' Retrieve estimated population allele frequencies
 #'
-#' @param x a \code{\link{struct}} or \code{\link{admix}} object.
+#' @param x a \code{\link{struct}} object.
 #' @importFrom data.table rbindlist
 #' @export
 getCompleteAlleleFreqMat <- function(x) {
