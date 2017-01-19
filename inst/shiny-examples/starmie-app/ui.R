@@ -25,7 +25,7 @@ fluidPage(
       tabsetPanel(
         tabPanel("starmie-summary", verbatimTextOutput("summary")),
         tabPanel("starmie-inference", plotOutput("inference"), uiOutput("bestKcontrols")),
-        tabPanel("starmie-visualise", renderPlot("table"))
+        tabPanel("starmie-visualise",  uiOutput("visualiseControls"), uiOutput("plotOptions"), uiOutput("plot_out"))
       )
     )
   )

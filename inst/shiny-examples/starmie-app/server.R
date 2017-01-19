@@ -1,7 +1,7 @@
 library(shiny)
 library(starmie)
 
-function(input, output) {
+function(input, output, session) {
 
   app_data <- reactive({
     if(input$program == "structure") {
@@ -105,13 +105,18 @@ function(input, output) {
     }
 
     else if (input$program == "fineStructure") {
-      app_data <- "coming soon"
+      app_data <- NULL
     }
 
     else if (input$program == "fastStructure") {
-      app_data <- "comming soon"
+      app_data <- NULL
     }
   })
+
+  summary_values <- reactiveValues()
+  summary_values$list_size <- length(isolate(app_data()))
+  summary_values$min_k <- min(unlist(lapply(isolate(app_data()), getK)))
+  summary_values$max_k <- max(unlist(lapply(isolate(app_data()), getK)))
 
   output$summary <- renderPrint({ print(app_data())})
 
@@ -134,5 +139,89 @@ function(input, output) {
     }
 
   })
+
+  output$visualiseControls <- renderUI({
+    common_plots <- c("bar", "tree", "multiple", "mds")
+    if (input$program == "structure") {
+      radioButtons("plot_type", "Choose a plot type:", c(common_plots, "mcmc_diagnostics"))
+    }
+    else if (input$program == "admixture") {
+      radioButtons("plot_type", "Choose a plot type:", common_plots)
+    }
+  })
+
+  output$plotOptions <- renderUI({
+    if (input$plot_type %in% c("bar", "tree", "mds")) {
+      numericInput("K", "Select K value:", summary_values$min_k,
+                   min = summary_values$min_k, max = summary_values$max_k)
+    }
+
+  })
+
+  output$plot_out <- renderUI({
+    switch(input$plot_type,
+           "bar" = plotOutput("bar"),
+           "mcmc_diagnostic" = plotOutput("mcmc_diagnostic"),
+           "tree" =  plotOutput("tree"),
+           "multiple" = plotOutput("multiple"),
+           "mds" = plotOutput("mds"))
+  })
+
+  output$bar <- renderPlot({
+    index_out <- unlist(lapply(app_data(), getK)) == input$K
+    if (sum(index_out) > 1) {
+      stop(safeError("more than 1 struct object with K-value, use multiple plot instead"))
+    }
+
+    input_obj <- app_data()[index_out]
+
+    plotBar(input_obj)
+
+  })
+
+  output$mcmc_diagnostic <- renderPlot({
+    can_plot <- any(unlist(lapply(app_data(), function(y) is.null(y[["nonburn_df"]]))))
+
+    if (can_plot) {
+      stop(safeError("Some struct objects have no MCMC data. Please upload to plot MCMC chains."))
+    }
+
+    plotMCMC(app_data())
+
+  })
+
+  output$tree <- renderPlot({
+    index_out <- unlist(lapply(app_data(), getK)) == input$K
+    if (sum(index_out) > 1) {
+      stop(safeError("more than one object with same K-value, use multiple plot instead"))
+    }
+
+    print(class(app_data()))
+    input_obj <- app_data()[index_out]
+    print(class(input_obj))
+    print(index_out)
+    plotTreeBar(input_obj)
+
+  })
+
+  output$mds <- renderPlot({
+    index_out <- unlist(lapply(app_data(), getK)) == input$K
+    if (sum(index_out) > 1) {
+      stop(safeError("more than one object with K-value, use multiple plot instead"))
+    }
+
+    input_obj <- app_data()[index_out]
+
+    plotMDS(input_obj)
+
+
+  })
+
+  output$multiple <- renderPlot({
+    plotMultiK(app_data())
+  })
+
+
+
 
 }
