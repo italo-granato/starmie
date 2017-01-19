@@ -33,13 +33,13 @@ function(input, output) {
 
     else if (input$program == "admixture") {
       if (is.null(input$Q_files) & is.null(input$P_files) &
-          is.null(input$log_files) & is.null(input$Q_bias_files) &
+          is.null(input$alog_files) & is.null(input$Q_bias_files) &
           is.null(input$Q_se_files)) {
 
         app_data <- NULL
 
       } else if (!is.null(input$Q_files) & !is.null(input$P_files) &
-                 is.null(input$log_files) & is.null(input$Q_bias_files) &
+                 is.null(input$alog_files) & is.null(input$Q_bias_files) &
                  is.null(input$Q_se_files)) {
 
         P_files <- sort(input$P_files$datapath)
@@ -53,16 +53,16 @@ function(input, output) {
         }
 
       } else if (!is.null(input$Q_files) & !is.null(input$P_files) &
-                 !is.null(input$log_files) & is.null(input$Q_bias_files) &
+                 !is.null(input$alog_files) & is.null(input$Q_bias_files) &
                  is.null(input$Q_se_files)) {
 
         P_files <- sort(input$P_files$datapath)
         Q_files <- sort(input$Q_files$datapath)
-        log_files <- sort(input$log_files$datapath)
-        if (length(log_files) == length(Q_files) &
-            length(log_files) == length(P_files)) {
+        alog_files <- sort(input$alog_files$datapath)
+        if (length(alog_files) == length(Q_files) &
+            length(alog_files) == length(P_files)) {
           app_data <- admixList(mapply(loadAdmixture, Q_files, P_files,
-                                       log_files, SIMPLIFY = FALSE,
+                                       alog_files, SIMPLIFY = FALSE,
                                        USE.NAMES = FALSE))
         } else {
           stop(safeError("Number of log files must match Q and P files."))
@@ -70,21 +70,21 @@ function(input, output) {
 
 
       } else if (!is.null(input$Q_files) & !is.null(input$P_files) &
-                 !is.null(input$log_files) & !is.null(input$Q_bias_files) &
+                 !is.null(input$alog_files) & !is.null(input$Q_bias_files) &
                  !is.null(input$Q_se_files)) {
 
         P_files <- sort(input$P_files$datapath)
         Q_files <- sort(input$Q_files$datapath)
-        log_files <- sort(input$log_files$datapath)
+        alog_files <- sort(input$alog_files$datapath)
         Qb_files <- sort(input$Q_bias_files$datapath)
         Qs_files <- sort(input$Q_se_files$datapath)
 
         app_data <- admixList(mapply(loadAdmixture, Q_files, P_files,
-                                     log_files, Qb_files, Qs_files,
+                                     alog_files, Qb_files, Qs_files,
                                      SIMPLIFY = FALSE, USE.NAMES = FALSE))
 
       } else if (!is.null(input$Q_files) & !is.null(input$P_files) &
-                 is.null(input$log_files) & !is.null(input$Q_bias_files) &
+                 is.null(input$alog_files) & !is.null(input$Q_bias_files) &
                  !is.null(input$Q_se_files)) {
 
         P_files <- sort(input$P_files$datapath)
@@ -112,6 +112,27 @@ function(input, output) {
       app_data <- "comming soon"
     }
   })
-  output$contents <- renderText({ print(app_data())})
+
+  output$summary <- renderPrint({ print(app_data())})
+
+  output$bestKcontrols <- renderUI({
+    if (input$program == "structure") {
+      method <- c("evanno", "structure")
+      radioButtons("method", "Choose Method:", method)
+    }
+
+  })
+
+  output$inference <- renderPlot({
+    method <- input$method
+    if (length(method) > 0 & input$program == "structure") {
+      bestK(app_data(), method)
+    } else if (input$program == "admixture") {
+      bestK(app_data())
+    } else {
+      stop(safeError("Invalid input for bestK function."))
+    }
+
+  })
 
 }
