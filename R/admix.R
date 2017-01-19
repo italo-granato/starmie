@@ -108,7 +108,7 @@ combineLogs <- function(x) {
 `[.admixList` <- function(x, ...) {
   y <- NextMethod("[")
   if (length(y) == 1L) {
-    return(y)
+    y[[1]]
   } else {
     class(y) <- oldClass(x)
     y
