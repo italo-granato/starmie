@@ -1,6 +1,6 @@
 language: r
 
-cache: pacakges
+cache: packages
 
 warnings_are_errors: false
 
