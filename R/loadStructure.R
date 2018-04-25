@@ -155,16 +155,32 @@ loadStructure <- function(filename, logfile=NULL){
     l_f <- readr::read_lines(logfile)
     #remove blank lines
     l_f <- l_f[l_f!=""]
+    
+    ## NOTE: New codes based on the current format
+    # removing spaces from borders
+    l_f <- stringr::str_trim(l_f)
+    # initial and final positions of the MCMC chain
+    initial <- which(grepl("^Rep#:   Lambda   Alpha.*",l_f))[1]
+    final <- which(grepl("^MCMC",l_f))[1]
+    
+    l_f <- l_f[initial:final]
+    # defining the split between burnin and non-burnin
+    mid <- grep("^BURNIN", l_f)
+    
+    #Get burn and non-burn in iterations as seperate data frames.
+    nonburn_lines <- l_f[(mid+1):length(l_f)]
+    burn_lines <- l_f[1:mid-1]
+
 
     #Get burn and non-burn in iterations as seperate data frames.
     ##NOTE: This relies heavily on the current format.
-    intervals <- unlist(lapply(which(grepl("^ Rep#:   Lambda   Alpha.*",l_f)), function(x){ x[1]:(x[1]+11) }))
-    burn_lines <- l_f[intervals]
-    burn_lines <- burn_lines[grepl("[0-9]|R.*", burn_lines)]
-    burn_lines <- str_trim(burn_lines)
-    mid <- which(grepl(".*Ln Like  Est Ln P.*",burn_lines))[1]
-    nonburn_lines <- burn_lines[mid:length(burn_lines)]
-    burn_lines <- burn_lines[1:mid-1]
+    #intervals <- unlist(lapply(which(grepl("^ Rep#:   Lambda   Alpha.*",l_f)), function(x){ x[1]:(x[1]+11) }))
+    #burn_lines <- l_f[intervals]
+    #burn_lines <- burn_lines[grepl("[0-9]|R.*", burn_lines)]
+    #burn_lines <- str_trim(burn_lines)
+    #mid <- which(grepl(".*Ln Like  Est Ln P.*",burn_lines))[1]
+    #nonburn_lines <- burn_lines[mid:length(burn_lines)]
+    #burn_lines <- burn_lines[1:mid-1]
 
     burn_header <- unlist(str_split(burn_lines[1], "\\s{2,}"))
 
@@ -181,7 +197,7 @@ loadStructure <- function(filename, logfile=NULL){
     nonburn_lines <- nonburn_lines[!grepl("Rep#:.*", nonburn_lines)]
     nonburn_lines <- str_split_fixed(nonburn_lines, "\\s+", n=length(nonburn_header))
     nonburn_lines[,1] <- gsub(":","",nonburn_lines[,1])
-    nonburn_df <- data.matrix(data.frame(nonburn_lines, stringsAsFactors = FALSE))
+    suppressWarnings(nonburn_df <- data.matrix(data.frame(nonburn_lines, stringsAsFactors = FALSE)))
     colnames(nonburn_df) <- nonburn_header
 
     structure_obj$burn_df = burn_df
