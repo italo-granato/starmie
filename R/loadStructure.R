@@ -163,7 +163,17 @@ loadStructure <- function(filename, logfile=NULL){
     initial <- which(grepl("^Rep#:   Lambda   Alpha.*",l_f))[1]
     final <- which(grepl("^MCMC",l_f))[1]
     
+    # substracting only the chain
     l_f <- l_f[initial:final]
+    
+    #removing text from the chain
+    resum <- grep(pattern = "Overall", l_f)
+    if(length(resum) != 0){
+      l_f <- l_f[-c(rep(0:4, length(resum)) + rep(resum, each=5))]
+      l_f <- l_f[!grepl(pattern = "---------", l_f)]
+    }
+    
+    
     # defining the split between burnin and non-burnin
     mid <- grep("^BURNIN", l_f)
     
